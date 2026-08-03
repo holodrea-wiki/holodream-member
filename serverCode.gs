@@ -12,7 +12,7 @@ function getTargetSpreadsheet() {
 }
 
 /**
- * 外部（GitHub Pages等）からの fetch 通信を受け取るエンドポイント
+ * 外部（GitHub Pages等）からの fetch 通信を受け取るAPIエンドポイント
  */
 function doGet(e) {
   const action = (e && e.parameter && e.parameter.action) ? String(e.parameter.action) : 'getTopBannerMap';
@@ -36,6 +36,7 @@ function doGet(e) {
     result = { error: true, message: err.message };
   }
 
+  // ★ HTMLではなく、必ず JSON テキストとして返却する
   const output = ContentService.createTextOutput(JSON.stringify(result));
   output.setMimeType(ContentService.MimeType.JSON);
   return output;
