@@ -1,26 +1,186 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ホロドリ メンバー情報</title>
+  <base target="_top">
   <style>
-    /* （CSS部分は変更なし） */
-    * { box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; }
-    body { margin: 0; padding: 0; background-color: #f8fafc; color: #1f2937; min-height: 100vh; display: flex; flex-direction: column; }
-    .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 24px 20px; text-align: center; border-bottom: 1px solid #334155; }
-    .header h1 { margin: 0; font-size: 26px; font-weight: 900; color: #f8fafc; }
-    .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 40px; flex: 1; width: 100%; display: flex; flex-direction: column; gap: 24px; }
-    .top-main-banner-container { width: 100%; display: none; padding: 28px 0; text-align: center; }
-    .top-main-banner-img { max-width: 100%; height: auto; transform: scale(1.18); }
-    .nav-list { display: flex; flex-direction: column; gap: 20px; }
-    .nav-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%); border: 1.5px solid rgba(191, 219, 254, 0.6); border-radius: 24px; padding: 20px 28px; text-decoration: none; color: #ffffff; display: flex; align-items: center; gap: 28px; }
-    .card-banner-box { width: 220px; height: 90px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .card-banner-img { width: 100%; height: 100%; object-fit: contain; }
-    .card-text-content { flex: 1; }
-    .card-title { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
-    .card-desc { font-size: 13.5px; color: #94a3b8; }
-    footer { text-align: center; padding: 20px; font-size: 12px; color: #94a3b8; background: #ffffff; }
+    * {
+      box-sizing: border-box;
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .top-main-banner-container {
+      width: 100%;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      display: none;
+      overflow: visible;
+      padding: 28px 0;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .top-main-banner-img {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: inline-block;
+      transform: scale(1.18);
+      transform-origin: center center;
+      filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.25));
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .nav-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%);
+      border: 1.5px solid rgba(191, 219, 254, 0.6);
+      border-radius: 24px;
+      padding: 20px 28px;
+      text-decoration: none;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 10px 25px -4px rgba(15, 23, 42, 0.45),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2),
+        inset 0 2px 3px rgba(224, 242, 254, 0.5),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .nav-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(224, 242, 254, 0.9);
+      box-shadow: 
+        0 18px 36px -4px rgba(30, 58, 138, 0.6),
+        0 6px 12px -2px rgba(0, 0, 0, 0.3),
+        inset 0 2.5px 4px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(147, 197, 253, 0.4);
+    }
+
+    .card-banner-box {
+      width: 220px;
+      height: 90px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+    }
+    .card-banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    }
+
+    .card-text-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      min-width: 0;
+    }
+    .card-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .card-desc {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #94a3b8;
+      line-height: 1.5;
+      letter-spacing: 0.01em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    @media screen and (max-width: 650px) {
+      .container {
+        padding: 16px 12px;
+        gap: 16px;
+      }
+      .top-main-banner-container {
+        padding: 16px 0;
+      }
+      .top-main-banner-img {
+        transform: scale(1.08);
+      }
+      .nav-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 20px;
+        border-radius: 20px;
+      }
+      .card-banner-box {
+        width: 100%;
+        height: 100px;
+      }
+      .card-title {
+        font-size: 22px;
+      }
+      .card-desc {
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -30,12 +190,14 @@
   </div>
 
   <div class="container">
+
     <div class="top-main-banner-container" id="topMainBannerBox">
       <img id="top_main_banner_img" class="top-main-banner-img" src="" alt="TOP Banner">
     </div>
 
     <div class="nav-list">
-      <a href="talent.html" class="nav-card">
+      
+      <a href="<?= scriptUrl ?>?page=index" target="_top" class="nav-card" onclick="navigateTo(event, '<?= scriptUrl ?>?page=index')">
         <div class="card-banner-box">
           <img id="banner_talent" class="card-banner-img" src="" alt="タレント一覧">
         </div>
@@ -45,7 +207,7 @@
         </div>
       </a>
 
-      <a href="holomen.html" class="nav-card">
+      <a href="<?= scriptUrl ?>?page=holomen" target="_top" class="nav-card" onclick="navigateTo(event, '<?= scriptUrl ?>?page=holomen')">
         <div class="card-banner-box">
           <img id="banner_member" class="card-banner-img" src="" alt="メンバー一覧">
         </div>
@@ -55,7 +217,7 @@
         </div>
       </a>
 
-      <a href="collection.html" class="nav-card">
+      <a href="<?= scriptUrl ?>?page=collection" target="_top" class="nav-card" onclick="navigateTo(event, '<?= scriptUrl ?>?page=collection')">
         <div class="card-banner-box">
           <img id="banner_checker" class="card-banner-img" src="" alt="所有率チェッカー">
         </div>
@@ -64,43 +226,39 @@
           <div class="card-desc">所有しているメンバーの所有率を確認＆ポストできる</div>
         </div>
       </a>
+
     </div>
   </div>
 
-  <footer>&copy; 攻略データまとめサイト</footer>
+  <footer>
+    &copy; 攻略データまとめサイト
+  </footer>
 
   <script>
-    // 公開した banner シートの CSV URL に置き換えてください
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9i1dLEAM5pGk_jAXCtSAf0ZZ_HHFfukMIOkBL85fmZVzgu-MmTM6LeV_IsMNWz82fReASMesOA_MK/pub?gid=78052298&single=true&output=csv';
+    function navigateTo(event, url) {
+      if (event) event.preventDefault();
+      try {
+        if (window.top && window.top !== window) {
+          window.top.location.href = url;
+        } else {
+          window.location.href = url;
+        }
+      } catch (e) {
+        window.location.href = url;
+      }
+    }
 
     window.onload = function() {
-      fetch(CSV_URL)
-        .then(response => response.text())
-        .then(csvText => {
-          const bannerMap = parseCsvToBannerMap(csvText);
-          setBanners(bannerMap);
+      // デプロイ済み GAS のウェブアプリ URL (exec URL)
+      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec';
+
+      fetch(GAS_ENDPOINT_URL)
+        .then(res => res.json())
+        .then(data => {
+          setBanners(data);
         })
-        .catch(err => console.error('CSV取得エラー:', err));
+        .catch(err => console.error('API通信エラー:', err));
     };
-
-    // 簡易CSVパース処理（1行目をヘッダーとして処理）
-    function parseCsvToBannerMap(csvText) {
-      const lines = csvText.split(/\r\n|\n/).filter(line => line.trim() !== '');
-      if (lines.length < 2) return {};
-
-      const headers = lines[0].split(',').map(h => h.replace(/^"(.*)"$/, '$1').trim());
-      const nameIdx = headers.findIndex(h => ['name', '機能名', 'title', '項目'].includes(h));
-      const urlIdx = headers.findIndex(h => ['banner_url', 'bannerurl', 'url', 'image'].includes(h));
-
-      const bannerMap = {};
-      for (let i = 1; i < lines.length; i++) {
-        const row = lines[i].split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
-        const name = nameIdx !== -1 ? row[nameIdx] : row[0];
-        const url = urlIdx !== -1 ? row[urlIdx] : row[1];
-        if (name) bannerMap[name] = url;
-      }
-      return bannerMap;
-    }
 
     function setBanners(bannerMap) {
       if (!bannerMap) return;
@@ -114,8 +272,10 @@
 
       const topMainUrl = getUrl(['TOP', 'top', 'メイン', 'メインバナー', 'top_banner']);
       if (topMainUrl) {
-        document.getElementById('top_main_banner_img').src = topMainUrl;
-        document.getElementById('topMainBannerBox').style.display = 'block';
+        const topBox = document.getElementById('topMainBannerBox');
+        const topImg = document.getElementById('top_main_banner_img');
+        topImg.src = topMainUrl;
+        topBox.style.display = 'block';
       }
 
       const talentUrl = getUrl(['タレント一覧', 'タレント 一覧', 'タレント', 'メンバー詳細カード一覧']);
@@ -127,5 +287,6 @@
       if (checkerUrl) document.getElementById('banner_checker').src = checkerUrl;
     }
   </script>
+
 </body>
 </html>
