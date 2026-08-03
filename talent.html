@@ -758,15 +758,12 @@
     let globalTagUrlMap = {};
 
     window.onload = function() {
-      // デプロイ済み GAS のウェブアプリ URL (exec URL)
-      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbx.../exec';
+      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDataGroupedByUnit';
 
       fetch(GAS_ENDPOINT_URL)
         .then(res => res.json())
-        .then(data => {
-          setBanners(data);
-        })
-        .catch(err => console.error('API通信エラー:', err));
+        .then(data => renderData(data))
+        .catch(err => showError(err));
     };
 
     function navigateTo(event, url) {
@@ -890,22 +887,18 @@
 
     function openCharacterDetail(charName) {
       const modal = document.getElementById('detailModal');
-      const title = document.getElementById('modalCharTitle');
       const body = document.getElementById('modalBody');
-
-      document.getElementById('modalRarityFilter').innerHTML = '<option value="">すべて</option>';
-      document.getElementById('modalTypeFilter').innerHTML = '<option value="">すべて</option>';
-
-      title.textContent = charName + ' のメンバー情報';
-      body.innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">データを読み込み中...</div>';
       modal.style.display = 'flex';
+      body.innerHTML = '読み込み中...';
 
-      google.script.run
-        .withSuccessHandler(renderCharacterDetails)
-        .withFailureHandler(err => {
-          body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラーが発生しました: ' + escapeHtml(err.message) + '</div>';
-        })
-        .getCharacterDetailsByName(charName);
+      const GAS_ENDPOINT_URL = `https://script.google.com/macros/s/YAKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDetailsByName&charName=${encodeURIComponent(charName)}`;
+
+      fetch(GAS_ENDPOINT_URL)
+        .then(res => res.json())
+        .then(data => renderCharacterDetails(data))
+        .catch(err => {
+          body.innerHTML = 'エラーが発生しました: ' + err.message;
+        });
     }
 
     function formatDateString(val) {
