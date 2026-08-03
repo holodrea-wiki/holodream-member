@@ -466,9 +466,38 @@
       .summary-card { flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
       .character-row { flex-direction: column; align-items: flex-start; gap: 10px; }
       .name-plate { width: 100%; min-width: 100%; }
-      .modal-member-card { padding: 10px 12px; gap: 12px; }
-      .modal-card-image-box { height: 80px; }
-      .modal-char-name { font-size: 20px; }
+
+      /* ★ スマホ画面時のモーダル内メンバーカード調整 */
+      .modal-member-card {
+        padding: 10px 12px;
+        gap: 12px;
+        min-height: auto;
+      }
+      .modal-card-image-box {
+        height: 70px;
+      }
+      .modal-alias-row {
+        gap: 6px;
+        margin-bottom: 2px;
+      }
+      .modal-type-icon {
+        height: 20px;
+      }
+      .modal-alias-text {
+        font-size: 13px;
+      }
+      .modal-name-row {
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .modal-char-name {
+        font-size: 18px;
+        white-space: normal;
+        line-height: 1.2;
+      }
+      .modal-unit-tag-img {
+        height: 20px;
+      }
     }
   </style>
 </head>
