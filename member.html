@@ -16,6 +16,7 @@
       color: #1f2937;
     }
 
+    /* 最上部固定エリア */
     .sticky-top-container {
       position: sticky;
       top: 0;
@@ -27,6 +28,7 @@
       margin: 0 auto;
     }
 
+    /* 検索バー */
     .header-bar {
       display: flex;
       align-items: center;
@@ -46,9 +48,11 @@
       font-size: 13px;
       font-weight: bold;
       white-space: nowrap;
+      transition: background 0.2s;
     }
+    .back-btn:hover { background: #475569; }
 
-    /* 検索バーコンテナ（✕ボタン対応） */
+    /* 検索バーコンテナ（✕ボタン配置用） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -90,6 +94,7 @@
       padding: 10px 20px;
       font-size: 15px;
       font-weight: bold;
+      letter-spacing: 0.05em;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -98,12 +103,28 @@
     }
     .hit-count-badge {
       font-size: 14px;
+      font-weight: bold;
       color: #ffffff;
       background: rgba(255, 255, 255, 0.2);
       padding: 4px 10px;
       border-radius: 12px;
     }
+    .open-filter-btn {
+      background: #ffffff;
+      color: #0044ff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
+    /* 外枠コンテナ */
     .list-wrapper {
       background: #ffffff;
       border-radius: 14px;
@@ -121,7 +142,8 @@
       background: #e2e8f0;
       padding: 8px;
       gap: 8px;
-      width: 100%;
+      width: max-content;
+      min-width: 100%;
     }
 
     .list-row-card {
@@ -133,49 +155,52 @@
       justify-content: space-between;
       gap: 15px;
       padding: 8px 15px;
-      width: 100%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      min-height: 110px;
+      width: 1169px;
+      min-width: 1169px;
     }
 
     .block-left-group, .block-right-group {
       display: flex;
       align-items: center;
       gap: 10px;
+      width: 560px;
+      flex-shrink: 0;
     }
 
+    .cell-member { display: flex; align-items: center; width: 340px; flex-shrink: 0; }
     .name-plate-mini {
-      width: 280px;
-      height: 70px;
-      border-radius: 12px;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      align-items: center;
-      padding: 6px 12px;
-      gap: 12px;
+      width: 100%; height: 90px; border-radius: 12px;
+      background-size: 125% 125% !important; background-repeat: no-repeat; background-position: center; background-color: #2563eb;
+      display: flex; align-items: center; padding: 6px 12px; gap: 12px; box-shadow: inset 0 0 8px rgba(0,0,0,0.25); overflow: hidden;
     }
-    .np-image-mini { height: 50px; border-radius: 6px; }
-    .np-name-mini { font-size: 15px; font-weight: bold; color: #fff; }
+    .np-image-mini { height: 72px; aspect-ratio: 16 / 9; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.9); object-fit: cover; flex-shrink: 0; }
+    .np-text-mini { display: flex; flex-direction: column; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); flex: 1; }
+    .np-alias-mini { font-size: 11px; opacity: 0.9; }
+    .np-name-mini { font-size: 15px; font-weight: bold; line-height: 1.2; word-break: break-all; }
+
+    .cell-type { display: flex; justify-content: center; align-items: center; width: 70px; flex-shrink: 0; }
+    .type-icon-img { height: 48px; width: auto; object-fit: contain; }
+    .cell-rarity { display: flex; justify-content: center; align-items: center; width: 130px; flex-shrink: 0; }
+    .rarity-icon-img { height: 32px; width: auto; object-fit: contain; }
+
+    .unified-card {
+      background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 6px 10px;
+      height: 52px; width: 180px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
+    }
 
     #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
 
-    /* ★ スマホ（縦長画面）可変最適化 */
-    @media screen and (max-width: 768px) {
+    /* モバイル・縦長画面対応 */
+    @media screen and (max-width: 600px) {
       body { padding: 6px; }
-      .header-bar { padding: 8px 10px; gap: 8px; }
-      .list-row-card {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 10px;
-      }
-      .block-left-group, .block-right-group {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .name-plate-mini {
-        width: 100%;
-        height: 60px;
-      }
+      .list-body { width: 100%; min-width: 100%; }
+      .list-row-card { width: 100%; min-width: 100%; flex-direction: column; min-height: auto; }
+      .block-left-group, .block-right-group { width: 100%; flex-wrap: wrap; justify-content: space-between; }
+      .cell-member { width: 100%; }
+      .name-plate-mini { height: 70px; }
+      .np-image-mini { height: 54px; }
     }
   </style>
 </head>
@@ -263,16 +288,33 @@
 
         const npBgUrl = item.mobile_name_plate || item.name_plate_url || '';
         const mainImgUrl = item.image || '';
+        const typeUrl = item.type_url || '';
+        const rarityIconUrl = item['rarity-icon'] || item.rarity_icon || '';
 
         rowCard.innerHTML = `
           <div class="block-left-group">
-            <div class="name-plate-mini" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
-              ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="np-image-mini">` : ''}
-              <span class="np-name-mini">${escapeHtml(item.character)}</span>
+            <div class="cell-member">
+              <div class="name-plate-mini" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
+                ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="np-image-mini">` : ''}
+                <div class="np-text-mini">
+                  <span class="np-alias-mini">${escapeHtml(item.alias || '')}</span>
+                  <span class="np-name-mini">${escapeHtml(item.character || '')}</span>
+                </div>
+              </div>
+            </div>
+            <div class="cell-type">
+              ${typeUrl ? `<img src="${escapeHtml(typeUrl)}" class="type-icon-img">` : ''}
+            </div>
+            <div class="cell-rarity">
+              ${rarityIconUrl ? `<img src="${escapeHtml(rarityIconUrl)}" class="rarity-icon-img">` : ''}
             </div>
           </div>
           <div class="block-right-group">
-            <div style="font-size:13px; font-weight:bold; color:#475569;">${escapeHtml(item.alias || '')}</div>
+            <div class="cell-status">
+              <div class="unified-card">
+                <span style="font-size:12px; font-weight:bold;">♪ トータル ${escapeHtml(item.total_status || 0)}</span>
+              </div>
+            </div>
           </div>
         `;
         listBody.appendChild(rowCard);
