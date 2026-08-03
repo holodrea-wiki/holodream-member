@@ -30,7 +30,7 @@
       align-items: center;
     }
 
-    /* 検索バーコンテナ（✕ボタン配置用） */
+    /* 検索バー（✕ボタン配置用） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -39,7 +39,7 @@
     }
     .search-input {
       width: 100%;
-      padding: 10px 36px 10px 14px; /* 右側にクリアボタン用余白 */
+      padding: 10px 36px 10px 14px;
       border: 1px solid #d1d5db;
       border-radius: 6px;
       font-size: 14px;
@@ -57,14 +57,11 @@
       font-size: 12px;
       font-weight: bold;
       cursor: pointer;
-      display: none; /* 初期状態は非表示 */
+      display: none;
       align-items: center;
       justify-content: center;
-      line-height: 1;
     }
-    .clear-btn:hover {
-      background: #6b7280;
-    }
+    .clear-btn:hover { background: #6b7280; }
 
     .back-btn {
       background: #334155;
@@ -114,10 +111,9 @@
     .unit-section.collapsed .accordion-arrow { transform: rotate(-90deg); }
     .unit-section.collapsed .card-grid { display: none !important; }
 
-    /* PC・タブレット時のグリッド表示 */
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 12px;
       padding: 16px;
     }
@@ -137,34 +133,60 @@
       cursor: pointer;
       overflow: hidden;
       box-shadow: inset 0 0 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.08);
+      transition: transform 0.15s ease;
     }
+    .char-card:hover { transform: translateY(-2px); }
+
     .char-icon {
-      width: 56px;
-      height: 56px;
+      width: 56px; height: 56px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #ffffff;
       box-shadow: 0 0 0 2px #2563eb, 0 2px 4px rgba(0,0,0,0.3);
-      position: relative;
-      z-index: 2;
-      flex-shrink: 0;
+      position: relative; z-index: 2; flex-shrink: 0;
     }
     .char-info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
     .char-name { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-    /* モーダル表示パーツ */
+    /* モーダル表示 */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; border: 1px solid #374151; }
+    .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; border: 1px solid #374151; overflow: hidden; position: relative; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
     .modal-close-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
 
-    /* ★ モバイル画面レスポンシブ対応 */
+    .modal-filter-bar { display: flex; gap: 12px; align-items: center; padding: 10px 20px; background: #1f2937; border-bottom: 1px solid #374151; flex-wrap: wrap; }
+    .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d1d5db; }
+    .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+    /* モーダルカードUI */
+    .game-card-container { background: #ffffff; color: #111827; border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px; }
+    .name-plate { position: relative; min-height: 80px; border-radius: 12px; background-size: 115% 115%; background-repeat: no-repeat; background-position: center; background-color: #2563eb; display: flex; align-items: center; padding: 8px 16px; gap: 12px; box-shadow: inset 0 0 12px rgba(0,0,0,0.25); overflow: hidden; }
+    .np-icon { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; flex-shrink: 0; transform: scale(1.25); }
+    .np-text-area { display: flex; flex-direction: column; justify-content: center; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); position: relative; z-index: 2; flex: 1; min-width: 0; }
+    .np-alias-img { height: 22px; width: auto; object-fit: contain; }
+    .np-alias-text { font-size: 13px; font-weight: 500; }
+    .np-name-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; width: 100%; }
+    .np-character-name { font-size: 22px; font-weight: bold; line-height: 1.2; word-break: break-all; }
+    .np-unit-tags { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .np-unit-tag-img { height: 24px; width: auto; object-fit: contain; }
+
+    .card-main-content { display: flex; gap: 16px; flex-wrap: wrap; }
+    .illustration-wrapper { flex: 1.3; min-width: 280px; display: flex; flex-direction: column; gap: 6px; }
+    .illustration-box { position: relative; width: 100%; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; cursor: zoom-in; }
+    .main-image { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; transform: scale(1.05); }
+    .rarity-icon { position: absolute; bottom: 10px; left: 10px; height: 28px; width: auto; object-fit: contain; }
+    .status-box { flex: 1; min-width: 260px; background: #f8fafc; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #e2e8f0; }
+    .status-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
+
     @media screen and (max-width: 600px) {
       body { padding: 8px; }
-      .controls { padding: 8px 12px; margin-bottom: 12px; gap: 8px; }
-      .card-grid { grid-template-columns: 1fr; gap: 8px; padding: 10px; }
-      .unit-banner { padding: 8px 12px; font-size: 14px; }
-      .unit-tag-img { height: 26px; }
+      .controls { padding: 8px 12px; margin-bottom: 12px; }
+      .card-grid { grid-template-columns: 1fr !important; gap: 8px; padding: 10px; }
+      .name-plate { min-height: 70px; padding: 8px 10px; gap: 10px; }
+      .np-icon { width: 52px; height: 52px; transform: scale(1.1); }
+      .np-character-name { font-size: 18px; }
+      .illustration-wrapper, .status-box { min-width: 100%; }
     }
   </style>
 </head>
@@ -181,19 +203,36 @@
   <div id="loading">データを読み込み中...</div>
   <div id="content"></div>
 
-  <!-- モーダルウィンドウ -->
+  <!-- モーダル詳細ウィンドウ -->
   <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
       <div class="modal-header">
         <span id="modalCharTitle">メンバー情報</span>
         <button class="modal-close-btn" onclick="closeModal()">&times;</button>
       </div>
-      <div id="modalBody" class="modal-body" style="padding:20px; overflow-y:auto; flex:1;"></div>
+
+      <div class="modal-filter-bar">
+        <div class="filter-item">
+          <span>レアリティ:</span>
+          <select id="modalRarityFilter" class="filter-select" onchange="filterModalCards()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <span>タイプ:</span>
+          <select id="modalTypeFilter" class="filter-select" onchange="filterModalCards()">
+            <option value="">すべて</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="modalBody" class="modal-body">読み込み中...</div>
     </div>
   </div>
 
   <script>
     let globalGroupedData = null;
+    let globalTagUrlMap = {};
 
     window.onload = function() {
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDataGroupedByUnit';
@@ -207,7 +246,6 @@
         .catch(err => showError(new Error('データの読み込みに失敗しました。')));
     };
 
-    /* 検索バー制御 */
     function handleSearchInput() {
       const input = document.getElementById('searchInput');
       const clearBtn = document.getElementById('clearBtn');
@@ -300,19 +338,138 @@
 
     function openCharacterDetail(charName) {
       const modal = document.getElementById('detailModal');
+      const title = document.getElementById('modalCharTitle');
       const body = document.getElementById('modalBody');
-      modal.style.display = 'flex';
+
+      document.getElementById('modalRarityFilter').innerHTML = '<option value="">すべて</option>';
+      document.getElementById('modalTypeFilter').innerHTML = '<option value="">すべて</option>';
+
+      title.textContent = charName + ' のメンバー情報';
       body.innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">データを読み込み中...</div>';
+      modal.style.display = 'flex';
 
       const GAS_ENDPOINT_URL = `https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDetailsByName&charName=${encodeURIComponent(charName)}`;
 
       fetch(GAS_ENDPOINT_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
         .then(data => {
-          if (data.error) body.innerHTML = 'エラー: ' + escapeHtml(data.message);
-          else body.innerHTML = `<pre style="white-space:pre-wrap; color:#fff;">${JSON.stringify(data.details, null, 2)}</pre>`;
+          if (data.error) body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
+          else renderCharacterDetails(data);
         })
-        .catch(err => { body.innerHTML = '詳細データの取得に失敗しました。'; });
+        .catch(err => { body.innerHTML = '<div style="color:#ef4444; padding:20px;">詳細データの取得に失敗しました。</div>'; });
+    }
+
+    function renderCharacterDetails(res) {
+      const body = document.getElementById('modalBody');
+      const rows = res.details;
+      const gIcons = res.globalIcons || {};
+      globalTagUrlMap = res.tagUrlMap || {};
+
+      if (!rows || rows.length === 0) {
+        body.innerHTML = '<div style="padding:30px; text-align:center;">詳細データが見つかりませんでした。</div>';
+        return;
+      }
+
+      const rarities = new Set();
+      const types = new Set();
+
+      rows.forEach(item => {
+        if (item['rarity']) rarities.add(String(item['rarity']).trim());
+        if (item['type']) types.add(String(item['type']).trim());
+      });
+
+      const raritySelect = document.getElementById('modalRarityFilter');
+      raritySelect.innerHTML = '<option value="">すべて</option>';
+      Array.from(rarities).sort((a, b) => Number(b) - Number(a)).forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r; opt.textContent = '★' + r;
+        raritySelect.appendChild(opt);
+      });
+
+      const typeSelect = document.getElementById('modalTypeFilter');
+      typeSelect.innerHTML = '<option value="">すべて</option>';
+      Array.from(types).sort().forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+
+      let html = '';
+      rows.forEach((item, index) => {
+        const getVal = (keys) => {
+          for (let k of keys) {
+            if (item[k] !== undefined && item[k] !== null && item[k] !== '') return item[k];
+          }
+          return '';
+        };
+
+        const rarityVal = getVal(['rarity']) || '';
+        const typeVal = getVal(['type']) || '';
+        const pcPlateUrl = getVal(['name_plate_url', 'nameplate_url']);
+        const mobilePlateUrl = getVal(['mobile_name_plate', 'mobilenameplate', 'mobile_plate']);
+        const npBgUrl = mobilePlateUrl || pcPlateUrl;
+
+        const iconUrl = getVal(['icon', 'アイコン']);
+        const aliasStr = getVal(['alias', '二つ名']);
+        const charName = getVal(['character', 'キャラクター名', '名前']);
+        const unitTagUrls = item['unit_tag_urls'] || [];
+        const mainImgUrl = getVal(['image', '画像']);
+        const rarityIconUrl = getVal(['rarity-icon', 'rarity_icon']);
+
+        const totalStatus = getVal(['total_status', 'total']) || 0;
+        const performanceVal = getVal(['performance']) || 0;
+        const technicVal = getVal(['technic']) || 0;
+        const senseVal = getVal(['sense']) || 0;
+
+        const tagsHtml = unitTagUrls.map(u => `<img src="${escapeHtml(u)}" class="np-unit-tag-img">`).join('');
+
+        html += `
+          <div class="game-card-container" data-rarity="${escapeHtml(rarityVal)}" data-type="${escapeHtml(typeVal)}">
+            <div class="name-plate" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
+              ${iconUrl ? `<img src="${escapeHtml(iconUrl)}" class="np-icon">` : ''}
+              <div class="np-text-area">
+                <span class="np-alias-text">${escapeHtml(aliasStr)}</span>
+                <div class="np-name-row">
+                  <span class="np-character-name">${escapeHtml(charName)}</span>
+                  <div class="np-unit-tags">${tagsHtml}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-main-content">
+              <div class="illustration-wrapper">
+                <div class="illustration-box">
+                  ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="main-image">` : ''}
+                  ${rarityIconUrl ? `<img src="${escapeHtml(rarityIconUrl)}" class="rarity-icon">` : ''}
+                </div>
+              </div>
+
+              <div class="status-box">
+                <div class="status-row"><span>トータル</span><span style="font-family:monospace; font-size:18px;">${escapeHtml(totalStatus)}</span></div>
+                <div class="status-row"><span>パフォーマンス</span><span style="font-family:monospace;">${escapeHtml(performanceVal)}</span></div>
+                <div class="status-row"><span>テクニック</span><span style="font-family:monospace;">${escapeHtml(technicVal)}</span></div>
+                <div class="status-row"><span>センス</span><span style="font-family:monospace;">${escapeHtml(senseVal)}</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      body.innerHTML = html;
+    }
+
+    function filterModalCards() {
+      const selectedRarity = document.getElementById('modalRarityFilter').value;
+      const selectedType = document.getElementById('modalTypeFilter').value;
+      const cards = document.querySelectorAll('.game-card-container');
+
+      cards.forEach(card => {
+        const cardRarity = card.getAttribute('data-rarity') || '';
+        const cardType = card.getAttribute('data-type') || '';
+        const matchRarity = (!selectedRarity || cardRarity === selectedRarity);
+        const matchType = (!selectedType || cardType === selectedType);
+        card.style.display = (matchRarity && matchType) ? 'flex' : 'none';
+      });
     }
 
     function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
