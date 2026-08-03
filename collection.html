@@ -467,14 +467,20 @@
       .character-row { flex-direction: column; align-items: flex-start; gap: 10px; }
       .name-plate { width: 100%; min-width: 100%; }
 
-      /* ★ スマホ画面時のモーダル内メンバーカード調整 */
+      /* ★ スマホ画面時のモーダル内メンバーカード崩れ修正 */
       .modal-member-card {
         padding: 10px 12px;
         gap: 12px;
-        min-height: auto;
+        min-height: 85px;
+        height: auto;
       }
       .modal-card-image-box {
-        height: 70px;
+        height: 65px;
+        flex-shrink: 0;
+      }
+      .modal-card-text-area {
+        flex: 1;
+        min-width: 0;
       }
       .modal-alias-row {
         gap: 6px;
@@ -482,21 +488,23 @@
       }
       .modal-type-icon {
         height: 20px;
+        flex-shrink: 0;
       }
       .modal-alias-text {
-        font-size: 13px;
+        font-size: 12px;
       }
       .modal-name-row {
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
       }
       .modal-char-name {
-        font-size: 18px;
+        font-size: 16px;
         white-space: normal;
         line-height: 1.2;
       }
       .modal-unit-tag-img {
-        height: 20px;
+        height: 18px;
+        flex-shrink: 0;
       }
     }
   </style>
