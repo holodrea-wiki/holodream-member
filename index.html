@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ホロドリ メンバー情報</title>
   <style>
     * {
       box-sizing: border-box;
@@ -152,16 +154,18 @@
       background: #ffffff;
     }
 
+    /* スマホ（レスポンシブ）最適化 */
     @media screen and (max-width: 650px) {
+      .header h1 { font-size: 20px; }
       .container {
         padding: 16px 12px;
         gap: 16px;
       }
       .top-main-banner-container {
-        padding: 16px 0;
+        padding: 12px 0;
       }
       .top-main-banner-img {
-        transform: scale(1.08);
+        transform: scale(1.02);
       }
       .nav-card {
         flex-direction: column;
@@ -172,7 +176,7 @@
       }
       .card-banner-box {
         width: 100%;
-        height: 100px;
+        height: 90px;
       }
       .card-title {
         font-size: 22px;
@@ -195,9 +199,7 @@
       <img id="top_main_banner_img" class="top-main-banner-img" src="" alt="TOP Banner">
     </div>
 
-    <!-- 修正後 (index.html) -->
     <div class="nav-list">
-  
       <a href="talent.html" class="nav-card">
         <div class="card-banner-box">
           <img id="banner_talent" class="card-banner-img" src="" alt="タレント一覧">
@@ -227,7 +229,6 @@
           <div class="card-desc">所有しているメンバーの所有率を確認＆ポストできる</div>
         </div>
       </a>
-
     </div>
   </div>
 
@@ -236,20 +237,6 @@
   </footer>
 
   <script>
-    function navigateTo(event, url) {
-      if (event) event.preventDefault();
-      try {
-        if (window.top && window.top !== window) {
-          window.top.location.href = url;
-        } else {
-          window.location.href = url;
-        }
-      } catch (e) {
-        window.location.href = url;
-      }
-    }
-
-    // index.html の onload 修正
     window.onload = function() {
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getTopBannerMap';
 
@@ -259,7 +246,7 @@
       })
         .then(res => res.json())
         .then(data => {
-          setBanners(data); // 取得したバナー情報をセット
+          setBanners(data);
         })
         .catch(err => console.error('API通信エラー:', err));
     };
@@ -289,31 +276,6 @@
       if (talentUrl) document.getElementById('banner_talent').src = talentUrl;
       if (memberUrl) document.getElementById('banner_member').src = memberUrl;
       if (checkerUrl) document.getElementById('banner_checker').src = checkerUrl;
-    }
-
-    function openCharacterDetail(charName) {
-      const modal = document.getElementById('detailModal');
-      const body = document.getElementById('modalBody');
-      modal.style.display = 'flex';
-      body.innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">データを読み込み中...</div>';
-
-      const GAS_ENDPOINT_URL = `https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDetailsByName&charName=${encodeURIComponent(charName)}`;
-
-      fetch(GAS_ENDPOINT_URL, {
-        method: 'GET',
-        redirect: 'follow'
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.error) {
-            body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
-          } else {
-            renderCharacterDetails(data);
-          }
-        })
-        .catch(err => {
-          body.innerHTML = '<div style="color:#ef4444; padding:20px;">詳細データの取得に失敗しました。</div>';
-        });
     }
   </script>
 
