@@ -810,13 +810,54 @@
     let currentViewMode = 'character'; // 'character' | 'unit' | 'rarity'
 
     window.onload = function() {
-      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCollectionPageData';
+      // 新しくデプロイした GAS の URL
+      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDataGroupedByUnit';
 
-      fetch(GAS_ENDPOINT_URL)
-        .then(res => res.json())
-        .then(data => initPage(data))
-        .catch(err => console.error('APIエラー:', err));
+      fetch(GAS_ENDPOINT_URL, {
+        method: 'GET',
+        redirect: 'follow' // ★ リダイレクト追従を明示
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('ネットワーク応答が正常ではありません');
+          return res.json();
+        })
+        .then(data => {
+          if (data.error) {
+            showError(new Error(data.message));
+          } else {
+            renderData(data);
+          }
+        })
+        .catch(err => {
+          console.error('API通信エラー:', err);
+          showError(new Error('データの読み込みに失敗しました。時間をおいて再読み込みしてください。'));
+        });
     };
+
+    function openCharacterDetail(charName) {
+      const modal = document.getElementById('detailModal');
+      const body = document.getElementById('modalBody');
+      modal.style.display = 'flex';
+      body.innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">データを読み込み中...</div>';
+
+      const GAS_ENDPOINT_URL = `https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDetailsByName&charName=${encodeURIComponent(charName)}`;
+
+      fetch(GAS_ENDPOINT_URL, {
+        method: 'GET',
+        redirect: 'follow'
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
+          } else {
+            renderCharacterDetails(data);
+          }
+        })
+        .catch(err => {
+          body.innerHTML = '<div style="color:#ef4444; padding:20px;">詳細データの取得に失敗しました。</div>';
+        });
+    }
 
     function navigateTo(event, url) {
       if (event) event.preventDefault();
