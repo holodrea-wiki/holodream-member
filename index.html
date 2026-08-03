@@ -249,29 +249,19 @@
       }
     }
 
+    // index.html の onload 修正
     window.onload = function() {
-      // 新しくデプロイした GAS の URL
-      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDataGroupedByUnit';
+      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getTopBannerMap';
 
       fetch(GAS_ENDPOINT_URL, {
-      method: 'GET',
-      redirect: 'follow' // ★ リダイレクト追従を明示
+        method: 'GET',
+        redirect: 'follow'
       })
-        .then(res => {
-          if (!res.ok) throw new Error('ネットワーク応答が正常ではありません');
-          return res.json();
-        })
+        .then(res => res.json())
         .then(data => {
-          if (data.error) {
-            showError(new Error(data.message));
-          } else {
-            renderData(data);
-          }
+          setBanners(data); // 取得したバナー情報をセット
         })
-        .catch(err => {
-          console.error('API通信エラー:', err);
-          showError(new Error('データの読み込みに失敗しました。時間をおいて再読み込みしてください。'));
-        });
+        .catch(err => console.error('API通信エラー:', err));
     };
 
     function setBanners(bannerMap) {
