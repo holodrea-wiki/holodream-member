@@ -30,7 +30,7 @@
       align-items: center;
     }
 
-    /* 検索バー（✕ボタン配置用） */
+    /* 検索バー（✕ボタンコンテナ） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -102,12 +102,18 @@
       align-items: center;
       cursor: pointer;
       user-select: none;
+      transition: background 0.2s ease;
     }
+    .unit-banner:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+    }
+
     .unit-title-area { display: flex; align-items: center; gap: 10px; }
-    .unit-tag-img { height: 32px; width: auto; object-fit: contain; }
+    .unit-tag-img { height: 32px; width: auto; object-fit: contain; border-radius: 3px; }
     .unit-right-area { display: flex; align-items: center; gap: 10px; }
     .unit-count { font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 12px; }
-    .accordion-arrow { font-size: 12px; transition: transform 0.3s ease; }
+
+    .accordion-arrow { font-size: 12px; transition: transform 0.3s ease; display: inline-block; }
     .unit-section.collapsed .accordion-arrow { transform: rotate(-90deg); }
     .unit-section.collapsed .card-grid { display: none !important; }
 
@@ -133,9 +139,12 @@
       cursor: pointer;
       overflow: hidden;
       box-shadow: inset 0 0 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.08);
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .char-card:hover { transform: translateY(-2px); }
+    .char-card:hover {
+      transform: translateY(-2px);
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.1), 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
 
     .char-icon {
       width: 56px; height: 56px;
@@ -145,49 +154,95 @@
       box-shadow: 0 0 0 2px #2563eb, 0 2px 4px rgba(0,0,0,0.3);
       position: relative; z-index: 2; flex-shrink: 0;
     }
-    .char-info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
-    .char-name { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
-    /* モーダル表示 */
+    .char-info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+    .char-name { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.9); letter-spacing: 0.02em; }
+
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; border: 1px solid #374151; overflow: hidden; position: relative; }
+    .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; border: 1px solid #374151; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
     .modal-close-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
 
     .modal-filter-bar { display: flex; gap: 12px; align-items: center; padding: 10px 20px; background: #1f2937; border-bottom: 1px solid #374151; flex-wrap: wrap; }
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d1d5db; }
-    .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; }
+    .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; cursor: pointer; }
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
 
-    /* モーダルカードUI */
     .game-card-container { background: #ffffff; color: #111827; border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px; }
     .name-plate { position: relative; min-height: 80px; border-radius: 12px; background-size: 115% 115%; background-repeat: no-repeat; background-position: center; background-color: #2563eb; display: flex; align-items: center; padding: 8px 16px; gap: 12px; box-shadow: inset 0 0 12px rgba(0,0,0,0.25); overflow: hidden; }
-    .np-icon { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; flex-shrink: 0; transform: scale(1.25); }
-    .np-text-area { display: flex; flex-direction: column; justify-content: center; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); position: relative; z-index: 2; flex: 1; min-width: 0; }
-    .np-alias-img { height: 22px; width: auto; object-fit: contain; }
+    .np-icon { width: 60px; height: 60px; border-radius: 12px; border: none; object-fit: cover; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3); transform: scale(1.25); }
+    .np-text-area { display: flex; flex-direction: column; justify-content: center; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.9); position: relative; z-index: 2; flex: 1; min-width: 0; }
+    .np-alias-img { height: 22px; width: auto; object-fit: contain; align-self: flex-start; }
     .np-alias-text { font-size: 13px; font-weight: 500; }
     .np-name-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; width: 100%; }
-    .np-character-name { font-size: 22px; font-weight: bold; line-height: 1.2; word-break: break-all; }
+    .np-character-name { font-size: 22px; font-weight: bold; letter-spacing: 0.03em; white-space: pre-wrap; overflow: hidden; line-height: 1.2; word-break: break-all; }
     .np-unit-tags { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-    .np-unit-tag-img { height: 24px; width: auto; object-fit: contain; }
-
-    .card-main-content { display: flex; gap: 16px; flex-wrap: wrap; }
-    .illustration-wrapper { flex: 1.3; min-width: 280px; display: flex; flex-direction: column; gap: 6px; }
-    .illustration-box { position: relative; width: 100%; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; cursor: zoom-in; }
-    .main-image { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; transform: scale(1.05); }
-    .rarity-icon { position: absolute; bottom: 10px; left: 10px; height: 28px; width: auto; object-fit: contain; }
-    .status-box { flex: 1; min-width: 260px; background: #f8fafc; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #e2e8f0; }
-    .status-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
+    .np-unit-tag-img { height: 24px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
 
     @media screen and (max-width: 600px) {
       body { padding: 8px; }
       .controls { padding: 8px 12px; margin-bottom: 12px; }
       .card-grid { grid-template-columns: 1fr !important; gap: 8px; padding: 10px; }
-      .name-plate { min-height: 70px; padding: 8px 10px; gap: 10px; }
+      .name-plate { min-height: 70px; background-size: 115% 115%; padding: 8px 10px; flex-direction: row; align-items: center; gap: 10px; }
       .np-icon { width: 52px; height: 52px; transform: scale(1.1); }
-      .np-character-name { font-size: 18px; }
-      .illustration-wrapper, .status-box { min-width: 100%; }
+      .np-text-area { align-items: flex-start; }
+      .np-name-row { flex-wrap: wrap; gap: 4px; }
+      .np-character-name { font-size: 18px; max-width: 100%; text-align: left; }
+      .modal-filter-bar { padding: 8px 12px; gap: 8px; }
     }
+
+    .card-main-content { display: flex; gap: 16px; flex-wrap: wrap; }
+    .illustration-wrapper { flex: 1.3; min-width: 300px; display: flex; flex-direction: column; gap: 6px; }
+    .type-header-bar { display: flex; align-items: center; padding: 2px 4px; min-height: 28px; }
+    .type-tag-img { height: 28px; width: auto; object-fit: contain; }
+    .illustration-box { position: relative; width: 100%; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; background: transparent; cursor: zoom-in; }
+    .main-image { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; transform: scale(1.05); transition: transform 0.2s ease; }
+    .illustration-box:hover .main-image { transform: scale(1.08); }
+    .rarity-icon { position: absolute; bottom: 10px; left: 10px; height: 28px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6)); pointer-events: none; }
+
+    .release-info-bar { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #475569; font-weight: 500; }
+    .release-item { display: flex; align-items: center; gap: 4px; }
+    .release-label { color: #64748b; font-size: 11px; }
+    .release-val { font-weight: bold; color: #1e293b; }
+
+    .status-box { flex: 1; min-width: 270px; background: #f8fafc; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #e2e8f0; }
+    .status-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
+    .status-label { display: flex; align-items: center; gap: 8px; color: #334155; }
+    .status-icon { width: 22px; height: 22px; object-fit: contain; }
+    .status-val { font-size: 18px; font-family: "Consolas", monospace; color: #0f172a; font-weight: bold; }
+
+    .skill-btn-group { display: flex; gap: 10px; justify-content: space-between; margin-top: 2px; }
+    .skill-card-btn { flex: 1; background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 2px solid #cbd5e1; border-radius: 12px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.08); transition: all 0.15s ease; min-height: 56px; }
+    .skill-card-btn:hover { transform: translateY(-2px); border-color: #3b82f6; box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2); }
+    .skill-btn-icon { height: 34px; width: auto; object-fit: contain; transform: scale(1.25); }
+    .skill-btn-fallback { font-size: 16px; font-weight: bold; color: #2563eb; }
+
+    .bottom-connect-card { background: #ffffff; border: 2px solid #cbd5e1; border-radius: 14px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.15s ease; min-height: 56px; }
+    .bottom-connect-card:hover { transform: translateY(-2px); border-color: #3b82f6; box-shadow: 0 4px 8px rgba(59, 130, 246, 0.15); }
+    .b-left-container { display: flex; align-items: center; justify-content: center; padding-right: 12px; flex-shrink: 0; }
+    .b-left-icon { width: 44px; height: 44px; border-radius: 8px; border: none; object-fit: cover; flex-shrink: 0; transform: scale(1.25); }
+    .b-divider { width: 2px; height: 32px; background-color: #cbd5e1; flex-shrink: 0; }
+    .b-right-container { display: flex; align-items: center; justify-content: center; gap: 12px; flex: 1; padding-left: 12px; }
+    .b-center-text { font-size: 15px; font-weight: bold; color: #1e293b; letter-spacing: 0.02em; }
+    .b-right-icon { height: 38px; width: auto; object-fit: contain; flex-shrink: 0; transform: scale(1.25); }
+
+    .pop-text-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 14px; padding: 24px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
+    .pop-header { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; color: #111827; }
+    .pop-icon { height: 32px; width: auto; object-fit: contain; }
+    .pop-content { font-size: 14px; line-height: 1.6; color: #374151; white-space: pre-wrap; word-break: break-all; }
+    .inline-tag-img { height: 1.3em; width: auto; vertical-align: -0.25em; margin: 0 3px; object-fit: contain; display: inline-block; }
+
+    .connect-pop-section { display: flex; flex-direction: column; gap: 16px; }
+    .connect-pop-row { display: flex; align-items: flex-start; gap: 16px; }
+    .connect-pop-img { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; }
+    .connect-pop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .connect-pop-title { font-size: 15px; font-weight: bold; color: #1f2937; }
+    .connect-pop-text { font-size: 14px; color: #4b5563; line-height: 1.5; }
+
+    .img-zoom-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; cursor: zoom-out; }
+    .zoomed-image { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.8); animation: zoomIn 0.2s ease; }
+    @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -203,7 +258,7 @@
   <div id="loading">データを読み込み中...</div>
   <div id="content"></div>
 
-  <!-- モーダル詳細ウィンドウ -->
+  <!-- ポップアップ詳細ウィンドウ -->
   <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
       <div class="modal-header">
@@ -227,7 +282,22 @@
       </div>
 
       <div id="modalBody" class="modal-body">読み込み中...</div>
+
+      <div id="popOverlay" class="pop-text-overlay" onclick="closePopText()">
+        <div class="pop-text-card" onclick="event.stopPropagation()">
+          <div class="pop-header">
+            <img id="popIcon" class="pop-icon" src="" alt="icon">
+            <span id="popTitle">スキル効果</span>
+          </div>
+          <div id="popContent" class="pop-content"></div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- 画像拡大モーダル -->
+  <div id="imageZoomModal" class="img-zoom-overlay" onclick="closeZoomImage()">
+    <img id="zoomedImg" class="zoomed-image" src="" alt="Zoomed Image">
   </div>
 
   <script>
@@ -298,15 +368,25 @@
         const section = document.createElement('div');
         section.className = 'unit-section';
 
-        const tagImgHtml = (group.tagUrl && group.tagUrl.startsWith('http')) 
-          ? `<img src="${escapeHtml(group.tagUrl)}" class="unit-tag-img" alt="tag">` : '';
+        const banner = document.createElement('div');
+        banner.className = 'unit-banner';
+        banner.onclick = () => toggleAccordion(banner);
 
-        section.innerHTML = `
-          <div class="unit-banner" onclick="toggleAccordion(this)">
-            <div class="unit-title-area">${tagImgHtml}<span>${escapeHtml(group.unitName)}</span></div>
-            <div class="unit-right-area"><span class="unit-count">${filtered.length} 名</span><span class="accordion-arrow">▼</span></div>
+        const tagImgHtml = (group.tagUrl && group.tagUrl.startsWith('http')) 
+          ? `<img src="${escapeHtml(group.tagUrl)}" class="unit-tag-img" alt="tag" loading="lazy">` 
+          : '';
+
+        banner.innerHTML = `
+          <div class="unit-title-area">
+            ${tagImgHtml}
+            <span>${escapeHtml(group.unitName)}</span>
+          </div>
+          <div class="unit-right-area">
+            <span class="unit-count">${filtered.length} 名</span>
+            <span class="accordion-arrow">▼</span>
           </div>
         `;
+        section.appendChild(banner);
 
         const grid = document.createElement('div');
         grid.className = 'card-grid';
@@ -315,14 +395,19 @@
           const card = document.createElement('div');
           card.className = 'char-card';
           card.onclick = () => openCharacterDetail(item.character);
+
           if (item.character_plate && String(item.character_plate).startsWith('http')) {
             card.style.backgroundImage = `url('${escapeHtml(item.character_plate)}')`;
           }
+
           const iconSrc = item.icon && String(item.icon).startsWith('http') ? item.icon : 'https://via.placeholder.com/56?text=No+Img';
+          const nameText = item.character || '（名称不明）';
 
           card.innerHTML = `
-            <img src="${escapeHtml(iconSrc)}" class="char-icon" alt="${escapeHtml(item.character)}">
-            <div class="char-info"><div class="char-name">${escapeHtml(item.character)}</div></div>
+            <img src="${escapeHtml(iconSrc)}" class="char-icon" alt="${escapeHtml(nameText)}" loading="lazy">
+            <div class="char-info">
+              <div class="char-name">${escapeHtml(nameText)}</div>
+            </div>
           `;
           grid.appendChild(card);
         });
@@ -359,6 +444,73 @@
         .catch(err => { body.innerHTML = '<div style="color:#ef4444; padding:20px;">詳細データの取得に失敗しました。</div>'; });
     }
 
+    function formatDateString(val) {
+      if (!val) return '-';
+      const str = String(val).trim();
+      if (/^\d{8}$/.test(str)) {
+        return `${str.substring(0, 4)}年${str.substring(4, 6)}月${str.substring(6, 8)}日`;
+      }
+      const d = new Date(str);
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}年${m}月${day}日`;
+      }
+      return str;
+    }
+
+    function parseSkillTextWithTags(text) {
+      if (!text) return '';
+      const str = String(text);
+      return str.replace(/\{([^}]+)\}/g, (match, tagName) => {
+        const trimmedTag = String(tagName).trim();
+        const tagUrl = globalTagUrlMap[trimmedTag];
+        if (tagUrl && String(tagUrl).startsWith('http')) {
+          return `<img src="${escapeHtml(tagUrl)}" class="inline-tag-img" alt="${escapeHtml(trimmedTag)}">`;
+        }
+        return `{${escapeHtml(trimmedTag)}}`;
+      });
+    }
+
+    function filterModalCards() {
+      const selectedRarity = document.getElementById('modalRarityFilter').value;
+      const selectedType = document.getElementById('modalTypeFilter').value;
+
+      const cards = document.querySelectorAll('.game-card-container');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const cardRarity = card.getAttribute('data-rarity') || '';
+        const cardType = card.getAttribute('data-type') || '';
+        const matchRarity = (!selectedRarity || cardRarity === selectedRarity);
+        const matchType = (!selectedType || cardType === selectedType);
+
+        if (matchRarity && matchType) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      let noResultElem = document.getElementById('modalNoResult');
+      if (visibleCount === 0) {
+        if (!noResultElem) {
+          noResultElem = document.createElement('div');
+          noResultElem.id = 'modalNoResult';
+          noResultElem.style.textAlign = 'center';
+          noResultElem.style.padding = '40px';
+          noResultElem.style.color = '#9ca3af';
+          noResultElem.textContent = '条件に該当するカードがありません。';
+          document.getElementById('modalBody').appendChild(noResultElem);
+        }
+        noResultElem.style.display = 'block';
+      } else if (noResultElem) {
+        noResultElem.style.display = 'none';
+      }
+    }
+
     function renderCharacterDetails(res) {
       const body = document.getElementById('modalBody');
       const rows = res.details;
@@ -374,8 +526,10 @@
       const types = new Set();
 
       rows.forEach(item => {
-        if (item['rarity']) rarities.add(String(item['rarity']).trim());
-        if (item['type']) types.add(String(item['type']).trim());
+        const r = item['rarity'] !== undefined && item['rarity'] !== '' ? String(item['rarity']).trim() : '';
+        const t = item['type'] !== undefined && item['type'] !== '' ? String(item['type']).trim() : '';
+        if (r) rarities.add(r);
+        if (t) types.add(t);
       });
 
       const raritySelect = document.getElementById('modalRarityFilter');
@@ -394,6 +548,8 @@
         typeSelect.appendChild(opt);
       });
 
+      const isMobileScreen = window.innerWidth <= 600;
+
       let html = '';
       rows.forEach((item, index) => {
         const getVal = (keys) => {
@@ -407,13 +563,15 @@
         const typeVal = getVal(['type']) || '';
         const pcPlateUrl = getVal(['name_plate_url', 'nameplate_url']);
         const mobilePlateUrl = getVal(['mobile_name_plate', 'mobilenameplate', 'mobile_plate']);
-        const npBgUrl = mobilePlateUrl || pcPlateUrl;
+        const npBgUrl = (isMobileScreen && mobilePlateUrl) ? mobilePlateUrl : (pcPlateUrl || mobilePlateUrl);
 
         const iconUrl = getVal(['icon', 'アイコン']);
         const aliasStr = getVal(['alias', '二つ名']);
         const charName = getVal(['character', 'キャラクター名', '名前']);
         const unitTagUrls = item['unit_tag_urls'] || [];
+
         const mainImgUrl = getVal(['image', '画像']);
+        const typeTagUrl = item['type_tag_url'] || '';
         const rarityIconUrl = getVal(['rarity-icon', 'rarity_icon']);
 
         const totalStatus = getVal(['total_status', 'total']) || 0;
@@ -421,14 +579,41 @@
         const technicVal = getVal(['technic']) || 0;
         const senseVal = getVal(['sense']) || 0;
 
+        const fastReleaseStr = getVal(['fast_release', 'fastrelease']) || '-';
+        const releaseAtFormatted = formatDateString(getVal(['release_at', 'releaseat']));
+
+        const iconTotal = gIcons['トータル'] || gIcons['total'] || '';
+        const iconPerf = gIcons['パフォーマンス'] || gIcons['performance'] || '';
+        const iconTech = gIcons['テクニック'] || gIcons['technic'] || '';
+        const iconSense = gIcons['センス'] || gIcons['sense'] || '';
+
+        const iconSP = gIcons['SP'] || gIcons['special'] || getVal(['special-icon', 'special_icon']);
+        const iconA = gIcons['A'] || gIcons['active'] || getVal(['active-icon', 'active_icon']);
+        const iconP = gIcons['P'] || gIcons['passive'] || getVal(['passive-icon', 'passive_icon']);
+
+        const spSkillText = getVal(['special-skill', 'special_skill']);
+        const aSkillText = getVal(['active-skill', 'active_skill']);
+        const pSkillText = getVal(['passive-skill', 'passive_skill']);
+
+        const costumeIconUrl = getVal(['costume_icon', 'costume-icon']);
+        const costumeSkillText = getVal(['costumeｰskill', 'costume_skill', 'costume-skill']);
+        const connectMassText = getVal(['connect-mass', 'connect_mass']);
+        const connectTargetUrl = getVal(['connect-target_url', 'connect_target_url']);
+        const connectEffectText = getVal(['connect_effect', 'connect-effect']);
+
         const tagsHtml = unitTagUrls.map(u => `<img src="${escapeHtml(u)}" class="np-unit-tag-img">`).join('');
+        const aliasHtml = String(aliasStr).startsWith('http') 
+          ? `<img src="${escapeHtml(aliasStr)}" class="np-alias-img">`
+          : `<span class="np-alias-text">${escapeHtml(aliasStr)}</span>`;
+
+        const cardId = 'card_' + index;
 
         html += `
-          <div class="game-card-container" data-rarity="${escapeHtml(rarityVal)}" data-type="${escapeHtml(typeVal)}">
+          <div class="game-card-container" id="${cardId}" data-rarity="${escapeHtml(rarityVal)}" data-type="${escapeHtml(typeVal)}">
             <div class="name-plate" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
               ${iconUrl ? `<img src="${escapeHtml(iconUrl)}" class="np-icon">` : ''}
               <div class="np-text-area">
-                <span class="np-alias-text">${escapeHtml(aliasStr)}</span>
+                ${aliasHtml}
                 <div class="np-name-row">
                   <span class="np-character-name">${escapeHtml(charName)}</span>
                   <div class="np-unit-tags">${tagsHtml}</div>
@@ -438,17 +623,86 @@
 
             <div class="card-main-content">
               <div class="illustration-wrapper">
-                <div class="illustration-box">
+                ${typeTagUrl ? `
+                  <div class="type-header-bar">
+                    <img src="${escapeHtml(typeTagUrl)}" class="type-tag-img" alt="type">
+                  </div>
+                ` : ''}
+
+                <div class="illustration-box" onclick="zoomImage('${escapeHtml(mainImgUrl)}')">
                   ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="main-image">` : ''}
                   ${rarityIconUrl ? `<img src="${escapeHtml(rarityIconUrl)}" class="rarity-icon">` : ''}
+                </div>
+                
+                <div class="release-info-bar">
+                  <div class="release-item">
+                    <span class="release-label">入手:</span>
+                    <span class="release-val">${escapeHtml(fastReleaseStr)}</span>
+                  </div>
+                  <div class="release-item">
+                    <span class="release-label">実装日:</span>
+                    <span class="release-val">${escapeHtml(releaseAtFormatted)}</span>
+                  </div>
                 </div>
               </div>
 
               <div class="status-box">
-                <div class="status-row"><span>トータル</span><span style="font-family:monospace; font-size:18px;">${escapeHtml(totalStatus)}</span></div>
-                <div class="status-row"><span>パフォーマンス</span><span style="font-family:monospace;">${escapeHtml(performanceVal)}</span></div>
-                <div class="status-row"><span>テクニック</span><span style="font-family:monospace;">${escapeHtml(technicVal)}</span></div>
-                <div class="status-row"><span>センス</span><span style="font-family:monospace;">${escapeHtml(senseVal)}</span></div>
+                <div style="font-size:11px; text-align:right; color:#64748b; font-weight:bold;">※表示内容は最大強化時のステータス</div>
+                
+                <div class="status-row">
+                  <div class="status-label">
+                    ${iconTotal ? `<img src="${escapeHtml(iconTotal)}" class="status-icon">` : '♪'}
+                    <span>トータル</span>
+                  </div>
+                  <span class="status-val">${escapeHtml(totalStatus)}</span>
+                </div>
+
+                <div class="status-row">
+                  <div class="status-label">
+                    ${iconPerf ? `<img src="${escapeHtml(iconPerf)}" class="status-icon">` : ''}
+                    <span>パフォーマンス</span>
+                  </div>
+                  <span class="status-val">${escapeHtml(performanceVal)}</span>
+                </div>
+
+                <div class="status-row">
+                  <div class="status-label">
+                    ${iconTech ? `<img src="${escapeHtml(iconTech)}" class="status-icon">` : ''}
+                    <span>テクニック</span>
+                  </div>
+                  <span class="status-val">${escapeHtml(technicVal)}</span>
+                </div>
+
+                <div class="status-row">
+                  <div class="status-label">
+                    ${iconSense ? `<img src="${escapeHtml(iconSense)}" class="status-icon">` : ''}
+                    <span>センス</span>
+                  </div>
+                  <span class="status-val">${escapeHtml(senseVal)}</span>
+                </div>
+
+                <div class="skill-btn-group">
+                  <div class="skill-card-btn" data-title="スペシャルスキル" data-skill="${escapeHtml(spSkillText)}" data-icon="${escapeHtml(iconSP)}" onclick="handleSkillClick(this)">
+                    ${iconSP ? `<img src="${escapeHtml(iconSP)}" class="skill-btn-icon">` : '<span class="skill-btn-fallback">SP</span>'}
+                  </div>
+                  <div class="skill-card-btn" data-title="アクティブスキル" data-skill="${escapeHtml(aSkillText)}" data-icon="${escapeHtml(iconA)}" onclick="handleSkillClick(this)">
+                    ${iconA ? `<img src="${escapeHtml(iconA)}" class="skill-btn-icon">` : '<span class="skill-btn-fallback">A</span>'}
+                  </div>
+                  <div class="skill-card-btn" data-title="パッシブスキル" data-skill="${escapeHtml(pSkillText)}" data-icon="${escapeHtml(iconP)}" onclick="handleSkillClick(this)">
+                    ${iconP ? `<img src="${escapeHtml(iconP)}" class="skill-btn-icon">` : '<span class="skill-btn-fallback">P</span>'}
+                  </div>
+                </div>
+
+                <div class="bottom-connect-card" data-costumeskill="${escapeHtml(costumeSkillText)}" data-costumeicon="${escapeHtml(costumeIconUrl)}" data-connectmass="${escapeHtml(connectMassText)}" data-connecteffect="${escapeHtml(connectEffectText)}" data-connecttargeturl="${escapeHtml(connectTargetUrl)}" onclick="handleConnectClick(this)">
+                  <div class="b-left-container">
+                    ${costumeIconUrl ? `<img src="${escapeHtml(costumeIconUrl)}" class="b-left-icon">` : ''}
+                  </div>
+                  <div class="b-divider"></div>
+                  <div class="b-right-container">
+                    <span class="b-center-text">${escapeHtml(connectMassText)}</span>
+                    ${connectTargetUrl ? `<img src="${escapeHtml(connectTargetUrl)}" class="b-right-icon">` : ''}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -458,20 +712,61 @@
       body.innerHTML = html;
     }
 
-    function filterModalCards() {
-      const selectedRarity = document.getElementById('modalRarityFilter').value;
-      const selectedType = document.getElementById('modalTypeFilter').value;
-      const cards = document.querySelectorAll('.game-card-container');
-
-      cards.forEach(card => {
-        const cardRarity = card.getAttribute('data-rarity') || '';
-        const cardType = card.getAttribute('data-type') || '';
-        const matchRarity = (!selectedRarity || cardRarity === selectedRarity);
-        const matchType = (!selectedType || cardType === selectedType);
-        card.style.display = (matchRarity && matchType) ? 'flex' : 'none';
-      });
+    function handleSkillClick(elem) {
+      showSkillPop(elem.getAttribute('data-title'), elem.getAttribute('data-skill'), elem.getAttribute('data-icon'));
     }
 
+    function handleConnectClick(elem) {
+      showConnectPop(elem.getAttribute('data-costumeskill'), elem.getAttribute('data-costumeicon'), elem.getAttribute('data-connectmass'), elem.getAttribute('data-connecteffect'), elem.getAttribute('data-connecttargeturl'));
+    }
+
+    function zoomImage(imgUrl) {
+      if (!imgUrl) return;
+      document.getElementById('zoomedImg').src = imgUrl;
+      document.getElementById('imageZoomModal').style.display = 'flex';
+    }
+
+    function closeZoomImage() { document.getElementById('imageZoomModal').style.display = 'none'; }
+
+    function showSkillPop(title, content, iconUrl) {
+      document.getElementById('popTitle').textContent = title;
+      const parsedHtml = parseSkillTextWithTags(content);
+      document.getElementById('popContent').innerHTML = parsedHtml ? parsedHtml : '<span style="color:#9ca3af;">スキル効果情報がありません。</span>';
+      const iconElem = document.getElementById('popIcon');
+      if (iconUrl) { iconElem.src = iconUrl; iconElem.style.display = 'inline-block'; } else { iconElem.style.display = 'none'; }
+      document.getElementById('popOverlay').style.display = 'flex';
+    }
+
+    function showConnectPop(costumeSkill, costumeIcon, connectMass, connectEffect, connectTargetUrl) {
+      document.getElementById('popTitle').textContent = '衣装スキル ＆ コネクト効果';
+      document.getElementById('popIcon').style.display = 'none';
+      let html = '<div class="connect-pop-section">';
+      const parsedCostumeSkill = parseSkillTextWithTags(costumeSkill);
+      html += `
+        <div class="connect-pop-row">
+          ${costumeIcon ? `<img src="${escapeHtml(costumeIcon)}" class="connect-pop-img">` : '<div style="width:48px;"></div>'}
+          <div class="connect-pop-body">
+            <div class="connect-pop-title">【衣装スキル】</div>
+            <div class="connect-pop-text">${parsedCostumeSkill ? parsedCostumeSkill : 'なし'}</div>
+          </div>
+        </div>
+      `;
+      const parsedConnectEffect = parseSkillTextWithTags((connectMass ? connectMass + ' : ' : '') + (connectEffect || ''));
+      html += `
+        <div class="connect-pop-row">
+          ${connectTargetUrl ? `<img src="${escapeHtml(connectTargetUrl)}" class="connect-pop-img">` : '<div style="width:48px;"></div>'}
+          <div class="connect-pop-body">
+            <div class="connect-pop-title">【コネクト効果】</div>
+            <div class="connect-pop-text">${parsedConnectEffect ? parsedConnectEffect : 'なし'}</div>
+          </div>
+        </div>
+      `;
+      html += '</div>';
+      document.getElementById('popContent').innerHTML = html;
+      document.getElementById('popOverlay').style.display = 'flex';
+    }
+
+    function closePopText() { document.getElementById('popOverlay').style.display = 'none'; }
     function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
     function closeModalOnOverlay(e) { if (e.target.id === 'detailModal') closeModal(); }
     function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
