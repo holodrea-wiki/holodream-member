@@ -250,15 +250,12 @@
     }
 
     window.onload = function() {
-      // デプロイ済み GAS のウェブアプリ URL (exec URL)
-      const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec';
+      const GAS_ENDPOINT_URL = 'https://script.google.com/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getTopBannerMap';
 
       fetch(GAS_ENDPOINT_URL)
         .then(res => res.json())
-        .then(data => {
-          setBanners(data);
-        })
-        .catch(err => console.error('API通信エラー:', err));
+        .then(data => setBanners(data))
+        .catch(err => console.error('APIエラー:', err));
     };
 
     function setBanners(bannerMap) {
