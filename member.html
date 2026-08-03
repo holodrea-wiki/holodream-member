@@ -16,7 +16,6 @@
       color: #1f2937;
     }
 
-    /* 最上部固定エリア */
     .sticky-top-container {
       position: sticky;
       top: 0;
@@ -24,11 +23,10 @@
       background: #eef2f7;
       padding-bottom: 8px;
       max-width: 1185px;
-      width: 100%;
+      min-width: 610px;
       margin: 0 auto;
     }
 
-    /* 検索バー */
     .header-bar {
       display: flex;
       align-items: center;
@@ -52,7 +50,7 @@
     }
     .back-btn:hover { background: #475569; }
 
-    /* 検索バーコンテナ（✕ボタン配置用） */
+    /* 検索バー（✕ボタンコンテナ） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -119,89 +117,113 @@
       font-weight: bold;
       cursor: pointer;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.1s;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
+    .open-filter-btn:hover { background: #f1f5f9; }
+    .filter-icon-inline { height: 16px; width: auto; object-fit: contain; vertical-align: middle; }
 
-    /* 外枠コンテナ */
-    .list-wrapper {
-      background: #ffffff;
-      border-radius: 14px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      border: 1px solid #cbd5e1;
-      width: 100%;
-      max-width: 1185px;
-      margin: 0 auto;
-      overflow-x: auto;
-    }
+    .filter-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 3000; justify-content: center; align-items: center; padding: 16px; }
+    .filter-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 600px; height: 80vh; max-height: 700px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
+    .filter-modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #334155; background: #0f172a; font-weight: bold; font-size: 16px; color: #ffffff; flex-shrink: 0; }
+    .filter-modal-actions { display: flex; gap: 8px; align-items: center; }
+    .filter-apply-btn { background: #ea580c; color: #ffffff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
+    .filter-reset-btn { background: #334155; color: #f1f5f9; border: 1px solid #475569; padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
 
-    .list-body {
-      display: flex;
-      flex-direction: column;
-      background: #e2e8f0;
-      padding: 8px;
-      gap: 8px;
-      width: max-content;
-      min-width: 100%;
-    }
+    .filter-tabs-header { display: flex; background: #0f172a; padding: 6px; gap: 4px; border-bottom: 1px solid #334155; flex-shrink: 0; }
+    .filter-tab-btn { flex: 1; padding: 8px 10px; font-size: 12px; font-weight: bold; text-align: center; background: #1e293b; border: 1px solid #334155; border-radius: 6px; cursor: pointer; color: #cbd5e1; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+    .filter-tab-btn.active { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
+    .tab-filter-icon { height: 14px; width: auto; object-fit: contain; }
 
-    .list-row-card {
-      background: #f8fafc;
-      border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 8px 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-      min-height: 110px;
-      width: 1169px;
-      min-width: 1169px;
-    }
+    .filter-tabs-body { padding: 16px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px; background: #1e293b; }
+    .filter-tab-pane { display: none; flex-direction: column; gap: 14px; }
+    .filter-tab-pane.active { display: flex; }
 
-    .block-left-group, .block-right-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 560px;
-      flex-shrink: 0;
-    }
+    .filter-accordion-group { border: 1px solid #334155; border-radius: 8px; overflow: hidden; background: #0f172a; }
+    .filter-accordion-header { background: #334155; padding: 8px 12px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #f1f5f9; }
+    .filter-accordion-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; background: #1e293b; }
 
-    .cell-member { display: flex; align-items: center; width: 340px; flex-shrink: 0; }
-    .name-plate-mini {
-      width: 100%; height: 90px; border-radius: 12px;
-      background-size: 125% 125% !important; background-repeat: no-repeat; background-position: center; background-color: #2563eb;
-      display: flex; align-items: center; padding: 6px 12px; gap: 12px; box-shadow: inset 0 0 8px rgba(0,0,0,0.25); overflow: hidden;
-    }
+    .filter-sub-section-title { font-size: 12px; font-weight: bold; color: #fef08a; background: #451a03; padding: 4px 8px; border-radius: 4px; margin-top: 6px; margin-bottom: 4px; border: 1px solid #78350f; }
+    .filter-btn-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .filter-chip-btn { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 4px; font-size: 12px; font-weight: bold; color: #cbd5e1; text-align: center; cursor: pointer; }
+    .filter-chip-btn.selected { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
+
+    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto; overflow-x: auto; }
+    .list-body { display: flex; flex-direction: column; background: #e2e8f0; padding: 8px; gap: 8px; width: max-content; min-width: 100%; }
+
+    .list-row-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 8px 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); min-height: 110px; width: 1169px; min-width: 1169px; max-width: 1169px; }
+    .block-left-group, .block-right-group { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 560px; min-width: 560px; max-width: 560px; flex-shrink: 0; }
+
+    .cell-member { display: flex; align-items: center; justify-content: flex-start; overflow: hidden; height: 100%; width: 340px; flex-shrink: 0; }
+    .name-plate-mini { width: 100%; height: 90px; border-radius: 12px; background-size: 125% 125% !important; background-repeat: no-repeat; background-position: center; background-color: #2563eb; display: flex; align-items: center; padding: 6px 12px; gap: 12px; box-shadow: inset 0 0 8px rgba(0,0,0,0.25); overflow: hidden; }
     .np-image-mini { height: 72px; aspect-ratio: 16 / 9; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.9); object-fit: cover; flex-shrink: 0; }
-    .np-text-mini { display: flex; flex-direction: column; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); flex: 1; }
-    .np-alias-mini { font-size: 11px; opacity: 0.9; }
-    .np-name-mini { font-size: 15px; font-weight: bold; line-height: 1.2; word-break: break-all; }
+    .np-icon-mini { height: 72px; width: 72px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .np-text-mini { display: flex; flex-direction: column; justify-content: center; color: #ffffff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); overflow: hidden; flex: 1; }
+    .np-alias-mini { font-size: 11px; opacity: 0.9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .np-name-row-mini { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+    .np-name-mini { font-size: 15px; font-weight: bold; white-space: pre-wrap; word-break: break-all; line-height: 1.2; }
+    .np-tag-img-mini { height: 18px; width: auto; object-fit: contain; flex-shrink: 0; }
 
     .cell-type { display: flex; justify-content: center; align-items: center; width: 70px; flex-shrink: 0; }
     .type-icon-img { height: 48px; width: auto; object-fit: contain; }
     .cell-rarity { display: flex; justify-content: center; align-items: center; width: 130px; flex-shrink: 0; }
     .rarity-icon-img { height: 32px; width: auto; object-fit: contain; }
 
-    .unified-card {
-      background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 6px 10px;
-      height: 52px; width: 180px; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;
-    }
+    .unified-card { background: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 6px 10px; height: 52px; width: 180px; min-width: 180px; max-width: 180px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; flex-shrink: 0; }
+    .status-badge-text { display: flex; flex-direction: column; align-items: flex-start; font-size: 11px; font-weight: bold; color: #1e293b; }
+    .status-badge-val { font-size: 16px; font-family: "Consolas", monospace; font-weight: bold; color: #0f172a; margin-top: -1px; }
+    .status-badge-divider { width: 1px; height: 28px; background: #cbd5e1; }
+    .highest-stat-icon { width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
 
-    #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
+    .cell-skills { display: flex; justify-content: center; align-items: center; width: 180px; flex-shrink: 0; }
+    .skill-mini-icon { height: 32px; width: auto; object-fit: contain; }
+    .skill-mini-divider { width: 1px; height: 22px; background: #cbd5e1; }
 
-    /* モバイル・縦長画面対応 */
+    .cell-connect { display: flex; justify-content: center; align-items: center; width: 180px; flex-shrink: 0; }
+    .connect-left-img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .connect-divider { width: 1px; height: 24px; background: #cbd5e1; }
+    .connect-text { font-size: 11px; font-weight: bold; color: #1e293b; white-space: nowrap; }
+    .connect-target-img { height: 28px; width: auto; object-fit: contain; flex-shrink: 0; }
+
     @media screen and (max-width: 600px) {
       body { padding: 6px; }
-      .list-body { width: 100%; min-width: 100%; }
-      .list-row-card { width: 100%; min-width: 100%; flex-direction: column; min-height: auto; }
-      .block-left-group, .block-right-group { width: 100%; flex-wrap: wrap; justify-content: space-between; }
-      .cell-member { width: 100%; }
-      .name-plate-mini { height: 70px; }
-      .np-image-mini { height: 54px; }
+      .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
+      .list-body { min-width: 594px !important; max-width: 594px !important; }
+      .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
+      .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 10px; width: 560px !important; min-width: 560px !important; max-width: 560px !important; }
+      .filter-tabs-header { flex-wrap: wrap; }
+      .filter-tab-btn { flex: 1 1 45%; }
+      .filter-btn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
     }
+
+    .pop-text-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 4000; justify-content: center; align-items: center; padding: 20px; }
+    .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 16px; padding: 20px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
+    .pop-header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; }
+    .pop-header-np-card { width: 100%; height: 80px; border-radius: 12px; background-size: 125% 125% !important; background-repeat: no-repeat; background-position: center; background-color: #2563eb; display: flex; align-items: center; padding: 6px 12px; gap: 12px; box-shadow: inset 0 0 8px rgba(0,0,0,0.25); overflow: hidden; }
+    .pop-header-category-title { font-size: 18px; font-weight: bold; color: #111827; margin-top: 2px; }
+    .pop-content { font-size: 14px; line-height: 1.6; color: #374151; white-space: pre-wrap; word-break: break-all; }
+    .inline-tag-img { height: 1.3em; width: auto; vertical-align: -0.25em; margin: 0 3px; object-fit: contain; display: inline-block; }
+    .status-pop-note { font-size: 12px; color: #64748b; margin-bottom: 8px; font-weight: normal; }
+    .status-pop-list { display: flex; flex-direction: column; gap: 10px; }
+    .status-pop-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-weight: bold; font-size: 15px; }
+    .status-pop-label { display: flex; align-items: center; gap: 8px; color: #334155; }
+    .status-pop-val { font-family: "Consolas", monospace; font-size: 18px; color: #0f172a; }
+    .skill-pop-section { display: flex; flex-direction: column; gap: 16px; }
+    .skill-pop-row { display: flex; align-items: flex-start; gap: 14px; }
+    .skill-pop-icon { height: 36px; width: auto; object-fit: contain; flex-shrink: 0; }
+    .skill-pop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .skill-pop-title { font-size: 15px; font-weight: bold; color: #1f2937; }
+    .skill-pop-text { font-size: 14px; color: #4b5563; line-height: 1.5; }
+    .connect-pop-section { display: flex; flex-direction: column; gap: 16px; }
+    .connect-pop-row { display: flex; align-items: flex-start; gap: 16px; }
+    .connect-pop-img { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; }
+    .connect-pop-body { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .connect-pop-title { font-size: 15px; font-weight: bold; color: #1f2937; }
+    .connect-pop-text { font-size: 14px; color: #4b5563; line-height: 1.5; }
+
+    #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -218,6 +240,10 @@
     <div class="standalone-blue-header">
       <span>メンバーリスト</span>
       <span class="hit-count-badge" id="hitCountDisplay">0名</span>
+      <button type="button" class="open-filter-btn" id="openFilterBtn" onclick="openFilterModal()">
+        <span>フィルタ</span>
+        <img id="mainFilterIcon" src="" class="filter-icon-inline" alt="filter icon">
+      </button>
     </div>
   </div>
 
@@ -227,8 +253,145 @@
     <div class="list-body" id="listBody"></div>
   </div>
 
+  <!-- フィルタ設定ダイアログ -->
+  <div id="filterModalOverlay" class="filter-modal-overlay" onclick="closeFilterModal()">
+    <div class="filter-modal-card" onclick="event.stopPropagation()">
+      <div class="filter-modal-topbar">
+        <span>フィルタ</span>
+        <div class="filter-modal-actions">
+          <button type="button" class="filter-reset-btn" onclick="resetAllFilters()">リセット</button>
+          <button type="button" class="filter-apply-btn" onclick="applyFilterAndClose()">決定</button>
+        </div>
+      </div>
+
+      <div class="filter-tabs-header">
+        <button type="button" class="filter-tab-btn active" onclick="switchFilterTab('rarity', this)">
+          <span>レアリティ</span>
+          <img class="tab-filter-icon" data-tab-group="rarity" src="" alt="icon">
+        </button>
+        <button type="button" class="filter-tab-btn" onclick="switchFilterTab('type', this)">
+          <span>タイプ</span>
+          <img class="tab-filter-icon" data-tab-group="type" src="" alt="icon">
+        </button>
+        <button type="button" class="filter-tab-btn" onclick="switchFilterTab('skill', this)">
+          <span>ライブスキル</span>
+          <img class="tab-filter-icon" data-tab-group="skill" src="" alt="icon">
+        </button>
+        <button type="button" class="filter-tab-btn" onclick="switchFilterTab('costume', this)">
+          <span>衣装スキル</span>
+          <img class="tab-filter-icon" data-tab-group="costume" src="" alt="icon">
+        </button>
+        <button type="button" class="filter-tab-btn" onclick="switchFilterTab('connect', this)">
+          <span>コネクト効果</span>
+          <img class="tab-filter-icon" data-tab-group="connect" src="" alt="icon">
+        </button>
+      </div>
+
+      <div class="filter-tabs-body">
+        <div id="pane-rarity" class="filter-tab-pane active">
+          <div class="filter-btn-grid" id="rarityFilterGrid">
+            <div class="filter-chip-btn selected" data-group="rarity" data-val="all" onclick="toggleChip(this)">すべて</div>
+          </div>
+        </div>
+
+        <div id="pane-type" class="filter-tab-pane">
+          <div class="filter-btn-grid" id="typeFilterGrid">
+            <div class="filter-chip-btn selected" data-group="type" data-val="all" onclick="toggleChip(this)">すべて</div>
+          </div>
+        </div>
+
+        <div id="pane-skill" class="filter-tab-pane">
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>対象スキル種別</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content">
+              <div class="filter-btn-grid" id="skillTargetGrid">
+                <div class="filter-chip-btn selected" data-group="skillTarget" data-val="all" onclick="toggleChip(this, true)">すべて</div>
+                <div class="filter-chip-btn" data-group="skillTarget" data-val="special" onclick="toggleChip(this, true)">SPスキル</div>
+                <div class="filter-chip-btn" data-group="skillTarget" data-val="active" onclick="toggleChip(this, true)">Aスキル</div>
+                <div class="filter-chip-btn" data-group="skillTarget" data-val="passive" onclick="toggleChip(this, true)">Pスキル</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>効果タイプ</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content">
+              <div class="filter-btn-grid" id="skillEffectGrid">
+                <div class="filter-chip-btn selected" data-group="skillEffect" data-val="all" onclick="toggleChip(this)">すべて</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>発動条件</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content" id="skillCondContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>効果対象</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content" id="skillTargetContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+
+        <div id="pane-costume" class="filter-tab-pane">
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>効果タイプ</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content">
+              <div class="filter-btn-grid" id="costumeEffectGrid">
+                <div class="filter-chip-btn selected" data-group="costumeEffect" data-val="all" onclick="toggleChip(this)">すべて</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-accordion-group">
+            <div class="filter-accordion-header" onclick="toggleFilterAccordion(this)">
+              <span>発動条件</span><span>▼</span>
+            </div>
+            <div class="filter-accordion-content" id="costumeCondContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+
+        <div id="pane-connect" class="filter-tab-pane">
+          <div class="filter-btn-grid" id="connectMassGrid">
+            <div class="filter-chip-btn selected" data-group="connectMass" data-val="all" onclick="toggleChip(this)">すべて</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="3" onclick="toggleChip(this)">3マス効果</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="4" onclick="toggleChip(this)">4マス効果</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="5" onclick="toggleChip(this)">5マス効果</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="6" onclick="toggleChip(this)">6マス効果</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="8" onclick="toggleChip(this)">8マス効果</div>
+            <div class="filter-chip-btn" data-group="connectMass" data-val="12" onclick="toggleChip(this)">12マス効果</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="popOverlay" class="pop-text-overlay" onclick="closePopText()">
+    <div class="pop-text-card" onclick="event.stopPropagation()">
+      <div class="pop-header">
+        <div id="popHeaderNpCard" class="pop-header-np-card"></div>
+        <div id="popCategoryTitle" class="pop-header-category-title">詳細情報</div>
+      </div>
+      <div id="popContent" class="pop-content"></div>
+    </div>
+  </div>
+
   <script>
     let globalRowsData = [];
+    let globalTagUrlMap = {};
+    let globalIconsMap = {};
+    let globalMasterData = {};
 
     window.onload = function() {
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getHolomenTableData';
@@ -258,21 +421,350 @@
 
     function initApp(res) {
       globalRowsData = res.rows || [];
+      globalTagUrlMap = res.tagUrlMap || {};
+      globalIconsMap = res.globalIcons || {};
+      globalMasterData = res.masterData || {};
+
       document.getElementById('loading').style.display = 'none';
       document.getElementById('listWrapper').style.display = 'block';
+
+      buildFilterOptionsDynamically();
+      updateFilterIcons();
       filterData();
+    }
+
+    function toggleFilterAccordion(headerElem) {
+      const content = headerElem.nextElementSibling;
+      const arrow = headerElem.querySelector('span:last-child');
+      if (content.style.display === 'none') {
+        content.style.display = 'flex';
+        arrow.textContent = '▼';
+      } else {
+        content.style.display = 'none';
+        arrow.textContent = '▶';
+      }
+    }
+
+    function getMainFilterIconUrl(isOn) {
+      return isOn ? (globalIconsMap['フィルタON'] || globalIconsMap['filter_on'] || '') : (globalIconsMap['フィルタOFF'] || globalIconsMap['filter_off'] || '');
+    }
+
+    function getTabFilterIconUrl(isOn) {
+      return isOn ? (globalIconsMap['フィルタON（タブ）'] || globalIconsMap['フィルタON'] || '') : (globalIconsMap['フィルタOFF（タブ）'] || globalIconsMap['フィルタOFF'] || '');
+    }
+
+    function updateFilterIcons() {
+      const tabGroups = {
+        rarity: ['rarity'],
+        type: ['type'],
+        skill: ['skillTarget', 'skillEffect', 'skillCond', 'skillTargetType'],
+        costume: ['costumeEffect', 'costumeCond'],
+        connect: ['connectMass']
+      };
+
+      let anyGlobalOn = false;
+
+      for (const [tabKey, groups] of Object.entries(tabGroups)) {
+        let isTabOn = false;
+        groups.forEach(g => {
+          const selected = document.querySelectorAll(`.filter-chip-btn[data-group="${g}"].selected`);
+          selected.forEach(el => {
+            if (el.getAttribute('data-val') !== 'all') isTabOn = true;
+          });
+        });
+
+        if (isTabOn) anyGlobalOn = true;
+
+        const tabIconImg = document.querySelector(`.tab-filter-icon[data-tab-group="${tabKey}"]`);
+        if (tabIconImg) {
+          const url = getTabFilterIconUrl(isTabOn);
+          tabIconImg.src = url;
+          tabIconImg.style.display = url ? 'inline-block' : 'none';
+        }
+      }
+
+      const mainIconImg = document.getElementById('mainFilterIcon');
+      if (mainIconImg) {
+        const url = getMainFilterIconUrl(anyGlobalOn);
+        mainIconImg.src = url;
+        mainIconImg.style.display = url ? 'inline-block' : 'none';
+      }
+    }
+
+    function openFilterModal() { document.getElementById('filterModalOverlay').style.display = 'flex'; }
+    function closeFilterModal() { document.getElementById('filterModalOverlay').style.display = 'none'; }
+    function applyFilterAndClose() { closeFilterModal(); updateFilterIcons(); filterData(); }
+
+    function resetAllFilters() {
+      const groups = ['rarity', 'type', 'skillTarget', 'skillEffect', 'skillCond', 'skillTargetType', 'costumeEffect', 'costumeCond', 'connectMass'];
+      groups.forEach(group => {
+        document.querySelectorAll(`.filter-chip-btn[data-group="${group}"]`).forEach(btn => {
+          if (btn.getAttribute('data-val') === 'all') btn.classList.add('selected');
+          else btn.classList.remove('selected');
+        });
+      });
+      updateFilterIcons();
+    }
+
+    function switchFilterTab(tabName, btnElem) {
+      document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-tab-pane').forEach(p => p.classList.remove('active'));
+      btnElem.classList.add('active');
+      document.getElementById('pane-' + tabName).classList.add('active');
+    }
+
+    function toggleChip(elem, isSingle = false) {
+      const group = elem.getAttribute('data-group');
+      const val = elem.getAttribute('data-val');
+
+      if (isSingle || val === 'all') {
+        document.querySelectorAll(`.filter-chip-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+        elem.classList.add('selected');
+      } else {
+        const allBtn = document.querySelector(`.filter-chip-btn[data-group="${group}"][data-val="all"]`);
+        if (allBtn) allBtn.classList.remove('selected');
+        elem.classList.toggle('selected');
+        const anySelected = document.querySelectorAll(`.filter-chip-btn[data-group="${group}"].selected`).length > 0;
+        if (!anySelected && allBtn) allBtn.classList.add('selected');
+      }
+      updateFilterIcons();
+    }
+
+    function buildFilterOptionsDynamically() {
+      const raritySet = new Set();
+      const typeSet = new Set();
+      const effectSet = new Set();
+      const costumeEffectSet = new Set();
+
+      globalRowsData.forEach(item => {
+        const getVal = (keys) => {
+          for (let k of keys) {
+            if (item[k] !== undefined && item[k] !== null && item[k] !== '') return String(item[k]).trim();
+          }
+          return '';
+        };
+        const r = getVal(['rarity', 'レアリティ', 'レア度']);
+        const t = getVal(['type', 'タイプ']);
+        if (r) raritySet.add(r);
+        if (t) typeSet.add(t);
+      });
+
+      const md = globalMasterData;
+      if (md.skill_effect) {
+        md.skill_effect.forEach(e => {
+          const v = String(e.effect || e.name || Object.values(e)[0] || '').trim();
+          if (v) effectSet.add(v);
+        });
+      }
+
+      globalRowsData.forEach(item => {
+        const ceStr = String(item['costumeｰeffect'] || item['costume_effect'] || item['costume-effect'] || '').trim();
+        if (ceStr) {
+          ceStr.split(/[,、]/).forEach(part => {
+            if (part.trim()) costumeEffectSet.add(part.trim());
+          });
+        }
+      });
+
+      const fillGrid = (containerId, setObj, groupName) => {
+        const container = document.getElementById(containerId);
+        let html = `<div class="filter-chip-btn selected" data-group="${groupName}" data-val="all" onclick="toggleChip(this)">すべて</div>`;
+        setObj.forEach(val => {
+          html += `<div class="filter-chip-btn" data-group="${groupName}" data-val="${escapeHtml(val)}" onclick="toggleChip(this)">${escapeHtml(val)}</div>`;
+        });
+        container.innerHTML = html;
+      };
+
+      fillGrid('rarityFilterGrid', raritySet, 'rarity');
+      fillGrid('typeFilterGrid', typeSet, 'type');
+      fillGrid('skillEffectGrid', effectSet, 'skillEffect');
+      fillGrid('costumeEffectGrid', costumeEffectSet, 'costumeEffect');
+
+      const buildConditionContainer = (containerId, groupName) => {
+        const container = document.getElementById(containerId);
+        const condTypes = md.condition_type || [];
+        const conditions = md.skill_conditions || [];
+
+        let condHtml = `<div class="filter-btn-grid"><div class="filter-chip-btn selected" data-group="${groupName}" data-val="all" onclick="toggleChip(this)">すべて</div></div>`;
+
+        const unassignedConds = conditions.filter(c => {
+          const ctVal = String(c.condition_type || '').trim();
+          return ctVal === '' || ctVal === 'undefined' || ctVal === 'null';
+        });
+
+        if (unassignedConds.length > 0) {
+          condHtml += '<div class="filter-btn-grid">';
+          unassignedConds.forEach(c => {
+            const filterName = String(c.filter_name || c.condition || Object.values(c)[0] || '').trim();
+            const conditionVal = String(c.condition || '').trim();
+            if (filterName) condHtml += `<div class="filter-chip-btn" data-group="${groupName}" data-val="${escapeHtml(conditionVal || filterName)}" onclick="toggleChip(this)">${escapeHtml(filterName)}</div>`;
+          });
+          condHtml += '</div>';
+        }
+
+        condTypes.forEach(ct => {
+          const ctId = String(ct.id || '').trim();
+          const ctName = String(ct.type || ct.name || '').trim();
+          const matchedConds = conditions.filter(c => String(c.condition_type || '').trim() === ctId);
+
+          if (matchedConds.length > 0) {
+            if (ctName) condHtml += `<div class="filter-sub-section-title">${escapeHtml(ctName)}</div>`;
+            condHtml += '<div class="filter-btn-grid">';
+            matchedConds.forEach(c => {
+              const filterName = String(c.filter_name || c.condition || Object.values(c)[0] || '').trim();
+              const conditionVal = String(c.condition || '').trim();
+              if (filterName) condHtml += `<div class="filter-chip-btn" data-group="${groupName}" data-val="${escapeHtml(conditionVal || filterName)}" onclick="toggleChip(this)">${escapeHtml(filterName)}</div>`;
+            });
+            condHtml += '</div>';
+          }
+        });
+        container.innerHTML = condHtml;
+      };
+
+      buildConditionContainer('skillCondContainer', 'skillCond');
+      buildConditionContainer('costumeCondContainer', 'costumeCond');
+
+      const targetContainer = document.getElementById('skillTargetContainer');
+      const targetTypes = md.skill_target_type || [];
+      const targets = md.skill_target || [];
+
+      let targetHtml = `<div class="filter-btn-grid"><div class="filter-chip-btn selected" data-group="skillTargetType" data-val="all" onclick="toggleChip(this)">すべて</div></div>`;
+
+      const unassignedTargets = targets.filter(st => {
+        const ttVal = String(st.skill_target_type || '').trim();
+        return ttVal === '' || ttVal === 'undefined' || ttVal === 'null';
+      });
+
+      if (unassignedTargets.length > 0) {
+        targetHtml += '<div class="filter-btn-grid">';
+        unassignedTargets.forEach(st => {
+          const filterName = String(st.filter_name || st.target || Object.values(st)[0] || '').trim();
+          const targetVal = String(st.target || '').trim();
+          if (filterName) targetHtml += `<div class="filter-chip-btn" data-group="skillTargetType" data-val="${escapeHtml(targetVal || filterName)}" onclick="toggleChip(this)">${escapeHtml(filterName)}</div>`;
+        });
+        targetHtml += '</div>';
+      }
+
+      targetTypes.forEach(tt => {
+        const ttId = String(tt.id || '').trim();
+        const ttName = String(tt.target_type || tt.name || '').trim();
+        const matchedTargets = targets.filter(st => String(st.skill_target_type || '').trim() === ttId);
+
+        if (matchedTargets.length > 0) {
+          if (ttName) targetHtml += `<div class="filter-sub-section-title">${escapeHtml(ttName)}</div>`;
+          targetHtml += '<div class="filter-btn-grid">';
+          matchedTargets.forEach(st => {
+            const filterName = String(st.filter_name || st.target || Object.values(st)[0] || '').trim();
+            const targetVal = String(st.target || '').trim();
+            if (filterName) targetHtml += `<div class="filter-chip-btn" data-group="skillTargetType" data-val="${escapeHtml(targetVal || filterName)}" onclick="toggleChip(this)">${escapeHtml(filterName)}</div>`;
+          });
+          targetHtml += '</div>';
+        }
+      });
+      targetContainer.innerHTML = targetHtml;
+    }
+
+    function checkExactMatch(cellValue, selectedValues) {
+      if (selectedValues.includes('all')) return true;
+      if (!cellValue) return false;
+      const cellTokens = String(cellValue).split(/[,、]/).map(s => s.trim());
+      return selectedValues.some(val => cellTokens.includes(val));
     }
 
     function filterData() {
       const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      const getSelectedValues = (groupName) => {
+        const selected = document.querySelectorAll(`.filter-chip-btn[data-group="${groupName}"].selected`);
+        const vals = [];
+        selected.forEach(el => vals.push(el.getAttribute('data-val')));
+        return vals;
+      };
+
+      const rarities = getSelectedValues('rarity');
+      const types = getSelectedValues('type');
+      const skillTargets = getSelectedValues('skillTarget');
+      const skillEffects = getSelectedValues('skillEffect');
+      const skillConds = getSelectedValues('skillCond');
+      const skillTargetTypes = getSelectedValues('skillTargetType');
+      const costumeEffects = getSelectedValues('costumeEffect');
+      const costumeConds = getSelectedValues('costumeCond');
+      const connectMasses = getSelectedValues('connectMass');
+
       const listBody = document.getElementById('listBody');
       listBody.innerHTML = '';
 
       const filtered = globalRowsData.filter(item => {
-        if (!keyword) return true;
-        const charName = String(item.character || '').toLowerCase();
-        const aliasStr = String(item.alias || '').toLowerCase();
-        return charName.includes(keyword) || aliasStr.includes(keyword);
+        const getVal = (keys) => {
+          for (let k of keys) {
+            if (item[k] !== undefined && item[k] !== null && item[k] !== '') return String(item[k]).trim();
+          }
+          return '';
+        };
+
+        const charName = getVal(['character', 'キャラクター名', '名前']);
+        const aliasStr = getVal(['alias', '二つ名']);
+        const rVal = getVal(['rarity', 'レアリティ', 'レア度']);
+        const tVal = getVal(['type', 'タイプ']);
+        const cEffVal = getVal(['costumeｰeffect', 'costume_effect', 'costume-effect']);
+        const cCondVal = getVal(['costume-conditions', 'costume_conditions']);
+        const cMassVal = getVal(['connect-mass', 'connect_mass']);
+
+        if (!rarities.includes('all') && !rarities.includes(rVal)) return false;
+        if (!types.includes('all') && !types.includes(tVal)) return false;
+
+        if (keyword) {
+          const matchChar = charName.toLowerCase().includes(keyword);
+          const matchAlias = aliasStr.toLowerCase().includes(keyword);
+          if (!matchChar && !matchAlias) return false;
+        }
+
+        if (!costumeEffects.includes('all') && !checkExactMatch(cEffVal, costumeEffects)) return false;
+        if (!costumeConds.includes('all') && !checkExactMatch(cCondVal, costumeConds)) return false;
+
+        if (!connectMasses.includes('all')) {
+          let matchedMass = connectMasses.some(m => cMassVal.includes(m));
+          if (!matchedMass) return false;
+        }
+
+        const hasSkillFilter = !skillEffects.includes('all') || !skillConds.includes('all') || !skillTargetTypes.includes('all');
+        if (hasSkillFilter) {
+          const targetMode = skillTargets.includes('all') ? 'all' : skillTargets[0];
+          let targetsToCheck = [];
+
+          if (targetMode === 'all' || targetMode === 'special') {
+            targetsToCheck.push({
+              eff: getVal(['special-effect', 'special_effect']),
+              cond: getVal(['special-conditions', 'special_conditions']),
+              target: getVal(['special-target', 'special_target'])
+            });
+          }
+          if (targetMode === 'all' || targetMode === 'active') {
+            targetsToCheck.push({
+              eff: getVal(['active-type', 'active_type', 'active-effect']),
+              cond: getVal(['active-conditions', 'active_conditions']),
+              target: getVal(['active-target', 'active_target'])
+            });
+          }
+          if (targetMode === 'all' || targetMode === 'passive') {
+            targetsToCheck.push({
+              eff: getVal(['passive-type', 'passive_type', 'passive-effect']),
+              cond: getVal(['passive-conditions', 'passive_conditions']),
+              target: getVal(['passive-target', 'passive_target'])
+            });
+          }
+
+          let matchedSkill = targetsToCheck.some(st => {
+            let matchE = checkExactMatch(st.eff, skillEffects);
+            let matchC = checkExactMatch(st.cond, skillConds);
+            let matchT = checkExactMatch(st.target, skillTargetTypes);
+            return matchE && matchC && matchT;
+          });
+
+          if (!matchedSkill) return false;
+        }
+
+        return true;
       });
 
       document.getElementById('hitCountDisplay').textContent = filtered.length + '名';
@@ -283,23 +775,93 @@
       }
 
       filtered.forEach(item => {
+        const getVal = (keys) => {
+          for (let k of keys) {
+            if (item[k] !== undefined && item[k] !== null && item[k] !== '') return item[k];
+          }
+          return '';
+        };
+
+        const charName = getVal(['character', 'キャラクター名', '名前']);
+        const aliasStr = getVal(['alias', '二つ名']);
+        
+        const mainImgUrl = getVal(['image', '画像']);
+        const iconImgUrl = getVal(['icon', 'アイコン']);
+        const mobilePlateUrl = getVal(['mobile_name_plate', 'mobilenameplate']);
+        const pcPlateUrl = getVal(['name_plate_url', 'nameplate_url']);
+        const npBgUrl = mobilePlateUrl || pcPlateUrl;
+
+        const popPcBgUrl = pcPlateUrl || mobilePlateUrl;
+        const popMobileBgUrl = mobilePlateUrl || pcPlateUrl;
+
+        const unitTagUrls = item['unit_tag_urls'] || [];
+        const tagsHtml = unitTagUrls.map(u => `<img src="${escapeHtml(u)}" class="np-tag-img-mini">`).join('');
+
+        const typeUrl = getVal(['type_url', 'typeurl']);
+        const rarityIconUrl = getVal(['rarity-icon', 'rarity_icon']);
+
+        const totalStatus = getVal(['total_status', 'total']) || 0;
+        const perfVal = Number(getVal(['performance'])) || 0;
+        const techVal = Number(getVal(['technic'])) || 0;
+        const senseVal = Number(getVal(['sense'])) || 0;
+
+        let highestIconKey = 'performance';
+        let maxVal = perfVal;
+        if (techVal > maxVal) { maxVal = techVal; highestIconKey = 'technic'; }
+        if (senseVal > maxVal) { maxVal = senseVal; highestIconKey = 'sense'; }
+
+        const iconPerf = globalIconsMap['パフォーマンス'] || globalIconsMap['performance'] || '';
+        const iconTech = globalIconsMap['テクニック'] || globalIconsMap['technic'] || '';
+        const iconSense = globalIconsMap['センス'] || globalIconsMap['sense'] || '';
+
+        let highestIconUrl = iconPerf;
+        if (highestIconKey === 'technic') highestIconUrl = iconTech;
+        if (highestIconKey === 'sense') highestIconUrl = iconSense;
+
+        const iconSP = globalIconsMap['SP'] || globalIconsMap['special'] || getVal(['special-icon', 'special_icon']);
+        const iconA = globalIconsMap['A'] || globalIconsMap['active'] || getVal(['active-icon', 'active_icon']);
+        const iconP = globalIconsMap['P'] || globalIconsMap['passive'] || getVal(['passive-icon', 'passive_icon']);
+
+        const spSkillText = getVal(['special-skill', 'special_skill']);
+        const aSkillText = getVal(['active-skill', 'active_skill']);
+        const pSkillText = getVal(['passive-skill', 'passive_skill']);
+
+        const costumeIconUrl = getVal(['costume_icon', 'costume-icon']);
+        const costumeSkillText = getVal(['costumeｰskill', 'costume_skill', 'costume-skill']);
+        const connectMassText = getVal(['connect-mass', 'connect_mass']);
+        const connectTargetUrl = getVal(['connect-target_url', 'connect_target_url']);
+        const connectEffectText = getVal(['connect_effect', 'connect-effect']);
+
+        const cardNpInnerHtml = `
+          ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="np-image-mini">` : ''}
+          <div class="np-text-mini">
+            <span class="np-alias-mini">${escapeHtml(aliasStr)}</span>
+            <div class="np-name-row-mini">
+              <span class="np-name-mini">${escapeHtml(charName)}</span>
+              ${tagsHtml}
+            </div>
+          </div>
+        `;
+
+        const popNpInnerHtml = `
+          ${iconImgUrl ? `<img src="${escapeHtml(iconImgUrl)}" class="np-icon-mini">` : (mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="np-image-mini">` : '')}
+          <div class="np-text-mini">
+            <span class="np-alias-mini">${escapeHtml(aliasStr)}</span>
+            <div class="np-name-row-mini">
+              <span class="np-name-mini">${escapeHtml(charName)}</span>
+              ${tagsHtml}
+            </div>
+          </div>
+        `;
+
         const rowCard = document.createElement('div');
         rowCard.className = 'list-row-card';
-
-        const npBgUrl = item.mobile_name_plate || item.name_plate_url || '';
-        const mainImgUrl = item.image || '';
-        const typeUrl = item.type_url || '';
-        const rarityIconUrl = item['rarity-icon'] || item.rarity_icon || '';
 
         rowCard.innerHTML = `
           <div class="block-left-group">
             <div class="cell-member">
               <div class="name-plate-mini" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
-                ${mainImgUrl ? `<img src="${escapeHtml(mainImgUrl)}" class="np-image-mini">` : ''}
-                <div class="np-text-mini">
-                  <span class="np-alias-mini">${escapeHtml(item.alias || '')}</span>
-                  <span class="np-name-mini">${escapeHtml(item.character || '')}</span>
-                </div>
+                ${cardNpInnerHtml}
               </div>
             </div>
             <div class="cell-type">
@@ -311,17 +873,237 @@
           </div>
           <div class="block-right-group">
             <div class="cell-status">
-              <div class="unified-card">
-                <span style="font-size:12px; font-weight:bold;">♪ トータル ${escapeHtml(item.total_status || 0)}</span>
+              <div class="unified-card" 
+                   data-pop-pc-bg="${escapeHtml(popPcBgUrl)}"
+                   data-pop-mobile-bg="${escapeHtml(popMobileBgUrl)}"
+                   data-total="${escapeHtml(totalStatus)}"
+                   data-perf="${perfVal}"
+                   data-tech="${techVal}"
+                   data-sense="${senseVal}"
+                   onclick="handleStatusClick(this)">
+                <div class="status-badge-text">
+                  <span>♪ トータル</span>
+                  <span class="status-badge-val">${escapeHtml(totalStatus)}</span>
+                </div>
+                <div class="status-badge-divider"></div>
+                ${highestIconUrl ? `<img src="${escapeHtml(highestIconUrl)}" class="highest-stat-icon">` : ''}
+              </div>
+            </div>
+            <div class="cell-skills">
+              <div class="unified-card" 
+                   data-pop-pc-bg="${escapeHtml(popPcBgUrl)}"
+                   data-pop-mobile-bg="${escapeHtml(popMobileBgUrl)}"
+                   data-spskill="${escapeHtml(spSkillText)}" data-spicon="${escapeHtml(iconSP)}"
+                   data-pskill="${escapeHtml(pSkillText)}" data-picon="${escapeHtml(iconP)}"
+                   data-askill="${escapeHtml(aSkillText)}" data-aicon="${escapeHtml(iconA)}"
+                   onclick="handleAllSkillsClick(this)">
+                ${iconSP ? `<img src="${escapeHtml(iconSP)}" class="skill-mini-icon">` : 'SP'}
+                <div class="skill-mini-divider"></div>
+                ${iconA ? `<img src="${escapeHtml(iconA)}" class="skill-mini-icon">` : 'A'}
+                <div class="skill-mini-divider"></div>
+                ${iconP ? `<img src="${escapeHtml(iconP)}" class="skill-mini-icon">` : 'P'}
+              </div>
+            </div>
+            <div class="cell-connect">
+              <div class="unified-card" 
+                   data-pop-pc-bg="${escapeHtml(popPcBgUrl)}"
+                   data-pop-mobile-bg="${escapeHtml(popMobileBgUrl)}"
+                   data-costumeskill="${escapeHtml(costumeSkillText)}" data-costumeicon="${escapeHtml(costumeIconUrl)}" data-connectmass="${escapeHtml(connectMassText)}" data-connecteffect="${escapeHtml(connectEffectText)}" data-connecttargeturl="${escapeHtml(connectTargetUrl)}" onclick="handleConnectClick(this)">
+                ${costumeIconUrl ? `<img src="${escapeHtml(costumeIconUrl)}" class="connect-left-img">` : ''}
+                <div class="connect-divider"></div>
+                <span class="connect-text">${escapeHtml(connectMassText)}</span>
+                ${connectTargetUrl ? `<img src="${escapeHtml(connectTargetUrl)}" class="connect-target-img">` : ''}
               </div>
             </div>
           </div>
         `;
+
+        const statusCard = rowCard.querySelector('.cell-status .unified-card');
+        const skillCard = rowCard.querySelector('.cell-skills .unified-card');
+        const connectCard = rowCard.querySelector('.cell-connect .unified-card');
+
+        statusCard._npInnerHtml = popNpInnerHtml;
+        skillCard._npInnerHtml = popNpInnerHtml;
+        connectCard._npInnerHtml = popNpInnerHtml;
+
         listBody.appendChild(rowCard);
       });
     }
 
-    function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
+    function setupPopHeader(elem, categoryTitleText) {
+      const isMobile = window.matchMedia('(max-width: 600px)').matches;
+      const pcBg = elem.getAttribute('data-pop-pc-bg');
+      const mobileBg = elem.getAttribute('data-pop-mobile-bg');
+
+      const npBgUrl = isMobile ? (mobileBg || pcBg) : (pcBg || mobileBg);
+      const innerHtml = elem._npInnerHtml || '';
+
+      const npCard = document.getElementById('popHeaderNpCard');
+      npCard.style.backgroundImage = npBgUrl ? `url('${escapeHtml(npBgUrl)}')` : 'none';
+      npCard.innerHTML = innerHtml;
+
+      document.getElementById('popCategoryTitle').textContent = categoryTitleText;
+    }
+
+    function handleStatusClick(elem) {
+      const total = elem.getAttribute('data-total');
+      const perf = elem.getAttribute('data-perf');
+      const tech = elem.getAttribute('data-tech');
+      const sense = elem.getAttribute('data-sense');
+
+      setupPopHeader(elem, 'ステータス');
+
+      const iconTotal = globalIconsMap['トータル'] || globalIconsMap['total'] || '';
+      const iconPerf = globalIconsMap['パフォーマンス'] || globalIconsMap['performance'] || '';
+      const iconTech = globalIconsMap['テクニック'] || globalIconsMap['technic'] || '';
+      const iconSense = globalIconsMap['センス'] || globalIconsMap['sense'] || '';
+
+      let html = '<div class="status-pop-note">※表示内容は最大強化時のステータス</div>';
+      html += '<div class="status-pop-list">';
+      html += `
+        <div class="status-pop-row">
+          <div class="status-pop-label">${iconTotal ? `<img src="${escapeHtml(iconTotal)}" style="height:22px;">` : '♪'} トータル</div>
+          <span class="status-pop-val">${escapeHtml(total)}</span>
+        </div>
+        <div class="status-pop-row">
+          <div class="status-pop-label">${iconPerf ? `<img src="${escapeHtml(iconPerf)}" style="height:22px;">` : ''} パフォーマンス</div>
+          <span class="status-pop-val">${escapeHtml(perf)}</span>
+        </div>
+        <div class="status-pop-row">
+          <div class="status-pop-label">${iconTech ? `<img src="${escapeHtml(iconTech)}" style="height:22px;">` : ''} テクニック</div>
+          <span class="status-pop-val">${escapeHtml(tech)}</span>
+        </div>
+        <div class="status-pop-row">
+          <div class="status-pop-label">${iconSense ? `<img src="${escapeHtml(iconSense)}" style="height:22px;">` : ''} センス</div>
+          <span class="status-pop-val">${escapeHtml(sense)}</span>
+        </div>
+      `;
+      html += '</div>';
+
+      document.getElementById('popContent').innerHTML = html;
+      document.getElementById('popOverlay').style.display = 'flex';
+    }
+
+    function handleAllSkillsClick(elem) {
+      const spSkill = elem.getAttribute('data-spskill');
+      const spIcon = elem.getAttribute('data-spicon');
+      const pSkill = elem.getAttribute('data-pskill');
+      const pIcon = elem.getAttribute('data-picon');
+      const aSkill = elem.getAttribute('data-askill');
+      const aIcon = elem.getAttribute('data-aicon');
+
+      setupPopHeader(elem, 'ライブスキル');
+
+      let html = '<div class="skill-pop-section">';
+
+      html += `
+        <div class="skill-pop-row">
+          ${spIcon ? `<img src="${escapeHtml(spIcon)}" class="skill-pop-icon">` : '<div style="font-weight:bold; color:#2563eb; width:36px;">SP</div>'}
+          <div class="skill-pop-body">
+            <div class="skill-pop-title">【スペシャルスキル】</div>
+            <div class="skill-pop-text">${parseSkillTextWithTags(spSkill) || 'なし'}</div>
+          </div>
+        </div>
+      `;
+
+      html += `
+        <div class="skill-pop-row">
+          ${aIcon ? `<img src="${escapeHtml(aIcon)}" class="skill-pop-icon">` : '<div style="font-weight:bold; color:#2563eb; width:36px;">A</div>'}
+          <div class="skill-pop-body">
+            <div class="skill-pop-title">【アクティブスキル】</div>
+            <div class="skill-pop-text">${parseSkillTextWithTags(aSkill) || 'なし'}</div>
+          </div>
+        </div>
+      `;
+
+      html += `
+        <div class="skill-pop-row">
+          ${pIcon ? `<img src="${escapeHtml(pIcon)}" class="skill-pop-icon">` : '<div style="font-weight:bold; color:#2563eb; width:36px;">P</div>'}
+          <div class="skill-pop-body">
+            <div class="skill-pop-title">【パッシブスキル】</div>
+            <div class="skill-pop-text">${parseSkillTextWithTags(pSkill) || 'なし'}</div>
+          </div>
+        </div>
+      `;
+
+      html += '</div>';
+
+      document.getElementById('popContent').innerHTML = html;
+      document.getElementById('popOverlay').style.display = 'flex';
+    }
+
+    function handleConnectClick(elem) {
+      const costumeSkill = elem.getAttribute('data-costumeskill');
+      const costumeIcon = elem.getAttribute('data-costumeicon');
+      const connectMass = elem.getAttribute('data-connectmass');
+      const connectEffect = elem.getAttribute('data-connecteffect');
+      const connectTargetUrl = elem.getAttribute('data-connecttargeturl');
+
+      showConnectPop(elem, costumeSkill, costumeIcon, connectMass, connectEffect, connectTargetUrl);
+    }
+
+    function parseSkillTextWithTags(text) {
+      if (!text) return '';
+      const str = String(text);
+
+      return str.replace(/\{([^}]+)\}/g, (match, tagName) => {
+        const trimmedTag = String(tagName).trim();
+        const tagUrl = globalTagUrlMap[trimmedTag];
+
+        if (tagUrl && String(tagUrl).startsWith('http')) {
+          return `<img src="${escapeHtml(tagUrl)}" class="inline-tag-img" alt="${escapeHtml(trimmedTag)}">`;
+        }
+        return `{${escapeHtml(trimmedTag)}}`;
+      });
+    }
+
+    function showConnectPop(elem, costumeSkill, costumeIcon, connectMass, connectEffect, connectTargetUrl) {
+      setupPopHeader(elem, '衣装スキル ＆ コネクト効果');
+
+      let html = '<div class="connect-pop-section">';
+
+      const parsedCostumeSkill = parseSkillTextWithTags(costumeSkill);
+      html += `
+        <div class="connect-pop-row">
+          ${costumeIcon ? `<img src="${escapeHtml(costumeIcon)}" class="connect-pop-img" alt="costume">` : '<div style="width:48px;"></div>'}
+          <div class="connect-pop-body">
+            <div class="connect-pop-title">【衣装スキル】</div>
+            <div class="connect-pop-text">${parsedCostumeSkill ? parsedCostumeSkill : 'なし'}</div>
+          </div>
+        </div>
+      `;
+
+      const connectFullText = (connectMass ? connectMass + ' : ' : '') + (connectEffect || '');
+      const parsedConnectEffect = parseSkillTextWithTags(connectFullText);
+      html += `
+        <div class="connect-pop-row">
+          ${connectTargetUrl ? `<img src="${escapeHtml(connectTargetUrl)}" class="connect-pop-img" alt="connect">` : '<div style="width:48px;"></div>'}
+          <div class="connect-pop-body">
+            <div class="connect-pop-title">【コネクト効果】</div>
+            <div class="connect-pop-text">${parsedConnectEffect ? parsedConnectEffect : 'なし'}</div>
+          </div>
+        </div>
+      `;
+
+      html += '</div>';
+
+      document.getElementById('popContent').innerHTML = html;
+      document.getElementById('popOverlay').style.display = 'flex';
+    }
+
+    function closePopText() {
+      document.getElementById('popOverlay').style.display = 'none';
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
   </script>
 </body>
 </html>
