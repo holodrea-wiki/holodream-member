@@ -713,3 +713,68 @@ function getCharacterDetailsByName(charName) {
     throw new Error('サーバー処理エラー: ' + err.message);
   }
 }
+
+/**
+ * 更新履歴シートからデータを取得（2行目以降）
+ * 最新データが下に来るように配列を整理
+ */
+function getUpdateHistory() {
+  try {
+    const ss = getTargetSpreadsheet();
+    const sheet = ss.getSheetByName('更新履歴') || ss.getSheetByName('history') || ss.getSheetByName('log');
+    if (!sheet) return [];
+
+    const values = sheet.getDataRange().getValues();
+    if (values.length < 2) return [];
+
+    const historyList = [];
+    // 2行目以降を順に取得（上が古い、下が最新）
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
+      if (row[0] === "" || row[0] === null || row[0] === undefined) continue;
+
+      const dateVal = row[0] ? formatDateString(row[0]) : '';
+      const textVal = row[1] ? String(row[1]).trim() : String(row[0]).trim();
+
+      historyList.push({
+        date: dateVal,
+        content: textVal
+      });
+    }
+
+    return historyList;
+  } catch (err) {
+    console.error('更新履歴取得エラー:', err);
+    return [];
+  }
+}
+
+// doGet 内に action === 'getUpdateHistory' の分岐を追加
+function doGet(e) {
+  const action = (e && e.parameter && e.parameter.action) ? String(e.parameter.action) : 'getTopBannerMap';
+  const charName = (e && e.parameter && e.parameter.charName) ? String(e.parameter.charName) : '';
+
+  let result = {};
+
+  try {
+    if (action === 'getTopBannerMap') {
+      result = getTopBannerMap();
+    } else if (action === 'getUpdateHistory') { // ★ 追加
+      result = getUpdateHistory();
+    } else if (action === 'getCharacterDataGroupedByUnit') {
+      result = getCharacterDataGroupedByUnit();
+    } else if (action === 'getHolomenTableData') {
+      result = getHolomenTableData();
+    } else if (action === 'getCollectionPageData') {
+      result = getCollectionPageData();
+    } else if (action === 'getCharacterDetailsByName') {
+      result = getCharacterDetailsByName(charName);
+    }
+  } catch (err) {
+    result = { error: true, message: err.message };
+  }
+
+  const output = ContentService.createTextOutput(JSON.stringify(result));
+  output.setMimeType(ContentService.MimeType.JSON);
+  return output;
+}
