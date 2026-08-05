@@ -134,9 +134,9 @@
       background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
     }
 
-    .unit-title-area { display: flex; align-items: center; gap: 10px; }
-    .unit-tag-img { height: 32px; width: auto; object-fit: contain; border-radius: 3px; }
-    .unit-right-area { display: flex; align-items: center; gap: 12px; }
+    .unit-title-area { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+    .unit-tag-img { height: 32px; width: auto; object-fit: contain; border-radius: 3px; flex-shrink: 0; }
+    .unit-right-area { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
     .unit-count { font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 12px; }
 
     /* 「タレント紹介」ボタン */
@@ -217,7 +217,7 @@
     .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; cursor: pointer; }
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
 
-    /* ★ タレント紹介カード（全体カード外枠） */
+    /* タレント紹介カード（全体カード外枠） */
     .intro-card {
       border-radius: 16px;
       padding: 20px;
@@ -230,7 +230,7 @@
       position: relative;
     }
 
-    /* ★ ネームプレートヘッダー */
+    /* ネームプレートヘッダー */
     .intro-np-header {
       position: relative;
       height: 72px;
@@ -273,7 +273,7 @@
       gap: 12px;
     }
 
-    /* ★ 一言メッセージ（立体パーツ） */
+    /* 一言メッセージ（立体パーツ） */
     .intro-message {
       font-size: 13.5px;
       font-weight: bold;
@@ -285,7 +285,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.06);
     }
 
-    /* ★ プロフィール格子（白い立体カード） */
+    /* プロフィール格子（白い立体カード） */
     .intro-profile-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -312,7 +312,7 @@
       font-weight: 700;
     }
 
-    /* ★ 紹介文カード（白い立体カード） */
+    /* 紹介文カード（白い立体カード） */
     .intro-text-card {
       background: #ffffff;
       padding: 14px 18px;
@@ -326,7 +326,7 @@
       word-break: break-all;
     }
 
-    /* ★ リンクボタン群 */
+    /* リンクボタン群 */
     .intro-links {
       display: flex;
       gap: 10px;
@@ -365,9 +365,42 @@
     .np-unit-tags { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
     .np-unit-tag-img { height: 24px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
 
+    /* スマホ（幅600px以下）用レイアウト調整 */
     @media screen and (max-width: 600px) {
       .page-container { padding: 8px; }
       .controls { padding: 8px 12px; margin-bottom: 12px; }
+      
+      /* ★ スマホ画面時のユニットバナー（2段レイアウト） */
+      .unit-banner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 14px;
+        gap: 8px;
+      }
+      .unit-title-area {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .unit-title-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+      .unit-title-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .unit-right-area {
+        width: 100%;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 2px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
       .card-grid { grid-template-columns: 1fr !important; gap: 8px; padding: 10px; }
       .name-plate { min-height: 70px; background-size: 115% 115%; padding: 8px 10px; flex-direction: row; align-items: center; gap: 10px; }
       .np-icon { width: 52px; height: 52px; transform: scale(1.1); }
@@ -544,8 +577,6 @@
       if (section) section.classList.toggle('collapsed');
     }
 
-    /* ★ タレント紹介ダイアログ表示関数（ネームプレート＆立体カードパーツ対応版） */
-    /* ★ タレント紹介ダイアログ表示関数（PC用ネームプレート優先切り替え対応版） */
     function openUnitIntroModal(event, unitName) {
       if (event) event.stopPropagation();
 
@@ -560,7 +591,6 @@
       title.textContent = unitName + ' タレント紹介';
       filterBar.style.display = 'none';
 
-      // 画面幅が600px以下のスマホ表示時のみモバイル画像を使用、それ以外（PC等）は name_plate を最優先
       const isMobileDevice = window.matchMedia('(max-width: 600px)').matches;
 
       const blendWithWhite = (hex, percent) => {
@@ -585,7 +615,6 @@
         const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/80?text=No+Img';
         const mainColor = (c.color && /^#?[0-9A-Fa-f]{3,6}$/.test(c.color)) ? c.color : '#2563eb';
         
-        // ★ 画面判定に応じて画像を決定（PC時は name_plate を確実に優先）
         const npBgUrl = isMobileDevice 
           ? (c.character_plate || c.name_plate) 
           : (c.name_plate || c.character_plate);
@@ -662,10 +691,13 @@
           ? `<img src="${escapeHtml(group.tagUrl)}" class="unit-tag-img" alt="tag" loading="lazy">` 
           : '';
 
+        /* ★ レスポンシブで要素を崩さない HTML 構造 */
         banner.innerHTML = `
           <div class="unit-title-area">
-            ${tagImgHtml}
-            <span>${escapeHtml(group.unitName)}</span>
+            <div class="unit-title-left">
+              ${tagImgHtml}
+              <span class="unit-title-text">${escapeHtml(group.unitName)}</span>
+            </div>
           </div>
           <div class="unit-right-area">
             <button type="button" class="talent-intro-btn" onclick="openUnitIntroModal(event, '${escapeHtml(group.unitName)}')">タレント紹介</button>
