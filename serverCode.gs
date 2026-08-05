@@ -722,23 +722,42 @@ function getCharacterDetailsByName(charName) {
 function getUpdateHistory() {
   try {
     const ss = getTargetSpreadsheet();
-    const sheet = ss.getSheetByName('更新履歴') || ss.getSheetByName('history') || ss.getSheetByName('log');
+    
+    // シート名候補から安全に取得
+    const sheetNames = ['更新履歴', 'history', 'logs', 'log'];
+    let sheet = null;
+    for (let name of sheetNames) {
+      sheet = ss.getSheetByName(name);
+      if (sheet) break;
+    }
+    
     if (!sheet) return [];
 
     const values = sheet.getDataRange().getValues();
     if (values.length < 2) return [];
 
+    // 1行目のヘッダーから列の位置を自動判定
+    const headers = values[0].map(h => String(h || '').trim().toLowerCase());
+    let timeIdx = headers.findIndex(h => ['timestamp', '時間', '日付', 'date'].includes(h));
+    let msgIdx = headers.findIndex(h => ['message', '内容', '更新内容', '本文'].includes(h));
+
+    // 見つからなければデフォルト（A列:日付, B列:内容）
+    if (timeIdx === -1) timeIdx = 0;
+    if (msgIdx === -1) msgIdx = 1;
+
     const historyList = [];
     for (let i = 1; i < values.length; i++) {
       const row = values[i];
-      if (row[0] === "" || row[0] === null || row[0] === undefined) continue;
+      if (row[timeIdx] === "" && row[msgIdx] === "") continue;
 
       let dateStr = '';
-      if (row[0] instanceof Date) {
-        const d = row[0];
+      const rawDate = row[timeIdx];
+
+      if (rawDate instanceof Date) {
+        const d = rawDate;
         dateStr = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-      } else {
-        const str = String(row[0]).trim();
+      } else if (rawDate) {
+        const str = String(rawDate).trim();
         const matches = str.match(/\d+/g);
         if (matches && matches.length >= 3) {
           dateStr = `${Number(matches[0])}-${Number(matches[1])}-${Number(matches[2])}`;
@@ -747,12 +766,14 @@ function getUpdateHistory() {
         }
       }
 
-      const msgStr = row[1] ? String(row[1]).trim() : '';
+      const msgStr = row[msgIdx] ? String(row[msgIdx]).trim() : '';
 
-      historyList.push({
-        timestamp: dateStr,
-        message: msgStr
-      });
+      if (dateStr || msgStr) {
+        historyList.push({
+          timestamp: dateStr,
+          message: msgStr
+        });
+      }
     }
 
     return historyList;
