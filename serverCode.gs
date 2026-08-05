@@ -23,6 +23,8 @@ function doGet(e) {
   try {
     if (action === 'getTopBannerMap') {
       result = getTopBannerMap();
+    } else if (action === 'getUpdateHistory') { // ★ 追加
+      result = getUpdateHistory();
     } else if (action === 'getCharacterDataGroupedByUnit') {
       result = getCharacterDataGroupedByUnit();
     } else if (action === 'getHolomenTableData') {
@@ -36,7 +38,6 @@ function doGet(e) {
     result = { error: true, message: err.message };
   }
 
-  // ★ HTMLではなく、必ず JSON テキストとして返却する
   const output = ContentService.createTextOutput(JSON.stringify(result));
   output.setMimeType(ContentService.MimeType.JSON);
   return output;
@@ -747,34 +748,4 @@ function getUpdateHistory() {
     console.error('更新履歴取得エラー:', err);
     return [];
   }
-}
-
-// doGet 内に action === 'getUpdateHistory' の分岐を追加
-function doGet(e) {
-  const action = (e && e.parameter && e.parameter.action) ? String(e.parameter.action) : 'getTopBannerMap';
-  const charName = (e && e.parameter && e.parameter.charName) ? String(e.parameter.charName) : '';
-
-  let result = {};
-
-  try {
-    if (action === 'getTopBannerMap') {
-      result = getTopBannerMap();
-    } else if (action === 'getUpdateHistory') { // ★ 追加
-      result = getUpdateHistory();
-    } else if (action === 'getCharacterDataGroupedByUnit') {
-      result = getCharacterDataGroupedByUnit();
-    } else if (action === 'getHolomenTableData') {
-      result = getHolomenTableData();
-    } else if (action === 'getCollectionPageData') {
-      result = getCollectionPageData();
-    } else if (action === 'getCharacterDetailsByName') {
-      result = getCharacterDetailsByName(charName);
-    }
-  } catch (err) {
-    result = { error: true, message: err.message };
-  }
-
-  const output = ContentService.createTextOutput(JSON.stringify(result));
-  output.setMimeType(ContentService.MimeType.JSON);
-  return output;
 }
