@@ -11,9 +11,26 @@
     }
     body {
       margin: 0;
-      padding: 16px;
+      padding: 0;
       background-color: #f8fafc;
       color: #1f2937;
+    }
+
+    /* 上部ナビヘッダー */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .container {
@@ -22,6 +39,7 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+      padding: 16px;
     }
 
     .sticky-header-container {
@@ -462,12 +480,12 @@
     #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
 
     @media screen and (max-width: 650px) {
-      body { padding: 8px; }
+      .container { padding: 8px; }
       .summary-card { flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
       .character-row { flex-direction: column; align-items: flex-start; gap: 10px; }
       .name-plate { width: 100%; min-width: 100%; }
 
-      /* ★ スマホ画面時のモーダル内メンバーカード（高さ＆余白調整） */
+      /* スマホ画面時のモーダル内メンバーカード */
       .modal-member-card {
         padding: 12px 14px;
         gap: 12px;
@@ -510,6 +528,11 @@
   </style>
 </head>
 <body>
+
+  <!-- ★ 追加：最上部共通ヘッダー -->
+  <div class="header">
+    <h1>ホロドリ メンバー情報</h1>
+  </div>
 
   <div class="container">
 
