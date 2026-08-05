@@ -545,6 +545,7 @@
     }
 
     /* ★ タレント紹介ダイアログ表示関数（ネームプレート＆立体カードパーツ対応版） */
+    /* ★ タレント紹介ダイアログ表示関数（PC用ネームプレート優先切り替え対応版） */
     function openUnitIntroModal(event, unitName) {
       if (event) event.stopPropagation();
 
@@ -559,7 +560,8 @@
       title.textContent = unitName + ' タレント紹介';
       filterBar.style.display = 'none';
 
-      const isMobileScreen = window.innerWidth <= 600;
+      // 画面幅が600px以下のスマホ表示時のみモバイル画像を使用、それ以外（PC等）は name_plate を最優先
+      const isMobileDevice = window.matchMedia('(max-width: 600px)').matches;
 
       const blendWithWhite = (hex, percent) => {
         let color = hex.replace('#', '');
@@ -583,12 +585,11 @@
         const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/80?text=No+Img';
         const mainColor = (c.color && /^#?[0-9A-Fa-f]{3,6}$/.test(c.color)) ? c.color : '#2563eb';
         
-        // ★ ネームプレート画像判定（PC: name_plate, モバイル: character_plate）
-        const pcPlate = c.name_plate || c.character_plate;
-        const mobilePlate = c.character_plate || c.name_plate;
-        const npBgUrl = isMobileScreen ? mobilePlate : pcPlate;
+        // ★ 画面判定に応じて画像を決定（PC時は name_plate を確実に優先）
+        const npBgUrl = isMobileDevice 
+          ? (c.character_plate || c.name_plate) 
+          : (c.name_plate || c.character_plate);
 
-        // グラデーションの計算（上:75%混色、下:45%混色）
         const topBgColor = blendWithWhite(mainColor, 0.75);
         const bottomBgColor = blendWithWhite(mainColor, 0.45);
         const gradientBg = `linear-gradient(to top, ${bottomBgColor} 0%, ${topBgColor} 100%)`;
@@ -611,7 +612,6 @@
         html += `
           <div class="intro-card" style="background: ${gradientBg}; border-color: ${escapeHtml(mainColor)}; border-left-color: ${escapeHtml(mainColor)};">
             
-            <!-- ★ ネームプレート表示 -->
             <div class="intro-np-header" style="${npBgUrl ? `background-image: url('${escapeHtml(npBgUrl)}');` : ''}">
               <img src="${escapeHtml(iconSrc)}" class="intro-np-icon" alt="${escapeHtml(c.character)}">
               <span class="intro-np-title">${escapeHtml(c.character)}</span>
