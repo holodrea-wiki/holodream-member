@@ -57,7 +57,6 @@
       width: 100%;
     }
 
-    /* 検索バー（✕ボタンコンテナ） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -137,8 +136,39 @@
 
     .unit-title-area { display: flex; align-items: center; gap: 10px; }
     .unit-tag-img { height: 32px; width: auto; object-fit: contain; border-radius: 3px; }
-    .unit-right-area { display: flex; align-items: center; gap: 10px; }
+    .unit-right-area { display: flex; align-items: center; gap: 12px; }
     .unit-count { font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 12px; }
+
+    /* ★ 添付画像風デザインの「タレント紹介」ボタン */
+    .talent-intro-btn {
+      background: linear-gradient(145deg, #b3d7ff, #8cbdfa);
+      color: #1d4ed8;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.2), 
+        -2px -2px 5px rgba(255, 255, 255, 0.7),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.8);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .talent-intro-btn:hover {
+      background: linear-gradient(145deg, #9cc8ff, #7ab1f8);
+      transform: translateY(-1px);
+      box-shadow: 
+        4px 4px 8px rgba(0, 0, 0, 0.25), 
+        -2px -2px 6px rgba(255, 255, 255, 0.8);
+    }
+    .talent-intro-btn:active {
+      transform: translateY(1px);
+      box-shadow: 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.25),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+    }
 
     .accordion-arrow { font-size: 12px; transition: transform 0.3s ease; display: inline-block; }
     .unit-section.collapsed .accordion-arrow { transform: rotate(-90deg); }
@@ -185,6 +215,7 @@
     .char-info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
     .char-name { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.9); letter-spacing: 0.02em; }
 
+    /* ★ タレント紹介ダイアログ専用スタイル */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
     .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; border: 1px solid #374151; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
@@ -194,6 +225,73 @@
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d1d5db; }
     .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; cursor: pointer; }
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+    .intro-card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .intro-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #3b82f6;
+      flex-shrink: 0;
+    }
+    .intro-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .intro-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #60a5fa;
+    }
+    .intro-message {
+      font-size: 13px;
+      font-weight: bold;
+      color: #fef08a;
+      background: rgba(245, 158, 11, 0.15);
+      border-left: 3px solid #f59e0b;
+      padding: 4px 8px;
+      border-radius: 0 4px 4px 0;
+    }
+    .intro-text {
+      font-size: 13.5px;
+      color: #d1d5db;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .intro-links {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .intro-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #ffffff;
+      transition: opacity 0.2s;
+    }
+    .intro-link-btn:hover { opacity: 0.8; }
+    .link-yt { background: #ef4444; }
+    .link-x { background: #000000; border: 1px solid #4b5563; }
+    .link-official { background: #2563eb; }
 
     .game-card-container { background: #ffffff; color: #111827; border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px; }
     .name-plate { position: relative; min-height: 80px; border-radius: 12px; background-size: 115% 115%; background-repeat: no-repeat; background-position: center; background-color: #2563eb; display: flex; align-items: center; padding: 8px 16px; gap: 12px; box-shadow: inset 0 0 12px rgba(0,0,0,0.25); overflow: hidden; }
@@ -216,6 +314,9 @@
       .np-name-row { flex-wrap: wrap; gap: 4px; }
       .np-character-name { font-size: 18px; max-width: 100%; text-align: left; }
       .modal-filter-bar { padding: 8px 12px; gap: 8px; }
+
+      .intro-card { flex-direction: column; gap: 10px; }
+      .intro-icon { width: 56px; height: 56px; }
     }
 
     .card-main-content { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -253,7 +354,7 @@
     .b-center-text { font-size: 15px; font-weight: bold; color: #1e293b; letter-spacing: 0.02em; }
     .b-right-icon { height: 38px; width: auto; object-fit: contain; flex-shrink: 0; transform: scale(1.25); }
 
-    .pop-text-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .pop-text-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
     .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 14px; padding: 24px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
     .pop-header { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; color: #111827; }
     .pop-icon { height: 32px; width: auto; object-fit: contain; }
@@ -274,7 +375,7 @@
 </head>
 <body>
 
-  <!-- ★ 追加：最上部共通ヘッダー -->
+  <!-- 上部共通ヘッダー -->
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
   </div>
@@ -292,7 +393,7 @@
     <div id="content"></div>
   </div>
 
-  <!-- ポップアップ詳細ウィンドウ -->
+  <!-- タレント詳細用モーダル（カード詳細 / タレント紹介共通） -->
   <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
       <div class="modal-header">
@@ -300,7 +401,7 @@
         <button class="modal-close-btn" onclick="closeModal()">&times;</button>
       </div>
 
-      <div class="modal-filter-bar">
+      <div class="modal-filter-bar" id="modalFilterBar">
         <div class="filter-item">
           <span>レアリティ:</span>
           <select id="modalRarityFilter" class="filter-select" onchange="filterModalCards()">
@@ -379,6 +480,47 @@
       if (section) section.classList.toggle('collapsed');
     }
 
+    /* ★ タレント紹介ダイアログ表示関数 */
+    function openUnitIntroModal(event, unitName) {
+      if (event) event.stopPropagation();
+
+      const group = globalGroupedData.find(g => g.unitName === unitName);
+      if (!group) return;
+
+      const modal = document.getElementById('detailModal');
+      const title = document.getElementById('modalCharTitle');
+      const filterBar = document.getElementById('modalFilterBar');
+      const body = document.getElementById('modalBody');
+
+      title.textContent = unitName + ' タレント紹介';
+      filterBar.style.display = 'none'; // 紹介モード時はフィルタバーを非表示
+
+      let html = '';
+      group.characters.forEach(c => {
+        const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/72?text=No+Img';
+        
+        let linksHtml = '';
+        if (c.youtube) linksHtml += `<a href="${escapeHtml(c.youtube)}" target="_blank" class="intro-link-btn link-yt">YouTube</a>`;
+        if (c.x_url) linksHtml += `<a href="${escapeHtml(c.x_url)}" target="_blank" class="intro-link-btn link-x">X (Twitter)</a>`;
+        if (c.official) linksHtml += `<a href="${escapeHtml(c.official)}" target="_blank" class="intro-link-btn link-official">公式サイト</a>`;
+
+        html += `
+          <div class="intro-card">
+            <img src="${escapeHtml(iconSrc)}" class="intro-icon" alt="${escapeHtml(c.character)}">
+            <div class="intro-main">
+              <div class="intro-name">${escapeHtml(c.character)}</div>
+              ${c.message ? `<div class="intro-message">「${escapeHtml(c.message)}」</div>` : ''}
+              ${c.introduction_text ? `<div class="intro-text">${escapeHtml(c.introduction_text)}</div>` : ''}
+              ${linksHtml ? `<div class="intro-links">${linksHtml}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      body.innerHTML = html;
+      modal.style.display = 'flex';
+    }
+
     function filterData() {
       if (!globalGroupedData) return;
       const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -416,6 +558,7 @@
             <span>${escapeHtml(group.unitName)}</span>
           </div>
           <div class="unit-right-area">
+            <button type="button" class="talent-intro-btn" onclick="openUnitIntroModal(event, '${escapeHtml(group.unitName)}')">タレント紹介</button>
             <span class="unit-count">${filtered.length} 名</span>
             <span class="accordion-arrow">▼</span>
           </div>
@@ -458,8 +601,10 @@
     function openCharacterDetail(charName) {
       const modal = document.getElementById('detailModal');
       const title = document.getElementById('modalCharTitle');
+      const filterBar = document.getElementById('modalFilterBar');
       const body = document.getElementById('modalBody');
 
+      filterBar.style.display = 'flex'; // カード詳細時はフィルタバーを表示
       document.getElementById('modalRarityFilter').innerHTML = '<option value="">すべて</option>';
       document.getElementById('modalTypeFilter').innerHTML = '<option value="">すべて</option>';
 
