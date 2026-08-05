@@ -68,22 +68,60 @@
       filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.25));
     }
 
+    /* ★ 更新履歴ウィンドウ（独立ウィンドウ表示） */
+    .history-window {
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-window-header {
+      font-size: 15px;
+      font-weight: bold;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+    .history-window-body {
+      max-height: 120px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-right: 4px;
+    }
+    .history-line {
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
     .nav-list {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
 
-    /* 共通カードスタイル */
-    .nav-card, .history-card {
+    .nav-card {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%);
       border: 1.5px solid rgba(191, 219, 254, 0.6);
       border-radius: 24px;
       padding: 20px 28px;
+      text-decoration: none;
       color: #ffffff;
       display: flex;
       align-items: center;
       gap: 28px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 
         0 10px 25px -4px rgba(15, 23, 42, 0.45),
         0 4px 6px -2px rgba(0, 0, 0, 0.2),
@@ -91,12 +129,7 @@
         inset 0 -2px 3px rgba(0, 0, 0, 0.6);
       position: relative;
       overflow: hidden;
-    }
-
-    .nav-card {
-      text-decoration: none;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nav-card:hover {
       transform: translateY(-4px);
@@ -149,28 +182,6 @@
       letter-spacing: 0.01em;
     }
 
-    /* ★ 更新履歴カード内スクロールエリア */
-    .history-container {
-      max-height: 120px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding-right: 6px;
-    }
-    .history-item {
-      font-size: 13.5px;
-      line-height: 1.4;
-      color: #e2e8f0;
-      display: flex;
-      gap: 10px;
-    }
-    .history-date {
-      color: #93c5fd;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -180,7 +191,7 @@
       background: #ffffff;
     }
 
-    /* ★ モバイル（スマホ）時：画像が上に行かないように横並び（row）を維持 */
+    /* モバイル（スマホ）画面最適化 */
     @media screen and (max-width: 650px) {
       .container {
         padding: 16px 12px;
@@ -193,8 +204,8 @@
         transform: scale(1.05);
       }
       
-      /* ★ 画像とテキストを横並びに固定 */
-      .nav-card, .history-card {
+      /* 画像とテキストの横並び配置を維持 */
+      .nav-card {
         flex-direction: row !important;
         align-items: center;
         gap: 14px;
@@ -214,13 +225,15 @@
         font-size: 11.5px;
         line-height: 1.3;
       }
-      .history-container {
+
+      .history-window {
+        padding: 12px 14px;
+      }
+      .history-window-body {
         max-height: 100px;
       }
-      .history-item {
+      .history-line {
         font-size: 12px;
-        flex-direction: column;
-        gap: 2px;
       }
     }
   </style>
@@ -237,22 +250,19 @@
       <img id="top_main_banner_img" class="top-main-banner-img" src="" alt="TOP Banner">
     </div>
 
-    <div class="nav-list">
-
-      <!-- ★ 1. 更新履歴カード（最上部に配置） -->
-      <div class="history-card">
-        <div class="card-banner-box">
-          <img id="banner_history" class="card-banner-img" src="" alt="更新履歴">
-        </div>
-        <div class="card-text-content">
-          <div class="card-title">更新履歴</div>
-          <div class="history-container" id="historyBox">
-            <div style="color:#94a3b8; font-size:13px;">読み込み中...</div>
-          </div>
-        </div>
+    <!-- ★ 更新履歴ウィンドウ（タレント一覧の直上に配置） -->
+    <div class="history-window">
+      <div class="history-window-header">
+        <span>更新履歴</span>
       </div>
+      <div class="history-window-body" id="historyBox">
+        <div style="color:#94a3b8; font-size:13px;">読み込み中...</div>
+      </div>
+    </div>
 
-      <!-- 2. タレント一覧 -->
+    <div class="nav-list">
+      
+      <!-- 1. タレント一覧 -->
       <a href="talent.html" class="nav-card">
         <div class="card-banner-box">
           <img id="banner_talent" class="card-banner-img" src="" alt="タレント一覧">
@@ -263,7 +273,7 @@
         </div>
       </a>
 
-      <!-- 3. メンバー一覧 -->
+      <!-- 2. メンバー一覧 -->
       <a href="member.html" class="nav-card">
         <div class="card-banner-box">
           <img id="banner_member" class="card-banner-img" src="" alt="メンバー一覧">
@@ -274,7 +284,7 @@
         </div>
       </a>
 
-      <!-- 4. 所有率チェッカー -->
+      <!-- 3. 所有率チェッカー -->
       <a href="collection.html" class="nav-card">
         <div class="card-banner-box">
           <img id="banner_checker" class="card-banner-img" src="" alt="所有率チェッカー">
@@ -325,12 +335,10 @@
         document.getElementById('topMainBannerBox').style.display = 'block';
       }
 
-      const historyUrl = getUrl(['更新履歴', '履歴', 'お知らせ', 'history']);
       const talentUrl = getUrl(['タレント一覧', 'タレント 一覧', 'タレント', 'メンバー詳細カード一覧']);
       const memberUrl = getUrl(['メンバー一覧', 'メンバー 一覧', 'メンバー', 'ホロメンデータ一覧表']);
       const checkerUrl = getUrl(['所有率チェッカー', '所持状況コレクション', '所有率', 'チェッカー']);
 
-      if (historyUrl) document.getElementById('banner_history').src = historyUrl;
       if (talentUrl) document.getElementById('banner_talent').src = talentUrl;
       if (memberUrl) document.getElementById('banner_member').src = memberUrl;
       if (checkerUrl) document.getElementById('banner_checker').src = checkerUrl;
@@ -344,18 +352,16 @@
       }
 
       let html = '';
-      // 上が古い順、下が最新になるように描画
+      // 上が古い内容、一番下が最新内容（1行＝「timestamp message」）
       historyList.forEach(item => {
-        html += `
-          <div class="history-item">
-            ${item.date ? `<span class="history-date">${escapeHtml(item.date)}</span>` : ''}
-            <span>${escapeHtml(item.content)}</span>
-          </div>
-        `;
+        const timeStr = item.timestamp ? escapeHtml(item.timestamp) : '';
+        const msgStr = item.message ? escapeHtml(item.message) : '';
+        
+        html += `<div class="history-line">${timeStr} ${msgStr}</div>`;
       });
 
       historyBox.innerHTML = html;
-      // スクロールを自動的に最新（一番下）に合わせる
+      // 自動でスクロール位置を最下部（最新内容）に合わせる
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
