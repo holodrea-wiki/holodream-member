@@ -523,7 +523,7 @@
       title.textContent = unitName + ' タレント紹介';
       filterBar.style.display = 'none';
 
-      // カラーコードと白を合成して明るい色を作成するヘルパー
+      // カラーコードと白を合成するヘルパー（白の割合を低く調整）
       const blendWithWhite = (hex, percent) => {
         let color = hex.replace('#', '');
         if (color.length === 3) color = color.split('').map(c => c + c).join('');
@@ -546,9 +546,9 @@
         const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/80?text=No+Img';
         const mainColor = (c.color && /^#?[0-9A-Fa-f]{3,6}$/.test(c.color)) ? c.color : '#2563eb';
         
-        // グラデーションの計算（上が非常に明るく、下がカラー感のある淡い色）
-        const topBgColor = blendWithWhite(mainColor, 0.92);
-        const bottomBgColor = blendWithWhite(mainColor, 0.72);
+        // ★ 白の比率を下げることで色味をしっかり残す（上:75%混色、下:45%混色）
+        const topBgColor = blendWithWhite(mainColor, 0.75);
+        const bottomBgColor = blendWithWhite(mainColor, 0.45);
         const gradientBg = `linear-gradient(to top, ${bottomBgColor} 0%, ${topBgColor} 100%)`;
 
         let linksHtml = '';
