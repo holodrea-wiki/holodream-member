@@ -729,17 +729,29 @@ function getUpdateHistory() {
     if (values.length < 2) return [];
 
     const historyList = [];
-    // 2行目以降を順に取得（上が古い、下が最新）
     for (let i = 1; i < values.length; i++) {
       const row = values[i];
       if (row[0] === "" || row[0] === null || row[0] === undefined) continue;
 
-      const dateVal = row[0] ? formatDateString(row[0]) : '';
-      const textVal = row[1] ? String(row[1]).trim() : String(row[0]).trim();
+      let dateStr = '';
+      if (row[0] instanceof Date) {
+        const d = row[0];
+        dateStr = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+      } else {
+        const str = String(row[0]).trim();
+        const matches = str.match(/\d+/g);
+        if (matches && matches.length >= 3) {
+          dateStr = `${Number(matches[0])}-${Number(matches[1])}-${Number(matches[2])}`;
+        } else {
+          dateStr = str;
+        }
+      }
+
+      const msgStr = row[1] ? String(row[1]).trim() : '';
 
       historyList.push({
-        date: dateVal,
-        content: textVal
+        timestamp: dateStr,
+        message: msgStr
       });
     }
 
