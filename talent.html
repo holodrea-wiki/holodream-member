@@ -11,16 +11,34 @@
     }
     body {
       margin: 0;
-      padding: 16px;
+      padding: 0;
       background-color: #eef2f7;
       color: #1f2937;
     }
 
-    /* ★ 外枠コンテナ（他の画面同様に最大幅 1185px に制限） */
+    /* 上部ナビヘッダー */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* 外枠コンテナ */
     .page-container {
       max-width: 1185px;
       margin: 0 auto;
       width: 100%;
+      padding: 16px;
     }
 
     .controls {
@@ -189,7 +207,7 @@
     .np-unit-tag-img { height: 24px; width: auto; object-fit: contain; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); }
 
     @media screen and (max-width: 600px) {
-      body { padding: 8px; }
+      .page-container { padding: 8px; }
       .controls { padding: 8px 12px; margin-bottom: 12px; }
       .card-grid { grid-template-columns: 1fr !important; gap: 8px; padding: 10px; }
       .name-plate { min-height: 70px; background-size: 115% 115%; padding: 8px 10px; flex-direction: row; align-items: center; gap: 10px; }
@@ -235,7 +253,7 @@
     .b-center-text { font-size: 15px; font-weight: bold; color: #1e293b; letter-spacing: 0.02em; }
     .b-right-icon { height: 38px; width: auto; object-fit: contain; flex-shrink: 0; transform: scale(1.25); }
 
-    .pop-text-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .pop-text-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
     .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 14px; padding: 24px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
     .pop-header { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; color: #111827; }
     .pop-icon { height: 32px; width: auto; object-fit: contain; }
@@ -256,7 +274,11 @@
 </head>
 <body>
 
-  <!-- ★ page-container でラップして最大幅を制限 -->
+  <!-- ★ 追加：最上部共通ヘッダー -->
+  <div class="header">
+    <h1>ホロドリ メンバー情報</h1>
+  </div>
+
   <div class="page-container">
     <div class="controls">
       <a href="index.html" class="back-btn">← TOP</a>
