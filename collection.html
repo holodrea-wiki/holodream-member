@@ -64,11 +64,13 @@
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
       border: 1px solid #e2e8f0;
+      gap: 12px;
     }
     .top-nav-left {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex: 1;
     }
     .back-btn {
       background: #334155;
@@ -80,12 +82,42 @@
       font-weight: bold;
       white-space: nowrap;
       transition: background 0.2s;
+      flex-shrink: 0;
     }
     .back-btn:hover { background: #475569; }
-    .page-title {
-      font-size: 16px;
-      font-weight: bold;
+
+    /* ★ 検索バー（✕ボタン付きコンテナ） */
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .search-box {
+      width: 100%;
+      padding: 8px 36px 8px 14px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
       color: #0f172a;
+      font-size: 14px;
+      outline: none;
+    }
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      background: #9ca3af;
+      color: #ffffff;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
     }
 
     .header-toggle-btn {
@@ -101,6 +133,7 @@
       align-items: center;
       gap: 4px;
       transition: all 0.2s ease;
+      flex-shrink: 0;
     }
     .header-toggle-btn:hover {
       background: #cbd5e1;
@@ -529,7 +562,7 @@
 </head>
 <body>
 
-  <!-- ★ 追加：最上部共通ヘッダー -->
+  <!-- 最上部共通ヘッダー -->
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
   </div>
@@ -540,7 +573,11 @@
       <div class="top-nav">
         <div class="top-nav-left">
           <a href="index.html" class="back-btn">← TOP</a>
-          <span class="page-title">所有率チェッカー</span>
+          <!-- ★ 検索バー（✕ボタン付き） -->
+          <div class="search-wrapper">
+            <input type="text" id="searchInput" class="search-box" placeholder="キャラクター名 または メンバー名 で検索..." oninput="handleSearchInput()">
+            <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
+          </div>
         </div>
         <button class="header-toggle-btn" onclick="toggleHeaderCollapse()">
           <span id="headerToggleText">表示切替</span>
@@ -633,6 +670,20 @@
         .catch(err => console.error('通信エラー:', err));
     };
 
+    function handleSearchInput() {
+      const input = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('clearBtn');
+      clearBtn.style.display = input.value.trim().length > 0 ? 'flex' : 'none';
+      renderCollectionList();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      input.value = '';
+      document.getElementById('clearBtn').style.display = 'none';
+      renderCollectionList();
+    }
+
     function initPage(res) {
       if (!res) return;
       globalCharacters = res.characters || [];
@@ -717,6 +768,7 @@
       if (block) block.classList.toggle('collapsed');
     }
 
+    /* ★ 検索フィルタ適用描画ロジック */
     function renderCollectionList() {
       const listContainer = document.getElementById('collectionList');
       listContainer.innerHTML = '';
@@ -733,10 +785,24 @@
       updateSummaryCount();
     }
 
+    function matchKeyword(charName, aliasStr, cardAlias) {
+      const keyword = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+      if (!keyword) return true;
+      const c = String(charName || '').toLowerCase();
+      const a = String(aliasStr || '').toLowerCase();
+      const ca = String(cardAlias || '').toLowerCase();
+      return c.includes(keyword) || a.includes(keyword) || ca.includes(keyword);
+    }
+
     function renderCharacterView(container) {
       const infoIconUrl = getInfoBtnIconUrl();
 
       globalCharacters.forEach(char => {
+        // カードの絞り込み
+        const filteredCards = (char.cards || []).filter(card => matchKeyword(char.character, char.alias, card.alias));
+
+        if (filteredCards.length === 0) return;
+
         const row = document.createElement('div');
         row.className = 'character-row';
 
@@ -759,7 +825,7 @@
         `;
 
         let cardsHtml = '<div class="cards-container">';
-        (char.cards || []).forEach(card => {
+        filteredCards.forEach(card => {
           if (ownedCardState[card.id] === undefined) ownedCardState[card.id] = false;
           const isOwned = !!ownedCardState[card.id];
 
@@ -776,6 +842,10 @@
         row.innerHTML = npHtml + cardsHtml;
         container.appendChild(row);
       });
+
+      if (container.children.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; background:#fff; border-radius:12px;">該当するキャラクターが見つかりませんでした。</div>';
+      }
     }
 
     function renderUnitView(container) {
@@ -784,6 +854,8 @@
 
       globalCharacters.forEach(charObj => {
         (charObj.cards || []).forEach(card => {
+          if (!matchKeyword(card.character, charObj.alias, card.alias)) return;
+
           let units = (card.units && card.units.length > 0) ? card.units : [];
           if (units.length === 0 && charObj.unit_tag_urls) {
             units = Object.keys(unitInfoMap).filter(uName => charObj.unit_tag_urls.includes(unitInfoMap[uName].tagUrl));
@@ -852,6 +924,10 @@
         sectionBlock.innerHTML = bannerHtml + cardsHtml;
         container.appendChild(sectionBlock);
       });
+
+      if (container.children.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; background:#fff; border-radius:12px;">該当するメンバーが見つかりませんでした。</div>';
+      }
     }
 
     function renderRarityView(container) {
@@ -860,6 +936,8 @@
 
       globalCharacters.forEach(char => {
         (char.cards || []).forEach(card => {
+          if (!matchKeyword(card.character, char.alias, card.alias)) return;
+
           const r = card.rarity || 0;
           if (!rarityGroupMap[r]) rarityGroupMap[r] = [];
           rarityGroupMap[r].push(card);
@@ -917,6 +995,10 @@
         sectionBlock.innerHTML = bannerHtml + cardsHtml;
         container.appendChild(sectionBlock);
       });
+
+      if (container.children.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; background:#fff; border-radius:12px;">該当するメンバーが見つかりませんでした。</div>';
+      }
     }
 
     function toggleCardOwnership(cardId) {
