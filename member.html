@@ -11,9 +11,26 @@
     }
     body {
       margin: 0;
-      padding: 12px;
+      padding: 0;
       background-color: #eef2f7;
       color: #1f2937;
+    }
+
+    /* 上部ナビヘッダー */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 900;
+      color: #f8fafc;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .sticky-top-container {
@@ -21,6 +38,7 @@
       top: 0;
       z-index: 1000;
       background: #eef2f7;
+      padding-top: 12px;
       padding-bottom: 8px;
       max-width: 1185px;
       min-width: 610px;
@@ -133,7 +151,7 @@
     .filter-apply-btn { background: #ea580c; color: #ffffff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
     .filter-reset-btn { background: #334155; color: #f1f5f9; border: 1px solid #475569; padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
 
-    /* ★ ソート専用モーダルスタイル */
+    /* ソート専用モーダルスタイル */
     .sort-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
     .sort-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
     .sort-option-group { display: flex; flex-direction: column; gap: 10px; }
@@ -161,7 +179,7 @@
     .filter-chip-btn { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 4px; font-size: 12px; font-weight: bold; color: #cbd5e1; text-align: center; cursor: pointer; }
     .filter-chip-btn.selected { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
 
-    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto; overflow-x: auto; }
+    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto 24px; overflow-x: auto; }
     .list-body { display: flex; flex-direction: column; background: #e2e8f0; padding: 8px; gap: 8px; width: max-content; min-width: 100%; }
 
     .list-row-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 8px 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); min-height: 110px; width: 1169px; min-width: 1169px; max-width: 1169px; }
@@ -199,7 +217,7 @@
     .connect-target-img { height: 28px; width: auto; object-fit: contain; flex-shrink: 0; }
 
     @media screen and (max-width: 600px) {
-      body { padding: 6px; }
+      body { padding: 0; }
       .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
       .list-body { min-width: 594px !important; max-width: 594px !important; }
       .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex !important; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
@@ -239,6 +257,11 @@
 </head>
 <body>
 
+  <!-- ★ 追加：最上部共通ヘッダー -->
+  <div class="header">
+    <h1>ホロドリ メンバー情報</h1>
+  </div>
+
   <div class="sticky-top-container">
     <div class="header-bar">
       <a href="index.html" class="back-btn">← TOP</a>
@@ -255,7 +278,6 @@
         <span>フィルタ</span>
         <img id="mainFilterIcon" src="" class="filter-icon-inline" alt="filter icon">
       </button>
-      <!-- ★ 追加：ソートボタン -->
       <button type="button" class="open-sort-btn" id="openSortBtn" onclick="openSortModal()">
         <span id="sortBtnLabel">並び替え: リリリース順</span>
       </button>
@@ -392,7 +414,7 @@
     </div>
   </div>
 
-  <!-- ★ 追加：ソート設定ダイアログ -->
+  <!-- ソート設定ダイアログ -->
   <div id="sortModalOverlay" class="filter-modal-overlay" onclick="closeSortModal()">
     <div class="sort-modal-card" onclick="event.stopPropagation()">
       <div class="filter-modal-topbar">
@@ -438,9 +460,8 @@
     let globalIconsMap = {};
     let globalMasterData = {};
 
-    // ★ ソート用グローバル状態
-    let currentSortType = 'release'; // 'release' | 'unit' | 'rarity'
-    let currentSortOrder = 'desc';   // 'desc' | 'asc'
+    let currentSortType = 'release';
+    let currentSortOrder = 'desc';
 
     window.onload = function() {
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getHolomenTableData';
@@ -482,13 +503,8 @@
       filterData();
     }
 
-    /* ★ ソートモーダル操作関数 */
-    function openSortModal() {
-      document.getElementById('sortModalOverlay').style.display = 'flex';
-    }
-    function closeSortModal() {
-      document.getElementById('sortModalOverlay').style.display = 'none';
-    }
+    function openSortModal() { document.getElementById('sortModalOverlay').style.display = 'flex'; }
+    function closeSortModal() { document.getElementById('sortModalOverlay').style.display = 'none'; }
     function selectSortOption(sortKey, btnElem) {
       document.querySelectorAll('.sort-opt-btn').forEach(b => b.classList.remove('selected'));
       btnElem.classList.add('selected');
@@ -501,11 +517,9 @@
     }
     function applySortAndClose() {
       closeSortModal();
-      
       const labels = { release: 'リリース順', unit: 'ユニット順', rarity: 'レアリティ順' };
       const orderLabel = currentSortOrder === 'asc' ? ' (昇順)' : ' (降順)';
       document.getElementById('sortBtnLabel').textContent = `並び替え: ${labels[currentSortType]}${orderLabel}`;
-      
       filterData();
     }
 
@@ -526,7 +540,7 @@
     }
 
     function getTabFilterIconUrl(isOn) {
-      return isOn ? (globalIconsMap['フィルタON（タブ）'] || globalIconsMap['フィルタON'] || '') : (globalIconsMap['フィルタOFF（タブ）'] || globalIconsMap['フィルタOFF'] || '');
+      return isOn ? (globalIconsMap['フィルタON（タブ）'] || globalIconsMap['フィルタON'] || '') : (globalIconsMap['フィルタOFF（タブ）'] || globalIconsMap['filter_off'] || '');
     }
 
     function updateFilterIcons() {
@@ -843,7 +857,6 @@
         return true;
       });
 
-      /* ★ 追加：多段階ソート処理 */
       filtered.sort((a, b) => {
         const getNum = (obj, keys) => {
           for (let k of keys) {
@@ -864,23 +877,19 @@
         let diff = 0;
 
         if (currentSortType === 'release') {
-          // リリース順: release_at(降) > rarity(降) > id(昇)
           if (releaseA !== releaseB) diff = releaseB - releaseA;
           else if (rarityA !== rarityB) diff = rarityB - rarityA;
           else diff = idA - idB;
         } else if (currentSortType === 'unit') {
-          // ユニット順: id(昇) > rarity(降) > release_at(降)
           if (idA !== idB) diff = idA - idB;
           else if (rarityA !== rarityB) diff = rarityB - rarityA;
           else diff = releaseB - releaseA;
         } else if (currentSortType === 'rarity') {
-          // レアリティ順: rarity(降) > id(昇) > release_at(降)
           if (rarityA !== rarityB) diff = rarityB - rarityA;
           else if (idA !== idB) diff = idA - idB;
           else diff = releaseB - releaseA;
         }
 
-        // 昇順（asc）が選択されている場合は判定結果を反転
         return currentSortOrder === 'asc' ? -diff : diff;
       });
 
