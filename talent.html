@@ -139,7 +139,7 @@
     .unit-right-area { display: flex; align-items: center; gap: 12px; }
     .unit-count { font-size: 12px; background: rgba(255, 255, 255, 0.2); padding: 3px 10px; border-radius: 12px; }
 
-    /* ★ 添付画像風デザインの「タレント紹介」ボタン */
+    /* 「タレント紹介」ボタン */
     .talent-intro-btn {
       background: linear-gradient(145deg, #b3d7ff, #8cbdfa);
       color: #1d4ed8;
@@ -159,15 +159,6 @@
     .talent-intro-btn:hover {
       background: linear-gradient(145deg, #9cc8ff, #7ab1f8);
       transform: translateY(-1px);
-      box-shadow: 
-        4px 4px 8px rgba(0, 0, 0, 0.25), 
-        -2px -2px 6px rgba(255, 255, 255, 0.8);
-    }
-    .talent-intro-btn:active {
-      transform: translateY(1px);
-      box-shadow: 
-        inset 2px 2px 4px rgba(0, 0, 0, 0.25),
-        inset -2px -2px 4px rgba(255, 255, 255, 0.5);
     }
 
     .accordion-arrow { font-size: 12px; transition: transform 0.3s ease; display: inline-block; }
@@ -215,7 +206,7 @@
     .char-info { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
     .char-name { font-size: 15px; font-weight: bold; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.9); letter-spacing: 0.02em; }
 
-    /* ★ タレント紹介ダイアログ専用スタイル */
+    /* ダイアログ全体スタイル */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
     .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; border: 1px solid #374151; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
@@ -226,49 +217,84 @@
     .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; cursor: pointer; }
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
 
+    /* ★ タレント紹介カード（明るい背景＋カラー枠線） */
     .intro-card {
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 12px;
-      padding: 16px;
+      background: #ffffff; /* 明るい色 */
+      color: #1f2937;
+      border-radius: 14px;
+      padding: 18px;
       margin-bottom: 16px;
       display: flex;
-      gap: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      gap: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 2px solid #e2e8f0; /* JSでcolor属性のカラーコードに上書き */
+      border-left-width: 6px;     /* アクセントとして左枠を太く */
+      position: relative;
     }
     .intro-icon {
-      width: 72px;
-      height: 72px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #3b82f6;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       flex-shrink: 0;
     }
     .intro-main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      min-width: 0;
     }
     .intro-name {
-      font-size: 18px;
-      font-weight: bold;
-      color: #60a5fa;
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: 0.02em;
     }
     .intro-message {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: bold;
-      color: #fef08a;
-      background: rgba(245, 158, 11, 0.15);
-      border-left: 3px solid #f59e0b;
-      padding: 4px 8px;
-      border-radius: 0 4px 4px 0;
+      color: #854d0e;
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 6px 12px;
+      border-radius: 0 6px 6px 0;
     }
+    
+    /* ★ プロフィール格子グリッド */
+    .intro-profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 16px;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 12.5px;
+    }
+    .profile-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .profile-label {
+      color: #64748b;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+    .profile-val {
+      color: #0f172a;
+      font-weight: 600;
+    }
+
     .intro-text {
       font-size: 13.5px;
-      color: #d1d5db;
-      line-height: 1.5;
+      color: #334155;
+      line-height: 1.6;
       white-space: pre-wrap;
+      word-break: break-all;
     }
     .intro-links {
       display: flex;
@@ -280,17 +306,18 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: bold;
       text-decoration: none;
       color: #ffffff;
-      transition: opacity 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.15s, opacity 0.2s;
     }
-    .intro-link-btn:hover { opacity: 0.8; }
+    .intro-link-btn:hover { transform: translateY(-1px); opacity: 0.9; }
     .link-yt { background: #ef4444; }
-    .link-x { background: #000000; border: 1px solid #4b5563; }
+    .link-x { background: #0f172a; }
     .link-official { background: #2563eb; }
 
     .game-card-container { background: #ffffff; color: #111827; border-radius: 16px; padding: 16px; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 12px; }
@@ -315,8 +342,9 @@
       .np-character-name { font-size: 18px; max-width: 100%; text-align: left; }
       .modal-filter-bar { padding: 8px 12px; gap: 8px; }
 
-      .intro-card { flex-direction: column; gap: 10px; }
-      .intro-icon { width: 56px; height: 56px; }
+      .intro-card { flex-direction: column; gap: 12px; padding: 14px; }
+      .intro-icon { width: 64px; height: 64px; }
+      .intro-profile-grid { grid-template-columns: 1fr; gap: 4px; }
     }
 
     .card-main-content { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -497,19 +525,33 @@
 
       let html = '';
       group.characters.forEach(c => {
-        const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/72?text=No+Img';
+        const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/80?text=No+Img';
+        const mainColor = c.color ? c.color : '#2563eb';
         
+        // SNS・公式リンクボタン
         let linksHtml = '';
         if (c.youtube) linksHtml += `<a href="${escapeHtml(c.youtube)}" target="_blank" class="intro-link-btn link-yt">YouTube</a>`;
         if (c.x_url) linksHtml += `<a href="${escapeHtml(c.x_url)}" target="_blank" class="intro-link-btn link-x">X (Twitter)</a>`;
         if (c.official) linksHtml += `<a href="${escapeHtml(c.official)}" target="_blank" class="intro-link-btn link-official">公式サイト</a>`;
 
+        // プロフィールグリッド項目
+        let profileHtml = '';
+        if (c.height || c.birthday || c.activity || c.fan_name) {
+          profileHtml += '<div class="intro-profile-grid">';
+          if (c.height) profileHtml += `<div class="profile-item"><span class="profile-label">身長:</span><span class="profile-val">${escapeHtml(c.height)}</span></div>`;
+          if (c.birthday) profileHtml += `<div class="profile-item"><span class="profile-label">誕生日:</span><span class="profile-val">${escapeHtml(c.birthday)}</span></div>`;
+          if (c.activity) profileHtml += `<div class="profile-item"><span class="profile-label">配信開始日:</span><span class="profile-val">${escapeHtml(formatDateString(c.activity))}</span></div>`;
+          if (c.fan_name) profileHtml += `<div class="profile-item"><span class="profile-label">ファンネーム:</span><span class="profile-val">${escapeHtml(c.fan_name)}</span></div>`;
+          profileHtml += '</div>';
+        }
+
         html += `
-          <div class="intro-card">
-            <img src="${escapeHtml(iconSrc)}" class="intro-icon" alt="${escapeHtml(c.character)}">
+          <div class="intro-card" style="border-color: ${escapeHtml(mainColor)}; border-left-color: ${escapeHtml(mainColor)};">
+            <img src="${escapeHtml(iconSrc)}" class="intro-icon" alt="${escapeHtml(c.character)}" style="border-color: ${escapeHtml(mainColor)};">
             <div class="intro-main">
               <div class="intro-name">${escapeHtml(c.character)}</div>
               ${c.message ? `<div class="intro-message">「${escapeHtml(c.message)}」</div>` : ''}
+              ${profileHtml}
               ${c.introduction_text ? `<div class="intro-text">${escapeHtml(c.introduction_text)}</div>` : ''}
               ${linksHtml ? `<div class="intro-links">${linksHtml}</div>` : ''}
             </div>
@@ -604,7 +646,7 @@
       const filterBar = document.getElementById('modalFilterBar');
       const body = document.getElementById('modalBody');
 
-      filterBar.style.display = 'flex'; // カード詳細時はフィルタバーを表示
+      filterBar.style.display = 'flex';
       document.getElementById('modalRarityFilter').innerHTML = '<option value="">すべて</option>';
       document.getElementById('modalTypeFilter').innerHTML = '<option value="">すべて</option>';
 
