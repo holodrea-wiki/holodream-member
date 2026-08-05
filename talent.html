@@ -521,20 +521,41 @@
       const body = document.getElementById('modalBody');
 
       title.textContent = unitName + ' タレント紹介';
-      filterBar.style.display = 'none'; // 紹介モード時はフィルタバーを非表示
+      filterBar.style.display = 'none';
+
+      // カラーコードと白を合成して明るい色を作成するヘルパー
+      const blendWithWhite = (hex, percent) => {
+        let color = hex.replace('#', '');
+        if (color.length === 3) color = color.split('').map(c => c + c).join('');
+        const num = parseInt(color, 16);
+        if (isNaN(num)) return '#ffffff';
+
+        const r = (num >> 16) & 0xFF;
+        const g = (num >> 8) & 0xFF;
+        const b = num & 0xFF;
+
+        const newR = Math.round(r + (255 - r) * percent);
+        const newG = Math.round(g + (255 - g) * percent);
+        const newB = Math.round(b + (255 - b) * percent);
+
+        return `#${((1 << 24) + (newR << 16) + (newG << 8) + newB).toString(16).slice(1)}`;
+      };
 
       let html = '';
       group.characters.forEach(c => {
         const iconSrc = (c.icon && c.icon.startsWith('http')) ? c.icon : 'https://via.placeholder.com/80?text=No+Img';
-        const mainColor = c.color ? c.color : '#2563eb';
+        const mainColor = (c.color && /^#?[0-9A-Fa-f]{3,6}$/.test(c.color)) ? c.color : '#2563eb';
         
-        // SNS・公式リンクボタン
+        // グラデーションの計算（上が非常に明るく、下がカラー感のある淡い色）
+        const topBgColor = blendWithWhite(mainColor, 0.92);
+        const bottomBgColor = blendWithWhite(mainColor, 0.72);
+        const gradientBg = `linear-gradient(to top, ${bottomBgColor} 0%, ${topBgColor} 100%)`;
+
         let linksHtml = '';
         if (c.youtube) linksHtml += `<a href="${escapeHtml(c.youtube)}" target="_blank" class="intro-link-btn link-yt">YouTube</a>`;
         if (c.x_url) linksHtml += `<a href="${escapeHtml(c.x_url)}" target="_blank" class="intro-link-btn link-x">X (Twitter)</a>`;
         if (c.official) linksHtml += `<a href="${escapeHtml(c.official)}" target="_blank" class="intro-link-btn link-official">公式サイト</a>`;
 
-        // プロフィールグリッド項目
         let profileHtml = '';
         if (c.height || c.birthday || c.activity || c.fan_name) {
           profileHtml += '<div class="intro-profile-grid">';
@@ -546,7 +567,7 @@
         }
 
         html += `
-          <div class="intro-card" style="border-color: ${escapeHtml(mainColor)}; border-left-color: ${escapeHtml(mainColor)};">
+          <div class="intro-card" style="background: ${gradientBg}; border-color: ${escapeHtml(mainColor)}; border-left-color: ${escapeHtml(mainColor)};">
             <img src="${escapeHtml(iconSrc)}" class="intro-icon" alt="${escapeHtml(c.character)}" style="border-color: ${escapeHtml(mainColor)};">
             <div class="intro-main">
               <div class="intro-name">${escapeHtml(c.character)}</div>
