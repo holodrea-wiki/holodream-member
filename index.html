@@ -68,7 +68,7 @@
       filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.25));
     }
 
-    /* ★ 更新履歴ウィンドウ（独立ウィンドウ表示） */
+    /* ★ 更新履歴ウィンドウ */
     .history-window {
       background: #1e293b;
       border: 1.5px solid #334155;
@@ -90,16 +90,26 @@
       padding-bottom: 8px;
     }
     .history-window-body {
-      max-height: 120px;
+      max-height: 160px; /* 複数行表示に合わせて少し拡張 */
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       padding-right: 4px;
     }
-    .history-line {
+    .history-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .history-date {
       font-size: 13.5px;
-      line-height: 1.5;
+      font-weight: bold;
+      color: #93c5fd;
+    }
+    .history-msg {
+      font-size: 13.5px;
+      line-height: 1.4;
       color: #cbd5e1;
       white-space: pre-wrap;
       word-break: break-all;
@@ -191,7 +201,6 @@
       background: #ffffff;
     }
 
-    /* モバイル（スマホ）画面最適化 */
     @media screen and (max-width: 650px) {
       .container {
         padding: 16px 12px;
@@ -204,7 +213,6 @@
         transform: scale(1.05);
       }
       
-      /* 画像とテキストの横並び配置を維持 */
       .nav-card {
         flex-direction: row !important;
         align-items: center;
@@ -230,9 +238,9 @@
         padding: 12px 14px;
       }
       .history-window-body {
-        max-height: 100px;
+        max-height: 130px;
       }
-      .history-line {
+      .history-date, .history-msg {
         font-size: 12px;
       }
     }
@@ -250,7 +258,7 @@
       <img id="top_main_banner_img" class="top-main-banner-img" src="" alt="TOP Banner">
     </div>
 
-    <!-- ★ 更新履歴ウィンドウ（タレント一覧の直上に配置） -->
+    <!-- 更新履歴ウィンドウ -->
     <div class="history-window">
       <div class="history-window-header">
         <span>更新履歴</span>
@@ -352,16 +360,21 @@
       }
 
       let html = '';
-      // 上が古い内容、一番下が最新内容（1行＝「timestamp message」）
+      // 1行目: timestamp、2行目: 全角スペース2つ＋message
       historyList.forEach(item => {
         const timeStr = item.timestamp ? escapeHtml(item.timestamp) : '';
         const msgStr = item.message ? escapeHtml(item.message) : '';
         
-        html += `<div class="history-line">${timeStr} ${msgStr}</div>`;
+        html += `
+          <div class="history-block">
+            <div class="history-date">${timeStr}</div>
+            <div class="history-msg">  ${msgStr}</div>
+          </div>
+        `;
       });
 
       historyBox.innerHTML = html;
-      // 自動でスクロール位置を最下部（最新内容）に合わせる
+      // スクロール位置を最新（最下部）に合わせる
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
