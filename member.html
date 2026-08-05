@@ -107,7 +107,7 @@
       padding: 4px 10px;
       border-radius: 12px;
     }
-    .open-filter-btn {
+    .open-filter-btn, .open-sort-btn {
       background: #ffffff;
       color: #0044ff;
       border: none;
@@ -122,15 +122,26 @@
       align-items: center;
       gap: 6px;
     }
-    .open-filter-btn:hover { background: #f1f5f9; }
+    .open-filter-btn:hover, .open-sort-btn:hover { background: #f1f5f9; }
     .filter-icon-inline { height: 16px; width: auto; object-fit: contain; vertical-align: middle; }
 
+    /* フィルタモーダル */
     .filter-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 3000; justify-content: center; align-items: center; padding: 16px; }
     .filter-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 600px; height: 80vh; max-height: 700px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
     .filter-modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #334155; background: #0f172a; font-weight: bold; font-size: 16px; color: #ffffff; flex-shrink: 0; }
     .filter-modal-actions { display: flex; gap: 8px; align-items: center; }
     .filter-apply-btn { background: #ea580c; color: #ffffff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
     .filter-reset-btn { background: #334155; color: #f1f5f9; border: 1px solid #475569; padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
+
+    /* ★ ソート専用モーダルスタイル */
+    .sort-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
+    .sort-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .sort-option-group { display: flex; flex-direction: column; gap: 10px; }
+    .sort-opt-btn { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; font-size: 14px; font-weight: bold; color: #cbd5e1; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; }
+    .sort-opt-btn.selected { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
+    .sort-order-toggle { display: flex; gap: 8px; background: #0f172a; padding: 4px; border-radius: 8px; border: 1px solid #334155; }
+    .sort-order-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: bold; color: #cbd5e1; background: transparent; border: none; border-radius: 6px; cursor: pointer; text-align: center; }
+    .sort-order-btn.selected { background: #ea580c; color: #ffffff; }
 
     .filter-tabs-header { display: flex; background: #0f172a; padding: 6px; gap: 4px; border-bottom: 1px solid #334155; flex-shrink: 0; }
     .filter-tab-btn { flex: 1; padding: 8px 10px; font-size: 12px; font-weight: bold; text-align: center; background: #1e293b; border: 1px solid #334155; border-radius: 6px; cursor: pointer; color: #cbd5e1; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
@@ -191,7 +202,7 @@
       body { padding: 6px; }
       .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
       .list-body { min-width: 594px !important; max-width: 594px !important; }
-      .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
+      .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex !important; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
       .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 10px; width: 560px !important; min-width: 560px !important; max-width: 560px !important; }
       .filter-tabs-header { flex-wrap: wrap; }
       .filter-tab-btn { flex: 1 1 45%; }
@@ -243,6 +254,10 @@
       <button type="button" class="open-filter-btn" id="openFilterBtn" onclick="openFilterModal()">
         <span>フィルタ</span>
         <img id="mainFilterIcon" src="" class="filter-icon-inline" alt="filter icon">
+      </button>
+      <!-- ★ 追加：ソートボタン -->
+      <button type="button" class="open-sort-btn" id="openSortBtn" onclick="openSortModal()">
+        <span id="sortBtnLabel">並び替え: リリリース順</span>
       </button>
     </div>
   </div>
@@ -377,6 +392,36 @@
     </div>
   </div>
 
+  <!-- ★ 追加：ソート設定ダイアログ -->
+  <div id="sortModalOverlay" class="filter-modal-overlay" onclick="closeSortModal()">
+    <div class="sort-modal-card" onclick="event.stopPropagation()">
+      <div class="filter-modal-topbar">
+        <span>並び替え</span>
+        <div class="filter-modal-actions">
+          <button type="button" class="filter-apply-btn" onclick="applySortAndClose()">決定</button>
+        </div>
+      </div>
+      <div class="sort-modal-body">
+        <div class="sort-option-group">
+          <button type="button" class="sort-opt-btn selected" data-sort="release" onclick="selectSortOption('release', this)">
+            <span>リリース順</span>
+          </button>
+          <button type="button" class="sort-opt-btn" data-sort="unit" onclick="selectSortOption('unit', this)">
+            <span>ユニット順</span>
+          </button>
+          <button type="button" class="sort-opt-btn" data-sort="rarity" onclick="selectSortOption('rarity', this)">
+            <span>レアリティ順</span>
+          </button>
+        </div>
+
+        <div class="sort-order-toggle">
+          <button type="button" class="sort-order-btn selected" data-order="desc" onclick="selectSortOrder('desc', this)">降順</button>
+          <button type="button" class="sort-order-btn" data-order="asc" onclick="selectSortOrder('asc', this)">昇順</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="popOverlay" class="pop-text-overlay" onclick="closePopText()">
     <div class="pop-text-card" onclick="event.stopPropagation()">
       <div class="pop-header">
@@ -392,6 +437,10 @@
     let globalTagUrlMap = {};
     let globalIconsMap = {};
     let globalMasterData = {};
+
+    // ★ ソート用グローバル状態
+    let currentSortType = 'release'; // 'release' | 'unit' | 'rarity'
+    let currentSortOrder = 'desc';   // 'desc' | 'asc'
 
     window.onload = function() {
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getHolomenTableData';
@@ -430,6 +479,33 @@
 
       buildFilterOptionsDynamically();
       updateFilterIcons();
+      filterData();
+    }
+
+    /* ★ ソートモーダル操作関数 */
+    function openSortModal() {
+      document.getElementById('sortModalOverlay').style.display = 'flex';
+    }
+    function closeSortModal() {
+      document.getElementById('sortModalOverlay').style.display = 'none';
+    }
+    function selectSortOption(sortKey, btnElem) {
+      document.querySelectorAll('.sort-opt-btn').forEach(b => b.classList.remove('selected'));
+      btnElem.classList.add('selected');
+      currentSortType = sortKey;
+    }
+    function selectSortOrder(orderKey, btnElem) {
+      document.querySelectorAll('.sort-order-btn').forEach(b => b.classList.remove('selected'));
+      btnElem.classList.add('selected');
+      currentSortOrder = orderKey;
+    }
+    function applySortAndClose() {
+      closeSortModal();
+      
+      const labels = { release: 'リリース順', unit: 'ユニット順', rarity: 'レアリティ順' };
+      const orderLabel = currentSortOrder === 'asc' ? ' (昇順)' : ' (降順)';
+      document.getElementById('sortBtnLabel').textContent = `並び替え: ${labels[currentSortType]}${orderLabel}`;
+      
       filterData();
     }
 
@@ -765,6 +841,47 @@
         }
 
         return true;
+      });
+
+      /* ★ 追加：多段階ソート処理 */
+      filtered.sort((a, b) => {
+        const getNum = (obj, keys) => {
+          for (let k of keys) {
+            if (obj[k] !== undefined && obj[k] !== null && obj[k] !== '') {
+              return Number(String(obj[k]).replace(/\D/g, '')) || 0;
+            }
+          }
+          return 0;
+        };
+
+        const releaseA = getNum(a, ['release_at', 'releaseat']);
+        const releaseB = getNum(b, ['release_at', 'releaseat']);
+        const rarityA = getNum(a, ['rarity', 'レアリティ']);
+        const rarityB = getNum(b, ['rarity', 'レアリティ']);
+        const idA = getNum(a, ['id', 'ID']);
+        const idB = getNum(b, ['id', 'ID']);
+
+        let diff = 0;
+
+        if (currentSortType === 'release') {
+          // リリース順: release_at(降) > rarity(降) > id(昇)
+          if (releaseA !== releaseB) diff = releaseB - releaseA;
+          else if (rarityA !== rarityB) diff = rarityB - rarityA;
+          else diff = idA - idB;
+        } else if (currentSortType === 'unit') {
+          // ユニット順: id(昇) > rarity(降) > release_at(降)
+          if (idA !== idB) diff = idA - idB;
+          else if (rarityA !== rarityB) diff = rarityB - rarityA;
+          else diff = releaseB - releaseA;
+        } else if (currentSortType === 'rarity') {
+          // レアリティ順: rarity(降) > id(昇) > release_at(降)
+          if (rarityA !== rarityB) diff = rarityB - rarityA;
+          else if (idA !== idB) diff = idA - idB;
+          else diff = releaseB - releaseA;
+        }
+
+        // 昇順（asc）が選択されている場合は判定結果を反転
+        return currentSortOrder === 'asc' ? -diff : diff;
       });
 
       document.getElementById('hitCountDisplay').textContent = filtered.length + '名';
