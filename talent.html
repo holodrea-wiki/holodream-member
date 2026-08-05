@@ -16,6 +16,13 @@
       color: #1f2937;
     }
 
+    /* ★ 外枠コンテナ（他の画面同様に最大幅 1185px に制限） */
+    .page-container {
+      max-width: 1185px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
     .controls {
       position: sticky;
       top: 0;
@@ -28,6 +35,8 @@
       display: flex;
       gap: 12px;
       align-items: center;
+      max-width: 1185px;
+      width: 100%;
     }
 
     /* 検索バー（✕ボタンコンテナ） */
@@ -247,16 +256,19 @@
 </head>
 <body>
 
-  <div class="controls">
-    <a href="index.html" class="back-btn">← TOP</a>
-    <div class="search-wrapper">
-      <input type="text" id="searchInput" class="search-input" placeholder="キャラクター名 または メンバー名 で検索..." oninput="handleSearchInput()">
-      <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
+  <!-- ★ page-container でラップして最大幅を制限 -->
+  <div class="page-container">
+    <div class="controls">
+      <a href="index.html" class="back-btn">← TOP</a>
+      <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="キャラクター名 または メンバー名 で検索..." oninput="handleSearchInput()">
+        <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
+      </div>
     </div>
-  </div>
 
-  <div id="loading">データを読み込み中...</div>
-  <div id="content"></div>
+    <div id="loading">データを読み込み中...</div>
+    <div id="content"></div>
+  </div>
 
   <!-- ポップアップ詳細ウィンドウ -->
   <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
