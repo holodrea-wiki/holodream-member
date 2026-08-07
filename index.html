@@ -116,7 +116,7 @@
       word-break: break-all;
     }
 
-    /* ★ ピックアップ1枚ずつ表示スライダーウィンドウ */
+    /* ★ ピックアップ無限スライダーウィンドウ */
     .pickup-window {
       background: #1e293b;
       border: 1.5px solid #334155;
@@ -138,7 +138,7 @@
       padding-bottom: 8px;
     }
 
-    /* 1枚表示用ビューポート */
+    /* ビューポート */
     .pickup-slider-viewport {
       position: relative;
       width: 100%;
@@ -200,7 +200,7 @@
     .slider-arrow-btn.prev { left: 10px; }
     .slider-arrow-btn.next { right: 10px; }
 
-    /* インジケーター（ドット） */
+    /* ドットインジケーター */
     .slider-dots {
       display: flex;
       justify-content: center;
@@ -298,7 +298,7 @@
       letter-spacing: 0.01em;
     }
 
-    /* ヘッダーと同色グラデーションのフッター */
+    /* フッター */
     footer {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       padding: 32px 20px 28px;
@@ -491,7 +491,7 @@
       </div>
     </div>
 
-    <!-- 2. ピックアップスライダーウィンドウ（中央1枚ずつ / 3秒自動 / 矢印付き） -->
+    <!-- 2. ピックアップスライダー（無限ループ対応） -->
     <div class="pickup-window" id="pickupWindow">
       <div class="pickup-window-header">
         <span>ピックアップ</span>
@@ -548,9 +548,10 @@
   </footer>
 
   <script>
-    let currentSlideIndex = 0;
-    let pickupImagesCount = 0;
+    let currentSlideIndex = 1; // 1（クローン先頭の次＝実質1枚目）からスタート
+    let realSlideCount = 0;
     let autoSlideTimer = null;
+    let isTransitioning = false;
 
     window.onload = function() {
       // 1. バナー画像取得
@@ -631,7 +632,7 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    /* ★ 中央1枚ずつスライド＆3秒自動切り替え描画処理 */
+    /* ★ シームレス無限ループスライダー実装 */
     function renderPickupSlider(images) {
       const pickupWindow = document.getElementById('pickupWindow');
       const track = document.getElementById('pickupSliderTrack');
@@ -642,68 +643,105 @@
         return;
       }
 
-      pickupImagesCount = images.length;
+      realSlideCount = images.length;
+
+      // 1枚のみの場合は矢印・ドット・タイマー不要
+      if (realSlideCount === 1) {
+        track.innerHTML = `
+          <div class="pickup-slide-item">
+            <img src="${escapeHtml(images[0])}" class="pickup-img-item" alt="ピックアップ">
+          </div>
+        `;
+        document.querySelectorAll('.slider-arrow-btn').forEach(btn => btn.style.display = 'none');
+        dotsBox.style.display = 'none';
+        pickupWindow.style.display = 'flex';
+        return;
+      }
+
+      // クローン作成: [末尾のクローン, 1枚目, 2枚目, ..., 最後の枚, 1枚目のクローン]
+      const slideList = [images[images.length - 1], ...images, images[0]];
 
       let html = '';
-      let dotsHtml = '';
-      images.forEach((url, idx) => {
+      slideList.forEach(url => {
         html += `
           <div class="pickup-slide-item">
             <img src="${escapeHtml(url)}" class="pickup-img-item" alt="ピックアップ">
           </div>
         `;
-        dotsHtml += `<div class="slider-dot ${idx === 0 ? 'active' : ''}" onclick="goToSlide(${idx})"></div>`;
+      });
+
+      let dotsHtml = '';
+      images.forEach((_, idx) => {
+        dotsHtml += `<div class="slider-dot ${idx === 0 ? 'active' : ''}" onclick="goToSlide(${idx + 1})"></div>`;
       });
 
       track.innerHTML = html;
       dotsBox.innerHTML = dotsHtml;
       pickupWindow.style.display = 'flex';
 
-      // 1枚のみの場合は矢印とドットを非表示
-      if (pickupImagesCount <= 1) {
-        document.querySelectorAll('.slider-arrow-btn').forEach(btn => btn.style.display = 'none');
-        dotsBox.style.display = 'none';
-        return;
-      }
+      // 初期位置（1枚目）のセット
+      track.style.transition = 'none';
+      track.style.transform = `translateX(-100%)`;
+
+      // トランジション終了時の判定（クローン位置なら一瞬で本物にワープ）
+      track.addEventListener('transitionend', () => {
+        isTransitioning = false;
+        if (currentSlideIndex >= realSlideCount + 1) {
+          track.style.transition = 'none';
+          currentSlideIndex = 1;
+          track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        } else if (currentSlideIndex <= 0) {
+          track.style.transition = 'none';
+          currentSlideIndex = realSlideCount;
+          track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        }
+      });
 
       startAutoSlide();
 
-      // マウスホバーで一時停止
       const viewport = document.getElementById('sliderViewport');
       viewport.addEventListener('mouseenter', stopAutoSlide);
       viewport.addEventListener('mouseleave', startAutoSlide);
     }
 
-    function updateSlidePosition() {
+    function updateSlidePosition(withTransition = true) {
       const track = document.getElementById('pickupSliderTrack');
+      if (withTransition) {
+        track.style.transition = 'transform 0.4s ease-in-out';
+      } else {
+        track.style.transition = 'none';
+      }
       track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
 
+      // ドット表示の更新（クローン位置も正規のインデックスにマッピング）
+      let activeDotIndex = (currentSlideIndex - 1 + realSlideCount) % realSlideCount;
       const dots = document.querySelectorAll('.slider-dot');
       dots.forEach((dot, idx) => {
-        if (idx === currentSlideIndex) dot.classList.add('active');
+        if (idx === activeDotIndex) dot.classList.add('active');
         else dot.classList.remove('active');
       });
     }
 
     function moveSlide(direction) {
-      if (pickupImagesCount <= 1) return;
-      currentSlideIndex = (currentSlideIndex + direction + pickupImagesCount) % pickupImagesCount;
-      updateSlidePosition();
+      if (isTransitioning || realSlideCount <= 1) return;
+      isTransitioning = true;
+      currentSlideIndex += direction;
+      updateSlidePosition(true);
       restartAutoSlide();
     }
 
-    function goToSlide(index) {
-      if (pickupImagesCount <= 1) return;
-      currentSlideIndex = index;
-      updateSlidePosition();
+    function goToSlide(targetIndex) {
+      if (isTransitioning || realSlideCount <= 1) return;
+      isTransitioning = true;
+      currentSlideIndex = targetIndex;
+      updateSlidePosition(true);
       restartAutoSlide();
     }
 
     function startAutoSlide() {
-      if (autoSlideTimer || pickupImagesCount <= 1) return;
+      if (autoSlideTimer || realSlideCount <= 1) return;
       autoSlideTimer = setInterval(() => {
-        currentSlideIndex = (currentSlideIndex + 1) % pickupImagesCount;
-        updateSlidePosition();
+        moveSlide(1);
       }, 3000);
     }
 
