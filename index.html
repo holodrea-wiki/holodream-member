@@ -68,7 +68,7 @@
       filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.25));
     }
 
-    /* ★ 更新履歴ウィンドウ */
+    /* 更新履歴ウィンドウ */
     .history-window {
       background: #1e293b;
       border: 1.5px solid #334155;
@@ -90,7 +90,7 @@
       padding-bottom: 8px;
     }
     .history-window-body {
-      max-height: 160px; /* 複数行表示に合わせて少し拡張 */
+      max-height: 160px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -192,13 +192,45 @@
       letter-spacing: 0.01em;
     }
 
+    /* ★ 外部リンクフッター */
     footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 12px;
-      color: #94a3b8;
+      padding: 30px 20px 24px;
+      font-size: 13px;
+      color: #64748b;
       border-top: 1px solid #e2e8f0;
       background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer-links-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px 20px;
+      max-width: 860px;
+    }
+    .footer-link {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s ease;
+    }
+    .footer-link:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    .footer-link::after {
+      content: '↗';
+      font-size: 11px;
+    }
+    .copyright {
+      font-size: 12px;
+      color: #94a3b8;
     }
 
     @media screen and (max-width: 650px) {
@@ -242,6 +274,13 @@
       }
       .history-date, .history-msg {
         font-size: 12px;
+      }
+
+      footer {
+        padding: 20px 16px;
+      }
+      .footer-links-container {
+        gap: 10px 16px;
       }
     }
   </style>
@@ -307,24 +346,32 @@
   </div>
 
   <footer>
-    &copy; 攻略データまとめサイト
+    <div class="footer-links-container" id="footerLinksBox"></div>
+    <div class="copyright">&copy; 攻略データまとめサイト</div>
   </footer>
 
   <script>
     window.onload = function() {
-      // バナー画像取得
+      // 1. バナー画像取得
       const BANNER_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getTopBannerMap';
       fetch(BANNER_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
         .then(data => setBanners(data))
         .catch(err => console.error('バナー通信エラー:', err));
 
-      // 更新履歴取得
+      // 2. 更新履歴取得
       const HISTORY_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getUpdateHistory';
       fetch(HISTORY_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
         .then(data => renderHistory(data))
         .catch(err => console.error('履歴通信エラー:', err));
+
+      // 3. 外部リンク取得
+      const LINKS_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getExternalLinks';
+      fetch(LINKS_URL, { method: 'GET', redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => renderExternalLinks(data))
+        .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
     function setBanners(bannerMap) {
@@ -360,7 +407,6 @@
       }
 
       let html = '';
-      // 1行目: timestamp、2行目: 全角スペース2つ＋message
       historyList.forEach(item => {
         const timeStr = item.timestamp ? escapeHtml(item.timestamp) : '';
         const msgStr = item.message ? escapeHtml(item.message) : '';
@@ -374,8 +420,24 @@
       });
 
       historyBox.innerHTML = html;
-      // スクロール位置を最新（最下部）に合わせる
       historyBox.scrollTop = historyBox.scrollHeight;
+    }
+
+    function renderExternalLinks(linksList) {
+      const linksBox = document.getElementById('footerLinksBox');
+      if (!linksList || !Array.isArray(linksList) || linksList.length === 0) {
+        linksBox.style.display = 'none';
+        return;
+      }
+
+      let html = '';
+      linksList.forEach(item => {
+        if (item.url) {
+          html += `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="footer-link">${escapeHtml(item.title)}</a>`;
+        }
+      });
+
+      linksBox.innerHTML = html;
     }
 
     function escapeHtml(str) {
