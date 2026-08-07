@@ -20,8 +20,8 @@
       position: relative;
     }
 
-    /* ★ 手前から奥へ半円（アーチ）を描いて横スライドする3D背景 */
-    .bg-3d-arch-container {
+    /* ★ 手前から奥へ乱雑に落ちていく（遠ざかる）3D背景 */
+    .bg-falling-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -29,45 +29,50 @@
       height: 100vh;
       z-index: -1;
       overflow: hidden;
-      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+      background: radial-gradient(circle at center, #1e293b 0%, #0b0f19 100%);
       perspective: 1000px;
     }
 
-    .bg-3d-arch-stage {
+    .bg-falling-card {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transform: translate(-50%, -50%) rotateX(6deg);
-    }
-
-    .bg-arch-card {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 320px;
-      height: 180px;
-      margin-top: -90px;
-      margin-left: -160px;
-      border-radius: 14px;
+      width: 260px;
+      height: 146px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
       background: #1e293b;
       will-change: transform, opacity;
-      filter: brightness(0.55) contrast(1.05);
-      transition: filter 0.3s ease;
+      filter: brightness(0.5) contrast(1.05);
+      pointer-events: none;
+      animation: fallToDepth 7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
-    .bg-arch-card img {
+    .bg-falling-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
       -webkit-user-drag: none;
       user-select: none;
+    }
+
+    /* 手前から出現し、奥へ小さくなりながら下に落ちて消えるキーフレーム */
+    @keyframes fallToDepth {
+      0% {
+        opacity: 0;
+        transform: translate3d(var(--start-x), var(--start-y), 200px) rotateX(var(--rot-x)) rotateY(var(--rot-y)) rotateZ(var(--rot-z)) scale(1.2);
+      }
+      15% {
+        opacity: 0.85;
+      }
+      80% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--end-x), var(--end-y), -600px) rotateX(calc(var(--rot-x) + 20deg)) rotateY(calc(var(--rot-y) - 20deg)) rotateZ(calc(var(--rot-z) + 15deg)) scale(0.4);
+      }
     }
 
     /* 上部ナビヘッダー */
@@ -605,11 +610,9 @@
       .slider-arrow-btn.prev { left: 0; }
       .slider-arrow-btn.next { right: 0; }
 
-      .bg-arch-card {
-        width: 220px;
-        height: 124px;
-        margin-top: -62px;
-        margin-left: -110px;
+      .bg-falling-card {
+        width: 180px;
+        height: 101px;
       }
 
       footer {
@@ -628,10 +631,8 @@
 </head>
 <body>
 
-  <!-- ★ 手前から奥へ半円を描いてスライドする3D背景用コンテナ -->
-  <div class="bg-3d-arch-container">
-    <div class="bg-3d-arch-stage" id="bg3dArchStage"></div>
-  </div>
+  <!-- ★ 手前から奥へ乱雑に落ちていく3D背景用コンテナ -->
+  <div class="bg-falling-container" id="bgFallingContainer"></div>
 
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
@@ -774,11 +775,11 @@
         .then(data => renderPickupSlider(data))
         .catch(err => console.error('ピックアップ通信エラー:', err));
 
-      // 4. 手前から奥へ半円を描く3Dスライドショー背景（全メンバー画像）取得
+      // 4. 手前から奥へ乱雑に落ちていく3D背景用（★5メンバー画像）取得
       const ALL_IMAGES_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getAllImages';
       fetch(ALL_IMAGES_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
-        .then(data => init3dArchBackground(data))
+        .then(data => initFallingBackground(data))
         .catch(err => console.error('全画像通信エラー:', err));
 
       // 5. 外部リンク取得
@@ -789,58 +790,57 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 手前から奥へ半円（アーチ）を描いて横スライドする3D背景アニメーション処理 */
-    function init3dArchBackground(imagesList) {
-      const stage = document.getElementById('bg3dArchStage');
+    /* ★ 手前から奥へ乱雑に落ちていく3D背景生成処理 */
+    function initFallingBackground(imagesList) {
+      const container = document.getElementById('bgFallingContainer');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
 
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      // ランダムシャッフル
-      imageUrls.sort(() => Math.random() - 0.5);
+      const getRandomImg = () => imageUrls[Math.floor(Math.random() * imageUrls.length)];
 
-      const totalCards = Math.min(10, imageUrls.length); // 画面上に配置するカード枚数
-      const cards = [];
-      const radiusX = 650; // 横方向の半径
-      const radiusZ = 450; // 奥方向の奥行き
-
-      for (let i = 0; i < totalCards; i++) {
+      const createFallingCard = () => {
         const card = document.createElement('div');
-        card.className = 'bg-arch-card';
+        card.className = 'bg-falling-card';
+
         const img = document.createElement('img');
-        img.src = imageUrls[i % imageUrls.length];
+        img.src = getRandomImg();
         card.appendChild(img);
-        stage.appendChild(card);
-        cards.push(card);
+
+        // ランダムな位置・回転角度の算出
+        const startX = (Math.random() * 90 - 10) + 'vw';
+        const startY = (Math.random() * 60 - 20) + 'vh';
+        const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
+        const endY = (parseFloat(startY) + (Math.random() * 40 + 30)) + 'vh';
+
+        const rotX = (Math.random() * 40 - 20) + 'deg';
+        const rotY = (Math.random() * 40 - 20) + 'deg';
+        const rotZ = (Math.random() * 50 - 25) + 'deg';
+
+        card.style.setProperty('--start-x', startX);
+        card.style.setProperty('--start-y', startY);
+        card.style.setProperty('--end-x', endX);
+        card.style.setProperty('--end-y', endY);
+        card.style.setProperty('--rot-x', rotX);
+        card.style.setProperty('--rot-y', rotY);
+        card.style.setProperty('--rot-z', rotZ);
+
+        container.appendChild(card);
+
+        // アニメーション完了後に要素を消去
+        setTimeout(() => {
+          card.remove();
+        }, 7000);
+      };
+
+      // 初期配置として複数枚生成
+      for (let i = 0; i < 6; i++) {
+        setTimeout(createFallingCard, i * 800);
       }
 
-      let currentAngle = 0;
-
-      // 毎フレーム円軌道（半円アーチ）に沿って位置と3D変形を計算
-      function animate3dArch() {
-        currentAngle += 0.0025; // スライド移動速度
-
-        cards.forEach((card, idx) => {
-          const angle = currentAngle + (idx * (Math.PI * 2 / totalCards));
-          
-          const x = Math.sin(angle) * radiusX;
-          const z = Math.cos(angle) * radiusZ - 100;
-          const rotateY = -Math.sin(angle) * 35; // 軌道に合わせて回転
-
-          // 手前ほど明るく・大きく、奥（半円の奥側）へ行くほど暗く透過する
-          const depthPercent = (z + radiusZ) / (radiusZ * 2);
-          const opacity = Math.max(0.1, Math.min(1, depthPercent * 1.2));
-          const scale = 0.6 + (depthPercent * 0.5);
-
-          card.style.transform = `translate3d(${x}px, 0px, ${z}px) rotateY(${rotateY}deg) scale(${scale})`;
-          card.style.opacity = opacity;
-        });
-
-        requestAnimationFrame(animate3dArch);
-      }
-
-      requestAnimationFrame(animate3dArch);
+      // 1.2秒周期でカードを生成して流し続ける
+      setInterval(createFallingCard, 1200);
     }
 
     function setBanners(bannerMap) {
@@ -1471,5 +1471,6 @@
         .replace(/'/g, "&#039;");
     }
   </script>
+
 </body>
 </html>
