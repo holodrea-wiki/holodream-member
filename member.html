@@ -36,7 +36,6 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* ★ 修正：ヘッダー枠の幅をリスト枠（1185px）と完全同一に復元 */
     .sticky-top-container {
       position: sticky;
       top: 0;
@@ -348,19 +347,29 @@
       letter-spacing: 0.03em;
     }
 
-    /* ★ 修正：元のレスポンシブ動作（カード2段表示）へ復元 */
+    /* ★ 修正：モバイル画面用CSS（つぶれ防止＆2段表示最適化） */
     @media screen and (max-width: 600px) {
       body { padding: 0; }
-      .sticky-top-container, .list-wrapper { max-width: 100% !important; min-width: 100% !important; margin: 0 !important; border-radius: 0 !important; }
+      .sticky-top-container, .list-wrapper { max-width: 100% !important; min-width: 100% !important; margin: 0 !important; border-radius: 0 !important; padding-left: 0; padding-right: 0; }
       .list-body { min-width: 100% !important; max-width: 100% !important; padding: 6px !important; }
       .list-row-card { width: 100% !important; min-width: 100% !important; max-width: 100% !important; display: flex !important; flex-direction: column !important; padding: 10px !important; gap: 10px !important; min-height: auto !important; }
-      .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 8px !important; width: 100% !important; min-width: 100% !important; max-width: 100% !important; }
-      .cell-member { width: auto !important; flex: 1 !important; }
-      .unified-card { width: 32% !important; min-width: 0 !important; max-width: 100% !important; padding: 4px 6px !important; gap: 6px !important; }
-      .status-badge-text { font-size: 10px !important; }
-      .status-badge-val { font-size: 13px !important; }
-      .connect-text { font-size: 10px !important; }
       
+      .block-left-group { display: flex !important; justify-content: space-between !important; gap: 8px !important; width: 100% !important; min-width: 100% !important; max-width: 100% !important; }
+      .cell-member { width: auto !important; flex: 1 !important; }
+      
+      /* 2段目（カード群）のつぶれ防止最適化 */
+      .block-right-group { display: flex !important; justify-content: space-between !important; gap: 6px !important; width: 100% !important; min-width: 100% !important; max-width: 100% !important; }
+      .cell-status, .cell-skills, .cell-connect { width: 32.5% !important; flex-shrink: 0 !important; }
+      .unified-card { width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: 50px !important; padding: 4px 4px !important; gap: 4px !important; flex-shrink: 0 !important; }
+      .status-badge-text { font-size: 9.5px !important; }
+      .status-badge-val { font-size: 13px !important; }
+      .highest-stat-icon { width: 22px !important; height: 22px !important; }
+      .skill-mini-icon { height: 26px !important; }
+      .skill-mini-divider { height: 18px !important; }
+      .connect-left-img { width: 28px !important; height: 28px !important; }
+      .connect-text { font-size: 9.5px !important; }
+      .connect-target-img { height: 22px !important; }
+
       .filter-tabs-header { flex-wrap: wrap; }
       .filter-tab-btn { flex: 1 1 45%; }
       .filter-btn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
