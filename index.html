@@ -20,8 +20,8 @@
       position: relative;
     }
 
-    /* ★ 奥へ遠ざかりながらフェードアウトする3Dモザイク背景 */
-    .bg-mosaic-container {
+    /* ★ 手前から奥へ半円（アーチ）を描いて横スライドする3D背景 */
+    .bg-3d-arch-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -30,55 +30,44 @@
       z-index: -1;
       overflow: hidden;
       background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
-      perspective: 1200px;
+      perspective: 1000px;
     }
 
-    .bg-mosaic-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 16px;
-      width: 110vw;
-      height: 110vh;
+    .bg-3d-arch-stage {
       position: absolute;
-      top: -5vh;
-      left: -5vw;
-      filter: brightness(0.45) contrast(1.05);
-      transform: rotateX(2deg);
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%) rotateX(6deg);
     }
 
-    .bg-mosaic-card {
-      position: relative;
-      border-radius: 12px;
+    .bg-arch-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 320px;
+      height: 180px;
+      margin-top: -90px;
+      margin-left: -160px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
       background: #1e293b;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      will-change: transform, opacity;
+      filter: brightness(0.55) contrast(1.05);
+      transition: filter 0.3s ease;
     }
 
-    .bg-mosaic-card img {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .bg-arch-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 1;
-      transform: scale(1) translateZ(0);
-      transition: opacity 1.8s cubic-bezier(0.25, 1, 0.5, 1), transform 2.2s cubic-bezier(0.25, 1, 0.5, 1);
-    }
-
-    /* 手前に表示（初期状態） */
-    .bg-mosaic-card img.active {
-      opacity: 1;
-      transform: scale(1) translateZ(0);
-    }
-
-    /* 奥へ遠ざかりながらフェードアウト */
-    .bg-mosaic-card img.fade-out {
-      opacity: 0;
-      transform: scale(0.65) translateZ(-300px);
-      pointer-events: none;
+      display: block;
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     /* 上部ナビヘッダー */
@@ -616,9 +605,11 @@
       .slider-arrow-btn.prev { left: 0; }
       .slider-arrow-btn.next { right: 0; }
 
-      .bg-mosaic-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(4, 1fr);
+      .bg-arch-card {
+        width: 220px;
+        height: 124px;
+        margin-top: -62px;
+        margin-left: -110px;
       }
 
       footer {
@@ -637,9 +628,9 @@
 </head>
 <body>
 
-  <!-- 動画風3Dモザイク背景スライドショー用コンテナ -->
-  <div class="bg-mosaic-container">
-    <div class="bg-mosaic-grid" id="bgMosaicGrid"></div>
+  <!-- ★ 手前から奥へ半円を描いてスライドする3D背景用コンテナ -->
+  <div class="bg-3d-arch-container">
+    <div class="bg-3d-arch-stage" id="bg3dArchStage"></div>
   </div>
 
   <div class="header">
@@ -783,11 +774,11 @@
         .then(data => renderPickupSlider(data))
         .catch(err => console.error('ピックアップ通信エラー:', err));
 
-      // 4. 背景奥へと遠ざかりフェードアウトする3Dモザイク用（全メンバー画像）取得
+      // 4. 手前から奥へ半円を描く3Dスライドショー背景（全メンバー画像）取得
       const ALL_IMAGES_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getAllImages';
       fetch(ALL_IMAGES_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
-        .then(data => initMosaicBackground(data))
+        .then(data => init3dArchBackground(data))
         .catch(err => console.error('全画像通信エラー:', err));
 
       // 5. 外部リンク取得
@@ -798,66 +789,58 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 奥へ遠ざかりながらフェードアウトする背景処理 */
-    function initMosaicBackground(imagesList) {
-      const gridContainer = document.getElementById('bgMosaicGrid');
+    /* ★ 手前から奥へ半円（アーチ）を描いて横スライドする3D背景アニメーション処理 */
+    function init3dArchBackground(imagesList) {
+      const stage = document.getElementById('bg3dArchStage');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
 
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      const cardCount = 8; // 8マス（4x2）構成
-      let gridCards = [];
+      // ランダムシャッフル
+      imageUrls.sort(() => Math.random() - 0.5);
 
-      for (let i = 0; i < cardCount; i++) {
+      const totalCards = Math.min(10, imageUrls.length); // 画面上に配置するカード枚数
+      const cards = [];
+      const radiusX = 650; // 横方向の半径
+      const radiusZ = 450; // 奥方向の奥行き
+
+      for (let i = 0; i < totalCards; i++) {
         const card = document.createElement('div');
-        card.className = 'bg-mosaic-card';
-        gridContainer.appendChild(card);
-        gridCards.push(card);
+        card.className = 'bg-arch-card';
+        const img = document.createElement('img');
+        img.src = imageUrls[i % imageUrls.length];
+        card.appendChild(img);
+        stage.appendChild(card);
+        cards.push(card);
       }
 
-      const getRandomImg = () => imageUrls[Math.floor(Math.random() * imageUrls.length)];
+      let currentAngle = 0;
 
-      // 初期画像のセット
-      gridCards.forEach(card => {
-        const img = document.createElement('img');
-        img.src = getRandomImg();
-        img.className = 'active';
-        card.appendChild(img);
-      });
+      // 毎フレーム円軌道（半円アーチ）に沿って位置と3D変形を計算
+      function animate3dArch() {
+        currentAngle += 0.0025; // スライド移動速度
 
-      // 1.8秒ごとにランダムなマスの画像を「手前から奥へ小さくなりながら消える（fade-out）」演出で切り替え
-      setInterval(() => {
-        const randomCardIndex = Math.floor(Math.random() * cardCount);
-        const targetCard = gridCards[randomCardIndex];
-        const oldImg = targetCard.querySelector('img.active');
+        cards.forEach((card, idx) => {
+          const angle = currentAngle + (idx * (Math.PI * 2 / totalCards));
+          
+          const x = Math.sin(angle) * radiusX;
+          const z = Math.cos(angle) * radiusZ - 100;
+          const rotateY = -Math.sin(angle) * 35; // 軌道に合わせて回転
 
-        // 新しい画像（背面側）を作成
-        const newImg = document.createElement('img');
-        newImg.src = getRandomImg();
-        newImg.style.opacity = '1';
-        newImg.style.transform = 'scale(1) translateZ(0)';
-        newImg.style.zIndex = '1';
-        
-        if (oldImg) {
-          oldImg.style.zIndex = '2'; // 古い画像を前面にして奥へと縮小・フェードアウトさせる
-        }
+          // 手前ほど明るく・大きく、奥（半円の奥側）へ行くほど暗く透過する
+          const depthPercent = (z + radiusZ) / (radiusZ * 2);
+          const opacity = Math.max(0.1, Math.min(1, depthPercent * 1.2));
+          const scale = 0.6 + (depthPercent * 0.5);
 
-        targetCard.appendChild(newImg);
+          card.style.transform = `translate3d(${x}px, 0px, ${z}px) rotateY(${rotateY}deg) scale(${scale})`;
+          card.style.opacity = opacity;
+        });
 
-        setTimeout(() => {
-          if (oldImg) {
-            oldImg.classList.remove('active');
-            oldImg.classList.add('fade-out');
-          }
-          newImg.classList.add('active');
-        }, 50);
+        requestAnimationFrame(animate3dArch);
+      }
 
-        // トランジション完了後に古い画像を削除
-        setTimeout(() => {
-          if (oldImg) oldImg.remove();
-        }, 2200);
-      }, 1800);
+      requestAnimationFrame(animate3dArch);
     }
 
     function setBanners(bannerMap) {
@@ -1488,6 +1471,5 @@
         .replace(/'/g, "&#039;");
     }
   </script>
-
 </body>
 </html>
