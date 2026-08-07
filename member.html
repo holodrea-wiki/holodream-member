@@ -14,6 +14,9 @@
       padding: 0;
       background-color: #eef2f7;
       color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* 上部ナビヘッダー */
@@ -68,7 +71,6 @@
     }
     .back-btn:hover { background: #475569; }
 
-    /* 検索バー（✕ボタンコンテナ） */
     .search-wrapper {
       position: relative;
       flex: 1;
@@ -143,7 +145,6 @@
     .open-filter-btn:hover, .open-sort-btn:hover { background: #f1f5f9; }
     .filter-icon-inline { height: 16px; width: auto; object-fit: contain; vertical-align: middle; }
 
-    /* フィルタモーダル */
     .filter-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 3000; justify-content: center; align-items: center; padding: 16px; }
     .filter-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 600px; height: 80vh; max-height: 700px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
     .filter-modal-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #334155; background: #0f172a; font-weight: bold; font-size: 16px; color: #ffffff; flex-shrink: 0; }
@@ -151,7 +152,6 @@
     .filter-apply-btn { background: #ea580c; color: #ffffff; border: none; padding: 6px 16px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
     .filter-reset-btn { background: #334155; color: #f1f5f9; border: 1px solid #475569; padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
 
-    /* ソート専用モーダルスタイル */
     .sort-modal-card { background: #1e293b; color: #ffffff; width: 100%; max-width: 420px; border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid #334155; }
     .sort-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
     .sort-option-group { display: flex; flex-direction: column; gap: 10px; }
@@ -179,7 +179,7 @@
     .filter-chip-btn { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 4px; font-size: 12px; font-weight: bold; color: #cbd5e1; text-align: center; cursor: pointer; }
     .filter-chip-btn.selected { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
 
-    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto 24px; overflow-x: auto; }
+    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto 24px; overflow-x: auto; flex: 1; }
     .list-body { display: flex; flex-direction: column; background: #e2e8f0; padding: 8px; gap: 8px; width: max-content; min-width: 100%; }
 
     .list-row-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 8px 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); min-height: 110px; width: 1169px; min-width: 1169px; max-width: 1169px; }
@@ -216,17 +216,6 @@
     .connect-text { font-size: 11px; font-weight: bold; color: #1e293b; white-space: nowrap; }
     .connect-target-img { height: 28px; width: auto; object-fit: contain; flex-shrink: 0; }
 
-    @media screen and (max-width: 600px) {
-      body { padding: 0; }
-      .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
-      .list-body { min-width: 594px !important; max-width: 594px !important; }
-      .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex !important; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
-      .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 10px; width: 560px !important; min-width: 560px !important; max-width: 560px !important; }
-      .filter-tabs-header { flex-wrap: wrap; }
-      .filter-tab-btn { flex: 1 1 45%; }
-      .filter-btn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-    }
-
     .pop-text-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 4000; justify-content: center; align-items: center; padding: 20px; }
     .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 16px; padding: 20px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
     .pop-header { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; }
@@ -253,11 +242,129 @@
     .connect-pop-text { font-size: 14px; color: #4b5563; line-height: 1.5; }
 
     #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
+
+    /* ★ 共通フッターCSS */
+    footer {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 32px 20px 28px;
+      color: #94a3b8;
+      border-top: 1px solid #334155;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+      margin-top: auto;
+    }
+    .footer-links-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 860px;
+    }
+    .footer-line-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 12px 16px;
+      width: 100%;
+    }
+    .footer-btn-base {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .footer-btn-store {
+      width: 160px;
+      height: 48px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .footer-btn-store:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    }
+    .footer-btn-x {
+      background: #000000;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .footer-btn-x:hover {
+      background-color: #18181b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .footer-x-svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+    .footer-btn-site {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #38bdf8;
+      border: 1px solid #475569;
+      padding: 9px 20px;
+      border-radius: 20px;
+      font-size: 13.5px;
+      font-weight: bold;
+      gap: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+    .footer-btn-site:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border-color: #60a5fa;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(37, 99, 235, 0.35);
+    }
+    .footer-site-svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .copyright {
+      font-size: 12px;
+      color: #64748b;
+      letter-spacing: 0.03em;
+    }
+
+    @media screen and (max-width: 600px) {
+      body { padding: 0; }
+      .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
+      .list-body { min-width: 594px !important; max-width: 594px !important; }
+      .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex !important; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
+      .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 10px; width: 560px !important; min-width: 560px !important; max-width: 560px !important; }
+      .filter-tabs-header { flex-wrap: wrap; }
+      .filter-tab-btn { flex: 1 1 45%; }
+      .filter-btn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+      footer { padding: 24px 16px 20px; }
+      .footer-btn-store { width: 140px; height: 42px; }
+      .footer-btn-x, .footer-btn-site { padding: 8px 16px; font-size: 12.5px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ★ 追加：最上部共通ヘッダー -->
+  <!-- 最上部共通ヘッダー -->
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
   </div>
@@ -279,7 +386,7 @@
         <img id="mainFilterIcon" src="" class="filter-icon-inline" alt="filter icon">
       </button>
       <button type="button" class="open-sort-btn" id="openSortBtn" onclick="openSortModal()">
-        <span id="sortBtnLabel">並び替え: リリリース順</span>
+        <span id="sortBtnLabel">並び替え: リリース順</span>
       </button>
     </div>
   </div>
@@ -454,6 +561,12 @@
     </div>
   </div>
 
+  <!-- 共通フッター -->
+  <footer>
+    <div class="footer-links-container" id="footerLinksBox"></div>
+    <div class="copyright">&copy; 攻略データまとめサイト</div>
+  </footer>
+
   <script>
     let globalRowsData = [];
     let globalTagUrlMap = {};
@@ -473,6 +586,13 @@
           else initApp(data);
         })
         .catch(err => console.error('通信エラー:', err));
+
+      // 外部リンクの非同期取得
+      const LINKS_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getExternalLinks';
+      fetch(LINKS_URL, { method: 'GET', redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => renderExternalLinks(data))
+        .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
     function handleSearchInput() {
@@ -1219,6 +1339,48 @@
 
     function closePopText() {
       document.getElementById('popOverlay').style.display = 'none';
+    }
+
+    function renderExternalLinks(linksList) {
+      const linksBox = document.getElementById('footerLinksBox');
+      if (!linksList || !Array.isArray(linksList) || linksList.length === 0) {
+        linksBox.style.display = 'none';
+        return;
+      }
+
+      const lineMap = {};
+      linksList.forEach(item => {
+        const lineNum = Number(item.line) || 1;
+        if (!lineMap[lineNum]) lineMap[lineNum] = [];
+        lineMap[lineNum].push(item);
+      });
+
+      const sortedLines = Object.keys(lineMap).map(Number).sort((a, b) => a - b);
+
+      const xSvg = `<svg class="footer-x-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`;
+      const siteSvg = `<svg class="footer-site-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`;
+
+      let html = '';
+      sortedLines.forEach(lineNum => {
+        html += '<div class="footer-line-row">';
+        lineMap[lineNum].forEach(item => {
+          const type = String(item.type || '').trim();
+          const name = escapeHtml(item.name || '');
+          const url = escapeHtml(item.url || '');
+          const btnImg = escapeHtml(item.button_image || '');
+
+          if (type === 'ストア') {
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-store" style="background-image: url('${btnImg}');" aria-label="${name || 'ストア'}"></a>`;
+          } else if (type === 'X') {
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-x">${xSvg}<span>${name}</span></a>`;
+          } else {
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-site">${siteSvg}<span>${name}</span></a>`;
+          }
+        });
+        html += '</div>';
+      });
+
+      linksBox.innerHTML = html;
     }
 
     function escapeHtml(str) {
