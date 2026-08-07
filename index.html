@@ -116,7 +116,7 @@
       word-break: break-all;
     }
 
-    /* ★ ピックアップ無限スライダーウィンドウ */
+    /* ピックアップ無限スライダーウィンドウ */
     .pickup-window {
       background: #1e293b;
       border: 1.5px solid #334155;
@@ -138,14 +138,14 @@
       padding-bottom: 8px;
     }
 
-    /* ビューポート */
+    /* ★ 矢印が画像に被らないよう左右余白（padding）を追加したビューポート */
     .pickup-slider-viewport {
       position: relative;
       width: 100%;
-      max-width: 540px;
+      max-width: 610px;
       margin: 0 auto;
+      padding: 0 46px; /* 左右に矢印配置用のパディング */
       overflow: hidden;
-      border-radius: 12px;
       display: flex;
       align-items: center;
     }
@@ -171,21 +171,21 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
     }
 
-    /* 左右矢印ボタン */
+    /* ★ 矢印ボタンを画像の外側に配置 */
     .slider-arrow-btn {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.85);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.3);
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
       z-index: 10;
       backdrop-filter: blur(4px);
@@ -193,12 +193,12 @@
       user-select: none;
     }
     .slider-arrow-btn:hover {
-      background: rgba(37, 99, 235, 0.9);
+      background: rgba(37, 99, 235, 0.95);
       border-color: #60a5fa;
       transform: translateY(-50%) scale(1.1);
     }
-    .slider-arrow-btn.prev { left: 10px; }
-    .slider-arrow-btn.next { right: 10px; }
+    .slider-arrow-btn.prev { left: 4px; }
+    .slider-arrow-btn.next { right: 4px; }
 
     /* ドットインジケーター */
     .slider-dots {
@@ -440,7 +440,7 @@
       }
 
       .history-window, .pickup-window {
-        padding: 12px 14px;
+        padding: 12px 10px;
       }
       .history-window-body {
         max-height: 130px;
@@ -449,11 +449,16 @@
         font-size: 12px;
       }
 
-      .slider-arrow-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 13px;
+      .pickup-slider-viewport {
+        padding: 0 34px;
       }
+      .slider-arrow-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+      }
+      .slider-arrow-btn.prev { left: 0; }
+      .slider-arrow-btn.next { right: 0; }
 
       footer {
         padding: 24px 16px 20px;
@@ -491,7 +496,7 @@
       </div>
     </div>
 
-    <!-- 2. ピックアップスライダー（無限ループ対応） -->
+    <!-- 2. ピックアップスライダー -->
     <div class="pickup-window" id="pickupWindow">
       <div class="pickup-window-header">
         <span>ピックアップ</span>
@@ -548,7 +553,7 @@
   </footer>
 
   <script>
-    let currentSlideIndex = 1; // 1（クローン先頭の次＝実質1枚目）からスタート
+    let currentSlideIndex = 1;
     let realSlideCount = 0;
     let autoSlideTimer = null;
     let isTransitioning = false;
@@ -632,7 +637,6 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    /* ★ シームレス無限ループスライダー実装 */
     function renderPickupSlider(images) {
       const pickupWindow = document.getElementById('pickupWindow');
       const track = document.getElementById('pickupSliderTrack');
@@ -645,7 +649,6 @@
 
       realSlideCount = images.length;
 
-      // 1枚のみの場合は矢印・ドット・タイマー不要
       if (realSlideCount === 1) {
         track.innerHTML = `
           <div class="pickup-slide-item">
@@ -658,7 +661,6 @@
         return;
       }
 
-      // クローン作成: [末尾のクローン, 1枚目, 2枚目, ..., 最後の枚, 1枚目のクローン]
       const slideList = [images[images.length - 1], ...images, images[0]];
 
       let html = '';
@@ -679,11 +681,9 @@
       dotsBox.innerHTML = dotsHtml;
       pickupWindow.style.display = 'flex';
 
-      // 初期位置（1枚目）のセット
       track.style.transition = 'none';
       track.style.transform = `translateX(-100%)`;
 
-      // トランジション終了時の判定（クローン位置なら一瞬で本物にワープ）
       track.addEventListener('transitionend', () => {
         isTransitioning = false;
         if (currentSlideIndex >= realSlideCount + 1) {
@@ -713,7 +713,6 @@
       }
       track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
 
-      // ドット表示の更新（クローン位置も正規のインデックスにマッピング）
       let activeDotIndex = (currentSlideIndex - 1 + realSlideCount) % realSlideCount;
       const dots = document.querySelectorAll('.slider-dot');
       dots.forEach((dot, idx) => {
