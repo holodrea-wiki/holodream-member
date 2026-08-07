@@ -17,6 +17,34 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+    }
+
+    /* ★ TOP画面の背景ランダムスライドショー */
+    .bg-slideshow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .bg-slide-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      filter: blur(8px) brightness(0.35); /* 背景用に見やすくぼかしと暗さを調整 */
+      transform: scale(1.08);
+      transition: opacity 1.5s ease-in-out;
+    }
+    .bg-slide-img.active {
+      opacity: 1;
     }
 
     /* 上部ナビヘッダー */
@@ -71,7 +99,8 @@
 
     /* 更新履歴ウィンドウ */
     .history-window {
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(6px);
       border: 1.5px solid #334155;
       border-radius: 16px;
       padding: 16px 20px;
@@ -118,7 +147,8 @@
 
     /* ピックアップ無限スライダーウィンドウ */
     .pickup-window {
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(6px);
       border: 1.5px solid #334155;
       border-radius: 16px;
       padding: 16px 20px;
@@ -151,7 +181,7 @@
       cursor: grab;
       user-select: none;
       -webkit-user-drag: none;
-      touch-action: pan-y; /* スマホでの縦スクロール競合防止 */
+      touch-action: pan-y;
     }
     .pickup-slider-viewport:active {
       cursor: grabbing;
@@ -567,6 +597,9 @@
 </head>
 <body>
 
+  <!-- ★ 背景ランダムスライドショー用コンテナ -->
+  <div class="bg-slideshow" id="bgSlideshow"></div>
+
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
   </div>
@@ -701,11 +734,14 @@
         .then(data => renderHistory(data))
         .catch(err => console.error('履歴通信エラー:', err));
 
-      // 3. ピックアップ画像取得
+      // 3. ピックアップ画像＆背景スライドショー用データ取得
       const PICKUP_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getPickupImages';
       fetch(PICKUP_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
-        .then(data => renderPickupSlider(data))
+        .then(data => {
+          renderPickupSlider(data);
+          initBackgroundSlideshow(data);
+        })
         .catch(err => console.error('ピックアップ通信エラー:', err));
 
       // 4. 外部リンク取得
@@ -715,6 +751,36 @@
         .then(data => renderExternalLinks(data))
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
+
+    /* ★ 背景ランダムスライドショー初期化・実行関数 */
+    function initBackgroundSlideshow(pickupList) {
+      const slideshowContainer = document.getElementById('bgSlideshow');
+      if (!pickupList || !Array.isArray(pickupList) || pickupList.length === 0) return;
+
+      // 画像URLのみの配列を抽出
+      let imageUrls = pickupList.map(item => typeof item === 'object' ? item.image : item).filter(url => Boolean(url));
+      if (imageUrls.length === 0) return;
+
+      // 配列をランダムにシャッフル
+      imageUrls.sort(() => Math.random() - 0.5);
+
+      let html = '';
+      imageUrls.forEach((url, idx) => {
+        html += `<img src="${escapeHtml(url)}" class="bg-slide-img ${idx === 0 ? 'active' : ''}" alt="bg slide">`;
+      });
+      slideshowContainer.innerHTML = html;
+
+      if (imageUrls.length <= 1) return;
+
+      let currentBgIndex = 0;
+      const bgImages = slideshowContainer.querySelectorAll('.bg-slide-img');
+
+      setInterval(() => {
+        bgImages[currentBgIndex].classList.remove('active');
+        currentBgIndex = (currentBgIndex + 1) % bgImages.length;
+        bgImages[currentBgIndex].classList.add('active');
+      }, 5000); // 5秒ごとに背景切り替え
+    }
 
     function setBanners(bannerMap) {
       if (!bannerMap) return;
@@ -843,7 +909,6 @@
       viewport.addEventListener('mouseenter', stopAutoSlide);
       viewport.addEventListener('mouseleave', startAutoSlide);
 
-      // ★ ピックアップウィンドウ上で縦スクロールをブロックするイベント
       viewport.addEventListener('wheel', (e) => {
         e.preventDefault();
       }, { passive: false });
@@ -1345,6 +1410,5 @@
         .replace(/'/g, "&#039;");
     }
   </script>
-
 </body>
 </html>
