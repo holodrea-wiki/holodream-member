@@ -39,7 +39,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      filter: blur(8px) brightness(0.35); /* 背景用に見やすくぼかしと暗さを調整 */
+      filter: blur(8px) brightness(0.35);
       transform: scale(1.08);
       transition: opacity 1.5s ease-in-out;
     }
@@ -734,17 +734,21 @@
         .then(data => renderHistory(data))
         .catch(err => console.error('履歴通信エラー:', err));
 
-      // 3. ピックアップ画像＆背景スライドショー用データ取得
+      // 3. ピックアップ画像取得
       const PICKUP_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getPickupImages';
       fetch(PICKUP_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
-        .then(data => {
-          renderPickupSlider(data);
-          initBackgroundSlideshow(data);
-        })
+        .then(data => renderPickupSlider(data))
         .catch(err => console.error('ピックアップ通信エラー:', err));
 
-      // 4. 外部リンク取得
+      // ★ 4. 背景ランダムスライドショー用（全メンバー画像）取得
+      const ALL_IMAGES_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getAllImages';
+      fetch(ALL_IMAGES_URL, { method: 'GET', redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => initBackgroundSlideshow(data))
+        .catch(err => console.error('全画像通信エラー:', err));
+
+      // 5. 外部リンク取得
       const LINKS_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getExternalLinks';
       fetch(LINKS_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
@@ -752,13 +756,12 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 背景ランダムスライドショー初期化・実行関数 */
-    function initBackgroundSlideshow(pickupList) {
+    /* ★ 背景ランダムスライドショー初期化・実行関数（全メンバー画像対応） */
+    function initBackgroundSlideshow(imagesList) {
       const slideshowContainer = document.getElementById('bgSlideshow');
-      if (!pickupList || !Array.isArray(pickupList) || pickupList.length === 0) return;
+      if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
 
-      // 画像URLのみの配列を抽出
-      let imageUrls = pickupList.map(item => typeof item === 'object' ? item.image : item).filter(url => Boolean(url));
+      let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
       // 配列をランダムにシャッフル
@@ -1410,5 +1413,6 @@
         .replace(/'/g, "&#039;");
     }
   </script>
+
 </body>
 </html>
