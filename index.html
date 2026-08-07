@@ -116,6 +116,63 @@
       word-break: break-all;
     }
 
+    /* ★ ピックアップカルーセルスライダーウィンドウ */
+    .pickup-window {
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.3);
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+    }
+    .pickup-window-header {
+      font-size: 15px;
+      font-weight: bold;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+    .pickup-slider-viewport {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      border-radius: 12px;
+    }
+    .pickup-slider-track {
+      display: flex;
+      gap: 14px;
+      width: max-content;
+      animation: infiniteScroll 25s linear infinite;
+    }
+    .pickup-slider-track:hover {
+      animation-play-state: paused;
+    }
+    .pickup-img-item {
+      height: 140px;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      flex-shrink: 0;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .pickup-img-item:hover {
+      transform: scale(1.03);
+      border-color: #60a5fa;
+    }
+
+    @keyframes infiniteScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
     .nav-list {
       display: flex;
       flex-direction: column;
@@ -206,7 +263,6 @@
       box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
     }
     
-    /* lineごとの配置行コンテナ */
     .footer-links-container {
       display: flex;
       flex-direction: column;
@@ -224,7 +280,6 @@
       width: 100%;
     }
 
-    /* 共通ボタン基本設定 */
     .footer-btn-base {
       display: inline-flex;
       align-items: center;
@@ -234,7 +289,6 @@
       cursor: pointer;
     }
 
-    /* ★ 1. ストアボタン（バナー画像メイン） */
     .footer-btn-store {
       width: 160px;
       height: 48px;
@@ -249,7 +303,6 @@
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
     }
 
-    /* ★ 2. Xボタン（チェッカー画面「ポストする」と同デザイン） */
     .footer-btn-x {
       background: #000000;
       color: #ffffff;
@@ -274,7 +327,6 @@
       fill: currentColor;
     }
 
-    /* ★ 3. サイトボタン（地球儀アイコン標準デザイン） */
     .footer-btn-site {
       background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
       color: #38bdf8;
@@ -339,7 +391,7 @@
         line-height: 1.3;
       }
 
-      .history-window {
+      .history-window, .pickup-window {
         padding: 12px 14px;
       }
       .history-window-body {
@@ -347,6 +399,9 @@
       }
       .history-date, .history-msg {
         font-size: 12px;
+      }
+      .pickup-img-item {
+        height: 100px;
       }
 
       footer {
@@ -375,13 +430,23 @@
       <img id="top_main_banner_img" class="top-main-banner-img" src="" alt="TOP Banner">
     </div>
 
-    <!-- 更新履歴ウィンドウ -->
+    <!-- 1. 更新履歴ウィンドウ -->
     <div class="history-window">
       <div class="history-window-header">
         <span>更新履歴</span>
       </div>
       <div class="history-window-body" id="historyBox">
         <div style="color:#94a3b8; font-size:13px;">読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- ★ 2. ピックアップスライドウィンドウ（更新履歴の下） -->
+    <div class="pickup-window" id="pickupWindow">
+      <div class="pickup-window-header">
+        <span>ピックアップ</span>
+      </div>
+      <div class="pickup-slider-viewport">
+        <div class="pickup-slider-track" id="pickupSliderTrack"></div>
       </div>
     </div>
 
@@ -444,7 +509,14 @@
         .then(data => renderHistory(data))
         .catch(err => console.error('履歴通信エラー:', err));
 
-      // 3. 外部リンク取得
+      // 3. ピックアップ画像取得
+      const PICKUP_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getPickupImages';
+      fetch(PICKUP_URL, { method: 'GET', redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => renderPickupSlider(data))
+        .catch(err => console.error('ピックアップ通信エラー:', err));
+
+      // 4. 外部リンク取得
       const LINKS_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getExternalLinks';
       fetch(LINKS_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
@@ -501,7 +573,28 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    /* ★ タイプ別ボタンデザイン＆line別配置描画関数 */
+    /* ★ ピックアップループスライダー描画処理 */
+    function renderPickupSlider(images) {
+      const pickupWindow = document.getElementById('pickupWindow');
+      const track = document.getElementById('pickupSliderTrack');
+
+      if (!images || !Array.isArray(images) || images.length === 0) {
+        pickupWindow.style.display = 'none';
+        return;
+      }
+
+      // シームレス（無限）ループ用に配列を2重化
+      const displayImages = [...images, ...images];
+
+      let html = '';
+      displayImages.forEach(url => {
+        html += `<img src="${escapeHtml(url)}" class="pickup-img-item" alt="ピックアップ">`;
+      });
+
+      track.innerHTML = html;
+      pickupWindow.style.display = 'flex';
+    }
+
     function renderExternalLinks(linksList) {
       const linksBox = document.getElementById('footerLinksBox');
       if (!linksList || !Array.isArray(linksList) || linksList.length === 0) {
@@ -509,7 +602,6 @@
         return;
       }
 
-      // 1. lineごとにグループ分け
       const lineMap = {};
       linksList.forEach(item => {
         const lineNum = Number(item.line) || 1;
@@ -517,7 +609,6 @@
         lineMap[lineNum].push(item);
       });
 
-      // 昇順ソート
       const sortedLines = Object.keys(lineMap).map(Number).sort((a, b) => a - b);
 
       const xSvg = `<svg class="footer-x-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`;
@@ -533,13 +624,10 @@
           const btnImg = escapeHtml(item.button_image || '');
 
           if (type === 'ストア') {
-            // 背景画像でボタン表示（名前テキストなし）
             html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-store" style="background-image: url('${btnImg}');" aria-label="${name || 'ストア'}"></a>`;
           } else if (type === 'X') {
-            // 所有率チェッカー「ポストする」ボタン風
             html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-x">${xSvg}<span>${name}</span></a>`;
           } else {
-            // 「サイト」および標準タイプ（地球儀マーク＋name）
             html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-site">${siteSvg}<span>${name}</span></a>`;
           }
         });
