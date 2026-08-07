@@ -304,13 +304,13 @@
       letter-spacing: 0.01em;
     }
 
-    /* ★ モーダル＆ゲームカード共通スタイル（talent.htmlより移植） */
+    /* モーダル＆ゲームカード共通スタイル */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
     .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; border: 1px solid #374151; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
     .modal-close-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
 
-    .modal-filter-bar { display: flex; gap: 12px; align-items: center; padding: 10px 20px; background: #1f2937; border-bottom: 1px solid #374151; flex-wrap: wrap; }
+    .modal-filter-bar { display: none; gap: 12px; align-items: center; padding: 10px 20px; background: #1f2937; border-bottom: 1px solid #374151; flex-wrap: wrap; }
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d1d5db; }
     .filter-select { background: #374151; color: #ffffff; border: 1px solid #4b5563; border-radius: 6px; padding: 4px 10px; font-size: 13px; outline: none; cursor: pointer; }
     .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
@@ -361,7 +361,7 @@
     .b-center-text { font-size: 15px; font-weight: bold; color: #1e293b; letter-spacing: 0.02em; }
     .b-right-icon { height: 38px; width: auto; object-fit: contain; flex-shrink: 0; transform: scale(1.25); }
 
-    .pop-text-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+    .pop-text-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
     .pop-text-card { background: #ffffff; color: #1f2937; border-radius: 14px; padding: 24px; width: 100%; max-width: 580px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; }
     .pop-header { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin-bottom: 16px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; color: #111827; }
     .pop-icon { height: 32px; width: auto; object-fit: contain; }
@@ -628,7 +628,7 @@
     </div>
   </div>
 
-  <!-- ★ ピックアップメンバー情報用モーダル -->
+  <!-- ピックアップメンバー情報用モーダル -->
   <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
       <div class="modal-header">
@@ -636,20 +636,8 @@
         <button class="modal-close-btn" onclick="closeModal()">&times;</button>
       </div>
 
-      <div class="modal-filter-bar" id="modalFilterBar">
-        <div class="filter-item">
-          <span>レアリティ:</span>
-          <select id="modalRarityFilter" class="filter-select" onchange="filterModalCards()">
-            <option value="">すべて</option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <span>タイプ:</span>
-          <select id="modalTypeFilter" class="filter-select" onchange="filterModalCards()">
-            <option value="">すべて</option>
-          </select>
-        </div>
-      </div>
+      <!-- ★ フィルタ不要のため非表示 -->
+      <div class="modal-filter-bar" id="modalFilterBar" style="display: none;"></div>
 
       <div id="modalBody" class="modal-body">読み込み中...</div>
 
@@ -761,7 +749,7 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    /* ★ ピックアップスライダー＆モーダル連携 */
+    /* ★ ピックアップスライダー描画 */
     function renderPickupSlider(pickupList) {
       const pickupWindow = document.getElementById('pickupWindow');
       const track = document.getElementById('pickupSliderTrack');
@@ -778,10 +766,12 @@
         const item = pickupList[0];
         const imgUrl = typeof item === 'object' ? item.image : item;
         const charName = typeof item === 'object' ? (item.character || '') : '';
-        
+        const aliasStr = typeof item === 'object' ? (item.alias || '') : '';
+        const cardId = typeof item === 'object' ? (item.id || '') : '';
+
         track.innerHTML = `
           <div class="pickup-slide-item">
-            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openCharacterDetail('${escapeHtml(charName)}')">
+            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openPickupCardDetail('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
           </div>
         `;
         document.querySelectorAll('.slider-arrow-btn').forEach(btn => btn.style.display = 'none');
@@ -796,10 +786,12 @@
       slideList.forEach(item => {
         const imgUrl = typeof item === 'object' ? item.image : item;
         const charName = typeof item === 'object' ? (item.character || '') : '';
+        const aliasStr = typeof item === 'object' ? (item.alias || '') : '';
+        const cardId = typeof item === 'object' ? (item.id || '') : '';
 
         html += `
           <div class="pickup-slide-item">
-            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openCharacterDetail('${escapeHtml(charName)}')">
+            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openPickupCardDetail('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
           </div>
         `;
       });
@@ -888,8 +880,8 @@
       startAutoSlide();
     }
 
-    /* ★ ピックアップメンバー詳細モーダル表示（talent.htmlと同等機能） */
-    function openCharacterDetail(charName) {
+    /* ★ ピンポイントで対象カード1体のみを表示するダイアログ関数 */
+    function openPickupCardDetail(charName, aliasStr, targetCardId, targetImgUrl) {
       if (!charName) return;
 
       const modal = document.getElementById('detailModal');
@@ -897,11 +889,9 @@
       const filterBar = document.getElementById('modalFilterBar');
       const body = document.getElementById('modalBody');
 
-      filterBar.style.display = 'flex';
-      document.getElementById('modalRarityFilter').innerHTML = '<option value="">すべて</option>';
-      document.getElementById('modalTypeFilter').innerHTML = '<option value="">すべて</option>';
+      // フィルタ非表示設定
+      filterBar.style.display = 'none';
 
-      // ★ タイトルを「ピックアップメンバー情報」に設定
       title.textContent = 'ピックアップメンバー情報';
       body.innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">データを読み込み中...</div>';
       modal.style.display = 'flex';
@@ -911,8 +901,43 @@
       fetch(GAS_ENDPOINT_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
         .then(data => {
-          if (data.error) body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
-          else renderCharacterDetails(data);
+          if (data.error) {
+            body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
+          } else {
+            // ★ 対象のカード1体のみを判定して抽出
+            const getVal = (item, keys) => {
+              for (let k of keys) {
+                if (item[k] !== undefined && item[k] !== null && item[k] !== '') return String(item[k]).trim();
+              }
+              return '';
+            };
+
+            let matchedDetails = data.details || [];
+            if (matchedDetails.length > 1) {
+              const filtered = matchedDetails.filter(item => {
+                const itemId = getVal(item, ['id', 'ID']);
+                const itemAlias = getVal(item, ['alias', '二つ名', 'メンバー名']);
+                const itemImg = getVal(item, ['image', '画像', 'メイン画像']);
+
+                if (targetCardId && itemId && itemId === targetCardId) return true;
+                if (aliasStr && itemAlias && itemAlias === aliasStr) return true;
+                if (targetImgUrl && itemImg && itemImg === targetImgUrl) return true;
+                return false;
+              });
+
+              if (filtered.length > 0) {
+                matchedDetails = [filtered[0]];
+              } else {
+                matchedDetails = [matchedDetails[0]];
+              }
+            }
+
+            renderCharacterDetails({
+              details: matchedDetails,
+              globalIcons: data.globalIcons || {},
+              tagUrlMap: data.tagUrlMap || {}
+            });
+          }
         })
         .catch(err => { body.innerHTML = '<div style="color:#ef4444; padding:20px;">詳細データの取得に失敗しました。</div>'; });
     }
@@ -946,44 +971,6 @@
       });
     }
 
-    function filterModalCards() {
-      const selectedRarity = document.getElementById('modalRarityFilter').value;
-      const selectedType = document.getElementById('modalTypeFilter').value;
-
-      const cards = document.querySelectorAll('.game-card-container');
-      let visibleCount = 0;
-
-      cards.forEach(card => {
-        const cardRarity = card.getAttribute('data-rarity') || '';
-        const cardType = card.getAttribute('data-type') || '';
-        const matchRarity = (!selectedRarity || cardRarity === selectedRarity);
-        const matchType = (!selectedType || cardType === selectedType);
-
-        if (matchRarity && matchType) {
-          card.style.display = 'flex';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      let noResultElem = document.getElementById('modalNoResult');
-      if (visibleCount === 0) {
-        if (!noResultElem) {
-          noResultElem = document.createElement('div');
-          noResultElem.id = 'modalNoResult';
-          noResultElem.style.textAlign = 'center';
-          noResultElem.style.padding = '40px';
-          noResultElem.style.color = '#9ca3af';
-          noResultElem.textContent = '条件に該当するカードがありません。';
-          document.getElementById('modalBody').appendChild(noResultElem);
-        }
-        noResultElem.style.display = 'block';
-      } else if (noResultElem) {
-        noResultElem.style.display = 'none';
-      }
-    }
-
     function renderCharacterDetails(res) {
       const body = document.getElementById('modalBody');
       const rows = res.details;
@@ -994,32 +981,6 @@
         body.innerHTML = '<div style="padding:30px; text-align:center;">詳細データが見つかりませんでした。</div>';
         return;
       }
-
-      const rarities = new Set();
-      const types = new Set();
-
-      rows.forEach(item => {
-        const r = item['rarity'] !== undefined && item['rarity'] !== '' ? String(item['rarity']).trim() : '';
-        const t = item['type'] !== undefined && item['type'] !== '' ? String(item['type']).trim() : '';
-        if (r) rarities.add(r);
-        if (t) types.add(t);
-      });
-
-      const raritySelect = document.getElementById('modalRarityFilter');
-      raritySelect.innerHTML = '<option value="">すべて</option>';
-      Array.from(rarities).sort((a, b) => Number(b) - Number(a)).forEach(r => {
-        const opt = document.createElement('option');
-        opt.value = r; opt.textContent = '★' + r;
-        raritySelect.appendChild(opt);
-      });
-
-      const typeSelect = document.getElementById('modalTypeFilter');
-      typeSelect.innerHTML = '<option value="">すべて</option>';
-      Array.from(types).sort().forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t; opt.textContent = t;
-        typeSelect.appendChild(opt);
-      });
 
       const isMobileScreen = window.innerWidth <= 600;
 
