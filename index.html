@@ -193,7 +193,7 @@
       letter-spacing: 0.01em;
     }
 
-    /* ★ ヘッダーと同色グラデーションのフッター */
+    /* ヘッダーと同色グラデーションのフッター */
     footer {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       padding: 32px 20px 28px;
@@ -205,41 +205,99 @@
       gap: 20px;
       box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
     }
+    
+    /* lineごとの配置行コンテナ */
     .footer-links-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 860px;
+    }
+    .footer-line-row {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
       gap: 12px 16px;
-      max-width: 860px;
+      width: 100%;
     }
 
-    /* ★ 外部リンクボタン */
-    .footer-link-btn {
+    /* 共通ボタン基本設定 */
+    .footer-btn-base {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    /* ★ 1. ストアボタン（バナー画像メイン） */
+    .footer-btn-store {
+      width: 160px;
+      height: 48px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .footer-btn-store:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ★ 2. Xボタン（チェッカー画面「ポストする」と同デザイン） */
+    .footer-btn-x {
+      background: #000000;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .footer-btn-x:hover {
+      background-color: #18181b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .footer-x-svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+
+    /* ★ 3. サイトボタン（地球儀アイコン標準デザイン） */
+    .footer-btn-site {
       background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
       color: #38bdf8;
       border: 1px solid #475569;
-      padding: 8px 18px;
+      padding: 9px 20px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: bold;
-      text-decoration: none;
+      gap: 8px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-      transition: all 0.2s ease;
     }
-    .footer-link-btn:hover {
+    .footer-btn-site:hover {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: #ffffff;
       border-color: #60a5fa;
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(37, 99, 235, 0.35);
     }
-    .footer-link-btn::after {
-      content: '↗';
-      font-size: 11px;
-      opacity: 0.8;
+    .footer-site-svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex-shrink: 0;
     }
 
     .copyright {
@@ -294,12 +352,13 @@
       footer {
         padding: 24px 16px 20px;
       }
-      .footer-links-container {
-        gap: 10px 12px;
+      .footer-btn-store {
+        width: 140px;
+        height: 42px;
       }
-      .footer-link-btn {
-        padding: 6px 14px;
-        font-size: 12px;
+      .footer-btn-x, .footer-btn-site {
+        padding: 8px 16px;
+        font-size: 12.5px;
       }
     }
   </style>
@@ -442,6 +501,7 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
+    /* ★ タイプ別ボタンデザイン＆line別配置描画関数 */
     function renderExternalLinks(linksList) {
       const linksBox = document.getElementById('footerLinksBox');
       if (!linksList || !Array.isArray(linksList) || linksList.length === 0) {
@@ -449,11 +509,41 @@
         return;
       }
 
-      let html = '';
+      // 1. lineごとにグループ分け
+      const lineMap = {};
       linksList.forEach(item => {
-        if (item.url) {
-          html += `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="footer-link-btn">${escapeHtml(item.title)}</a>`;
-        }
+        const lineNum = Number(item.line) || 1;
+        if (!lineMap[lineNum]) lineMap[lineNum] = [];
+        lineMap[lineNum].push(item);
+      });
+
+      // 昇順ソート
+      const sortedLines = Object.keys(lineMap).map(Number).sort((a, b) => a - b);
+
+      const xSvg = `<svg class="footer-x-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`;
+      const siteSvg = `<svg class="footer-site-svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`;
+
+      let html = '';
+      sortedLines.forEach(lineNum => {
+        html += '<div class="footer-line-row">';
+        lineMap[lineNum].forEach(item => {
+          const type = String(item.type || '').trim();
+          const name = escapeHtml(item.name || '');
+          const url = escapeHtml(item.url || '');
+          const btnImg = escapeHtml(item.button_image || '');
+
+          if (type === 'ストア') {
+            // 背景画像でボタン表示（名前テキストなし）
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-store" style="background-image: url('${btnImg}');" aria-label="${name || 'ストア'}"></a>`;
+          } else if (type === 'X') {
+            // 所有率チェッカー「ポストする」ボタン風
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-x">${xSvg}<span>${name}</span></a>`;
+          } else {
+            // 「サイト」および標準タイプ（地球儀マーク＋name）
+            html += `<a href="${url}" target="_blank" rel="noopener noreferrer" class="footer-btn-base footer-btn-site">${siteSvg}<span>${name}</span></a>`;
+          }
+        });
+        html += '</div>';
       });
 
       linksBox.innerHTML = html;
