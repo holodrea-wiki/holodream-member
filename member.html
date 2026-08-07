@@ -36,6 +36,7 @@
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
+    /* ★ 修正：ヘッダーコンテナの幅固定を解除し、リスト幅に完全同期 */
     .sticky-top-container {
       position: sticky;
       top: 0;
@@ -44,8 +45,10 @@
       padding-top: 12px;
       padding-bottom: 8px;
       max-width: 1185px;
-      min-width: 610px;
+      width: 100%;
       margin: 0 auto;
+      padding-left: 16px;
+      padding-right: 16px;
     }
 
     .header-bar {
@@ -179,7 +182,7 @@
     .filter-chip-btn { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 4px; font-size: 12px; font-weight: bold; color: #cbd5e1; text-align: center; cursor: pointer; }
     .filter-chip-btn.selected { background: #2563eb; color: #ffffff; border-color: #3b82f6; }
 
-    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; min-width: 610px; margin: 0 auto 24px; overflow-x: auto; flex: 1; }
+    .list-wrapper { background: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid #cbd5e1; width: 100%; max-width: 1185px; margin: 0 auto 24px; overflow-x: auto; flex: 1; }
     .list-body { display: flex; flex-direction: column; background: #e2e8f0; padding: 8px; gap: 8px; width: max-content; min-width: 100%; }
 
     .list-row-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 8px 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); min-height: 110px; width: 1169px; min-width: 1169px; max-width: 1169px; }
@@ -243,7 +246,7 @@
 
     #loading { text-align: center; padding: 60px; color: #64748b; font-weight: bold; }
 
-    /* ★ 共通フッターCSS */
+    /* 共通フッターCSS */
     footer {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       padding: 32px 20px 28px;
@@ -346,9 +349,10 @@
       letter-spacing: 0.03em;
     }
 
+    /* ★ モバイル画面レスポンシブ */
     @media screen and (max-width: 600px) {
       body { padding: 0; }
-      .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; }
+      .sticky-top-container, .list-wrapper { max-width: 610px !important; min-width: 610px !important; padding-left: 0; padding-right: 0; }
       .list-body { min-width: 594px !important; max-width: 594px !important; }
       .list-row-card { width: 594px !important; min-width: 594px !important; max-width: 594px !important; display: flex !important; flex-direction: column; padding: 10px; gap: 10px; min-height: auto; }
       .block-left-group, .block-right-group { display: flex !important; justify-content: space-between !important; gap: 10px; width: 560px !important; min-width: 560px !important; max-width: 560px !important; }
