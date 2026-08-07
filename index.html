@@ -138,7 +138,7 @@
       padding-bottom: 8px;
     }
 
-    /* ★ ドラッグ操作時のカーソルとスクロール制御 */
+    /* ビューポート */
     .pickup-slider-viewport {
       position: relative;
       width: 100%;
@@ -151,6 +151,7 @@
       cursor: grab;
       user-select: none;
       -webkit-user-drag: none;
+      touch-action: pan-y; /* スマホでの縦スクロール競合防止 */
     }
     .pickup-slider-viewport:active {
       cursor: grabbing;
@@ -678,7 +679,6 @@
     let isTransitioning = false;
     let globalTagUrlMap = {};
 
-    // ★ ドラッグ・スワイプ用変数
     let isDragging = false;
     let startX = 0;
     let currentTranslate = 0;
@@ -765,7 +765,6 @@
       historyBox.scrollTop = historyBox.scrollHeight;
     }
 
-    /* ★ ピックアップスライダー描画 */
     function renderPickupSlider(pickupList) {
       const pickupWindow = document.getElementById('pickupWindow');
       const track = document.getElementById('pickupSliderTrack');
@@ -837,27 +836,27 @@
         }
       });
 
-      // ★ マウス・タッチドラッグイベントの登録
       setupDragEvents();
-
       startAutoSlide();
 
       const viewport = document.getElementById('sliderViewport');
       viewport.addEventListener('mouseenter', stopAutoSlide);
       viewport.addEventListener('mouseleave', startAutoSlide);
+
+      // ★ ピックアップウィンドウ上で縦スクロールをブロックするイベント
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+      }, { passive: false });
     }
 
-    /* ★ ドラッグ＆スワイプ処理の実装 */
     function setupDragEvents() {
       const viewport = document.getElementById('sliderViewport');
       const track = document.getElementById('pickupSliderTrack');
 
-      // PCマウスイベント
       viewport.addEventListener('mousedown', dragStart);
       window.addEventListener('mousemove', dragMove);
       window.addEventListener('mouseup', dragEnd);
 
-      // スマホタッチイベント
       viewport.addEventListener('touchstart', dragStart, { passive: true });
       window.addEventListener('touchmove', dragMove, { passive: true });
       window.addEventListener('touchend', dragEnd);
@@ -884,7 +883,6 @@
       const currentX = getPositionX(event);
       dragMoveX = currentX - startX;
 
-      // 5px以上ドラッグした場合はクリック（詳細ダイアログ開く）を無効化
       if (Math.abs(dragMoveX) > 5) {
         isClickPrevented = true;
       }
@@ -902,7 +900,7 @@
       isDragging = false;
 
       const viewportWidth = document.getElementById('sliderViewport').clientWidth;
-      const threshold = viewportWidth * 0.15; // 幅の15%以上動かしたらスライド変更
+      const threshold = viewportWidth * 0.15;
 
       if (dragMoveX < -threshold) {
         moveSlide(1);
@@ -915,7 +913,6 @@
     }
 
     function handleCardClick(charName, aliasStr, targetCardId, targetImgUrl) {
-      // ドラッグ操作だった場合はモーダルを開かない
       if (isClickPrevented) {
         isClickPrevented = false;
         return;
@@ -975,7 +972,6 @@
       startAutoSlide();
     }
 
-    /* ピンポイントで対象カード1体のみを表示するダイアログ関数 */
     function openPickupCardDetail(charName, aliasStr, targetCardId, targetImgUrl) {
       if (!charName) return;
 
