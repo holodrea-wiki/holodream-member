@@ -138,7 +138,7 @@
       padding-bottom: 8px;
     }
 
-    /* ビューポート */
+    /* ★ ドラッグ操作時のカーソルとスクロール制御 */
     .pickup-slider-viewport {
       position: relative;
       width: 100%;
@@ -148,11 +148,18 @@
       overflow: hidden;
       display: flex;
       align-items: center;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .pickup-slider-viewport:active {
+      cursor: grabbing;
     }
     .pickup-slider-track {
       display: flex;
       width: 100%;
       transition: transform 0.4s ease-in-out;
+      will-change: transform;
     }
     .pickup-slide-item {
       min-width: 100%;
@@ -171,6 +178,8 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
       cursor: pointer;
       transition: transform 0.2s ease, border-color 0.2s ease;
+      -webkit-user-drag: none;
+      user-select: none;
     }
     .pickup-img-item:hover {
       transform: scale(1.02);
@@ -636,7 +645,6 @@
         <button class="modal-close-btn" onclick="closeModal()">&times;</button>
       </div>
 
-      <!-- ★ フィルタ不要のため非表示 -->
       <div class="modal-filter-bar" id="modalFilterBar" style="display: none;"></div>
 
       <div id="modalBody" class="modal-body">読み込み中...</div>
@@ -669,6 +677,14 @@
     let autoSlideTimer = null;
     let isTransitioning = false;
     let globalTagUrlMap = {};
+
+    // ★ ドラッグ・スワイプ用変数
+    let isDragging = false;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let dragMoveX = 0;
+    let isClickPrevented = false;
 
     window.onload = function() {
       // 1. バナー画像取得
@@ -771,7 +787,7 @@
 
         track.innerHTML = `
           <div class="pickup-slide-item">
-            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openPickupCardDetail('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
+            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="handleCardClick('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
           </div>
         `;
         document.querySelectorAll('.slider-arrow-btn').forEach(btn => btn.style.display = 'none');
@@ -791,7 +807,7 @@
 
         html += `
           <div class="pickup-slide-item">
-            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="openPickupCardDetail('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
+            <img src="${escapeHtml(imgUrl)}" class="pickup-img-item" alt="ピックアップ" onclick="handleCardClick('${escapeHtml(charName)}', '${escapeHtml(aliasStr)}', '${escapeHtml(cardId)}', '${escapeHtml(imgUrl)}')">
           </div>
         `;
       });
@@ -821,11 +837,90 @@
         }
       });
 
+      // ★ マウス・タッチドラッグイベントの登録
+      setupDragEvents();
+
       startAutoSlide();
 
       const viewport = document.getElementById('sliderViewport');
       viewport.addEventListener('mouseenter', stopAutoSlide);
       viewport.addEventListener('mouseleave', startAutoSlide);
+    }
+
+    /* ★ ドラッグ＆スワイプ処理の実装 */
+    function setupDragEvents() {
+      const viewport = document.getElementById('sliderViewport');
+      const track = document.getElementById('pickupSliderTrack');
+
+      // PCマウスイベント
+      viewport.addEventListener('mousedown', dragStart);
+      window.addEventListener('mousemove', dragMove);
+      window.addEventListener('mouseup', dragEnd);
+
+      // スマホタッチイベント
+      viewport.addEventListener('touchstart', dragStart, { passive: true });
+      window.addEventListener('touchmove', dragMove, { passive: true });
+      window.addEventListener('touchend', dragEnd);
+    }
+
+    function getPositionX(event) {
+      return event.type.includes('touch') ? event.touches[0].clientX : event.clientX;
+    }
+
+    function dragStart(event) {
+      if (isTransitioning || realSlideCount <= 1) return;
+      isDragging = true;
+      isClickPrevented = false;
+      startX = getPositionX(event);
+      dragMoveX = 0;
+      stopAutoSlide();
+
+      const track = document.getElementById('pickupSliderTrack');
+      track.style.transition = 'none';
+    }
+
+    function dragMove(event) {
+      if (!isDragging) return;
+      const currentX = getPositionX(event);
+      dragMoveX = currentX - startX;
+
+      // 5px以上ドラッグした場合はクリック（詳細ダイアログ開く）を無効化
+      if (Math.abs(dragMoveX) > 5) {
+        isClickPrevented = true;
+      }
+
+      const viewportWidth = document.getElementById('sliderViewport').clientWidth;
+      const baseTranslate = -currentSlideIndex * viewportWidth;
+      const currentPos = baseTranslate + dragMoveX;
+
+      const track = document.getElementById('pickupSliderTrack');
+      track.style.transform = `translateX(${currentPos}px)`;
+    }
+
+    function dragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const viewportWidth = document.getElementById('sliderViewport').clientWidth;
+      const threshold = viewportWidth * 0.15; // 幅の15%以上動かしたらスライド変更
+
+      if (dragMoveX < -threshold) {
+        moveSlide(1);
+      } else if (dragMoveX > threshold) {
+        moveSlide(-1);
+      } else {
+        updateSlidePosition(true);
+        restartAutoSlide();
+      }
+    }
+
+    function handleCardClick(charName, aliasStr, targetCardId, targetImgUrl) {
+      // ドラッグ操作だった場合はモーダルを開かない
+      if (isClickPrevented) {
+        isClickPrevented = false;
+        return;
+      }
+      openPickupCardDetail(charName, aliasStr, targetCardId, targetImgUrl);
     }
 
     function updateSlidePosition(withTransition = true) {
@@ -880,7 +975,7 @@
       startAutoSlide();
     }
 
-    /* ★ ピンポイントで対象カード1体のみを表示するダイアログ関数 */
+    /* ピンポイントで対象カード1体のみを表示するダイアログ関数 */
     function openPickupCardDetail(charName, aliasStr, targetCardId, targetImgUrl) {
       if (!charName) return;
 
@@ -889,7 +984,6 @@
       const filterBar = document.getElementById('modalFilterBar');
       const body = document.getElementById('modalBody');
 
-      // フィルタ非表示設定
       filterBar.style.display = 'none';
 
       title.textContent = 'ピックアップメンバー情報';
@@ -904,7 +998,6 @@
           if (data.error) {
             body.innerHTML = '<div style="color:#ef4444; padding:20px;">エラー: ' + escapeHtml(data.message) + '</div>';
           } else {
-            // ★ 対象のカード1体のみを判定して抽出
             const getVal = (item, keys) => {
               for (let k of keys) {
                 if (item[k] !== undefined && item[k] !== null && item[k] !== '') return String(item[k]).trim();
