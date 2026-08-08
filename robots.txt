@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://holodrea-wiki.github.io/holodreams-member/sitemap.xml
