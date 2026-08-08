@@ -47,7 +47,8 @@
       border: none;
       background: transparent;
       will-change: transform, opacity;
-      filter: brightness(0.45) contrast(1.05);
+      /* ★ カード画像を明るく調整（brightness: 0.45 -> 0.75） */
+      filter: brightness(0.75) contrast(1.05);
       pointer-events: none;
       /* ★ 移動スピードを32秒に変更 */
       animation: fallStraightToDepth 32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
@@ -864,12 +865,12 @@
         return '';
       };
 
-      // ★ bannerシートで banner カラムが「背景」になっている行のURLを背景にセット
+      // ★ bannerシートで banner カラムが「背景」になっている行のURLに暗めオーバーレイを重ねてセット
       const bgUrl = getUrl(['背景', 'background', 'bg_banner', 'bg']);
       if (bgUrl) {
         const bgContainer = document.getElementById('bgFallingContainer');
         if (bgContainer) {
-          bgContainer.style.backgroundImage = `url('${bgUrl}')`;
+          bgContainer.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('${bgUrl}')`;
         }
       }
 
