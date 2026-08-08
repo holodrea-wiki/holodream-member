@@ -70,14 +70,19 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      /* ★ 背景色を透明に変更し、余白と影を調整 */
-      background: transparent;
+      /* ★ 背景を明るい半透明ホワイトに戻す */
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
       padding-top: 12px;
-      padding-bottom: 8px;
+      padding-bottom: 12px;
+      padding-left: 16px;
+      padding-right: 16px;
       max-width: 1185px;
       min-width: 610px;
       margin: 0 auto;
       width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     .header-bar {
