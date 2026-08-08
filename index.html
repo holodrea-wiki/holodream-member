@@ -20,8 +20,8 @@
       position: relative;
     }
 
-    /* ★ 手前から奥へ乱雑に落ちていく3D背景（サイズを約3倍に拡大） */
-    .bg-falling-container {
+    /* ★ 動画再現：モザイク枠内で奥へ引っ込んで切り替わる3D背景 */
+    .bg-mosaic-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -30,49 +30,71 @@
       z-index: -1;
       overflow: hidden;
       background: radial-gradient(circle at center, #1e293b 0%, #0b0f19 100%);
-      perspective: 1000px;
+      perspective: 1200px;
     }
 
-    /* 従来260px×146px ➔ 780px×438px（3倍）に拡大 */
-    .bg-falling-card {
+    /* グリッド配置 */
+    .bg-mosaic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 16px;
+      width: 110vw;
+      height: 110vh;
       position: absolute;
-      width: 780px;
-      height: 438px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      background: #1e293b;
-      will-change: transform, opacity;
-      filter: brightness(0.45) contrast(1.05);
-      pointer-events: none;
-      animation: fallToDepth 8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      top: -5vh;
+      left: -5vw;
+      filter: brightness(0.5) contrast(1.05);
+      transform: rotateX(2deg);
     }
 
-    .bg-falling-card img {
+    .bg-mosaic-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      background: #1e293b;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .bg-mosaic-card img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
-      -webkit-user-drag: none;
-      user-select: none;
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+      will-change: transform, opacity, filter;
     }
 
-    /* 手前から出現し、奥へ小さくなりながら下に落ちて消えるキーフレーム */
-    @keyframes fallToDepth {
+    /* 新しい画像：手前にパッと表示 */
+    .bg-mosaic-card img.active {
+      opacity: 1;
+      transform: scale(1) translateZ(0);
+      filter: brightness(1);
+    }
+
+    /* ★ 動画風演出：奥へすーっと引き込まれながら（小さくなりながら）白くフェードアウト */
+    .bg-mosaic-card img.shrink-out {
+      animation: shrinkToDepth 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes shrinkToDepth {
       0% {
-        opacity: 0;
-        transform: translate3d(var(--start-x), var(--start-y), 250px) rotateX(var(--rot-x)) rotateY(var(--rot-y)) rotateZ(var(--rot-z)) scale(1.1);
+        opacity: 1;
+        transform: scale(1) translateZ(0);
+        filter: brightness(1);
       }
-      15% {
-        opacity: 0.8;
-      }
-      80% {
-        opacity: 0.5;
+      50% {
+        filter: brightness(1.8); /* 切り替わり時のパッとした光のフラッシュ */
       }
       100% {
         opacity: 0;
-        transform: translate3d(var(--end-x), var(--end-y), -700px) rotateX(calc(var(--rot-x) + 15deg)) rotateY(calc(var(--rot-y) - 15deg)) rotateZ(calc(var(--rot-z) + 10deg)) scale(0.35);
+        transform: scale(0.6) translateZ(-400px); /* 奥へと一瞬で引っこむ動き */
+        filter: brightness(0.4);
       }
     }
 
@@ -611,9 +633,9 @@
       .slider-arrow-btn.prev { left: 0; }
       .slider-arrow-btn.next { right: 0; }
 
-      .bg-falling-card {
-        width: 480px;
-        height: 269px;
+      .bg-mosaic-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
       }
 
       footer {
@@ -632,8 +654,10 @@
 </head>
 <body>
 
-  <!-- 手前から奥へ乱雑に落ちていく3D背景用コンテナ -->
-  <div class="bg-falling-container" id="bgFallingContainer"></div>
+  <!-- ★ モザイク枠内で奥へ引き込まれて切り替わる3D背景用コンテナ -->
+  <div class="bg-mosaic-container">
+    <div class="bg-mosaic-grid" id="bgMosaicGrid"></div>
+  </div>
 
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
@@ -776,11 +800,11 @@
         .then(data => renderPickupSlider(data))
         .catch(err => console.error('ピックアップ通信エラー:', err));
 
-      // 4. 手前から奥へ乱雑に落ちていく3D背景用（★5メンバー画像）取得
+      // 4. 奥へ沈み込む3D背景用（★5メンバー画像）取得
       const ALL_IMAGES_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getAllImages';
       fetch(ALL_IMAGES_URL, { method: 'GET', redirect: 'follow' })
         .then(res => res.json())
-        .then(data => initFallingBackground(data))
+        .then(data => initMosaicBackground(data))
         .catch(err => console.error('全画像通信エラー:', err));
 
       // 5. 外部リンク取得
@@ -791,55 +815,62 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* 手前から奥へ乱雑に落ちていく3D背景生成処理 */
-    function initFallingBackground(imagesList) {
-      const container = document.getElementById('bgFallingContainer');
+    /* ★ 動画再現：モザイク枠内で奥へ引っ込んで切り替わる3D背景処理 */
+    function initMosaicBackground(imagesList) {
+      const gridContainer = document.getElementById('bgMosaicGrid');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
 
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      const getRandomImg = () => imageUrls[Math.floor(Math.random() * imageUrls.length)];
+      const cardCount = 8; // 8マス（4x2）構成
+      let gridCards = [];
 
-      const createFallingCard = () => {
+      for (let i = 0; i < cardCount; i++) {
         const card = document.createElement('div');
-        card.className = 'bg-falling-card';
-
-        const img = document.createElement('img');
-        img.src = getRandomImg();
-        card.appendChild(img);
-
-        // 大きめサイズ（780px）に対応した配置位置・移動量の算出
-        const startX = (Math.random() * 80 - 15) + 'vw';
-        const startY = (Math.random() * 50 - 25) + 'vh';
-        const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
-        const endY = (parseFloat(startY) + (Math.random() * 35 + 25)) + 'vh';
-
-        const rotX = (Math.random() * 36 - 18) + 'deg';
-        const rotY = (Math.random() * 36 - 18) + 'deg';
-        const rotZ = (Math.random() * 40 - 20) + 'deg';
-
-        card.style.setProperty('--start-x', startX);
-        card.style.setProperty('--start-y', startY);
-        card.style.setProperty('--end-x', endX);
-        card.style.setProperty('--end-y', endY);
-        card.style.setProperty('--rot-x', rotX);
-        card.style.setProperty('--rot-y', rotY);
-        card.style.setProperty('--rot-z', rotZ);
-
-        container.appendChild(card);
-
-        // アニメーション完了後に要素を消去
-        setTimeout(() => {
-          card.remove();
-        }, 8000);
-      };
-
-      for (let i = 0; i < 5; i++) {
-        setTimeout(createFallingCard, i * 1000);
+        card.className = 'bg-mosaic-card';
+        gridContainer.appendChild(card);
+        gridCards.push(card);
       }
 
-      setInterval(createFallingCard, 1500);
+      const getRandomImg = () => imageUrls[Math.floor(Math.random() * imageUrls.length)];
+
+      // 初期配置
+      gridCards.forEach(card => {
+        const img = document.createElement('img');
+        img.src = getRandomImg();
+        img.className = 'active';
+        card.appendChild(img);
+      });
+
+      // 1.5秒ごとにランダムなマスの画像が奥へと引き込まれ（沈み込み）、背後の新しい画像と交代
+      setInterval(() => {
+        const randomCardIndex = Math.floor(Math.random() * cardCount);
+        const targetCard = gridCards[randomCardIndex];
+        const oldImg = targetCard.querySelector('img.active');
+
+        // 新しい画像を背面にあらかじめ準備
+        const newImg = document.createElement('img');
+        newImg.src = getRandomImg();
+        newImg.style.zIndex = '1';
+
+        if (oldImg) {
+          oldImg.style.zIndex = '2'; // 前面の画像を奥へ沈ませる
+          oldImg.classList.remove('active');
+          oldImg.classList.add('shrink-out');
+        }
+
+        targetCard.appendChild(newImg);
+
+        setTimeout(() => {
+          newImg.classList.add('active');
+        }, 50);
+
+        // トランジション完了後に消去
+        setTimeout(() => {
+          if (oldImg) oldImg.remove();
+        }, 1600);
+      }, 1500);
     }
 
     function setBanners(bannerMap) {
