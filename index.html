@@ -795,6 +795,7 @@
     };
 
     /* ★ 手前から奥へまっすぐ乱雑に落ちていく3D背景生成処理 */
+    /* ★ 手前から奥へまっすぐ落ちていく3D背景生成処理（軽量化版） */
     function initFallingBackground(imagesList) {
       const container = document.getElementById('bgFallingContainer');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
@@ -802,53 +803,41 @@
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      // 重複を防ぎ画像を散らすための履歴リスト
-      let recentIndices = [];
-      const getRandomImg = () => {
-        if (imageUrls.length <= 1) return imageUrls[0];
-        let idx;
-        const maxHistory = Math.min(Math.floor(imageUrls.length * 0.6), 15);
-        do {
-          idx = Math.floor(Math.random() * imageUrls.length);
-        } while (recentIndices.includes(idx));
+      // ----------------------------------------------------
+      // ★ 1. ページ読み込み時に数枚（例: 5枚）だけ選出・固定する
+      // ----------------------------------------------------
+      const SELECT_COUNT = 5; // 抽選する枚数
+      const shuffled = [...imageUrls].sort(() => 0.5 - Math.random());
+      const selectedImages = shuffled.slice(0, Math.min(SELECT_COUNT, shuffled.length));
 
-        recentIndices.push(idx);
-        if (recentIndices.length > maxHistory) {
-          recentIndices.shift();
-        }
-        return imageUrls[idx];
-      };
-
-      // ★ 出現位置を画面全域にバランスよく分散させるためのグリッド制御
+      // 位置を分散させるグリッド制御
       let areaSector = 0;
       const getNextPosition = () => {
-        // 画面を3x2（合計6エリア）に分割
-        const col = areaSector % 3; // 0, 1, 2 (左, 中央, 右)
-        const row = Math.floor(areaSector / 3); // 0, 1 (上寄り, 下寄り)
+        const col = areaSector % 3; // 0, 1, 2
+        const row = Math.floor(areaSector / 3); // 0, 1
         areaSector = (areaSector + 1) % 6;
 
-        // 各エリア内でさらにランダムにばらけさせる
         const startX = (col * 30 - 10 + Math.random() * 25) + 'vw';
         const startY = (row * 35 + 5 + Math.random() * 25) + 'vh';
-        
-        // 移動先もほんのり拡散
         const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
         const endY = (parseFloat(startY) + (Math.random() * 20 + 10)) + 'vh';
 
         return { startX, startY, endX, endY };
       };
 
+      let imgIndex = 0;
       const createFallingCard = () => {
         const card = document.createElement('div');
         card.className = 'bg-falling-card';
 
         const img = document.createElement('img');
-        img.src = getRandomImg();
+        // 選出された画像のみを順番にループ使用
+        img.src = selectedImages[imgIndex % selectedImages.length];
+        imgIndex++;
+
         card.appendChild(img);
 
-        // 位置取得（ばらつき向上）
         const pos = getNextPosition();
-
         card.style.setProperty('--start-x', pos.startX);
         card.style.setProperty('--start-y', pos.startY);
         card.style.setProperty('--end-x', pos.endX);
@@ -856,19 +845,19 @@
 
         container.appendChild(card);
 
-        // ★ 32秒（全体の移動時間）完了後に要素を削除
+        // アニメーション終了後にDOM要素を削除
         setTimeout(() => {
           card.remove();
         }, 32000);
       };
 
-      // ★ 初期カード生成数（さらに半分の 3個 に減少し密度を減らす）
-      for (let i = 0; i < 3; i++) {
-        setTimeout(createFallingCard, i * 1200);
+      // ★ 初期出現数（2枚）
+      for (let i = 0; i < 2; i++) {
+        setTimeout(createFallingCard, i * 2000);
       }
 
-      // ★ 生成インターバル（2秒間に1個生成へ変更し、画面内カード数を前回の半分に調整）
-      setInterval(createFallingCard, 2000);
+      // ★ 生成インターバル（4秒毎に1枚生成に低減してさらに動作を軽量化）
+      setInterval(createFallingCard, 4000);
     }
 
     function setBanners(bannerMap) {
