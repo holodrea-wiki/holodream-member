@@ -61,16 +61,13 @@
       overflow: hidden;
       box-shadow: none;
       border: none;
-      background: transparent;
+      /* ★ 黒背景（背景色）をカード自体に指定することでドットの透過を遮断 */
+      background: #0b0f19;
       will-change: transform, opacity;
-      filter: brightness(0.85) contrast(1.05); /* 少し明るめに調整 */
+      filter: brightness(0.75) contrast(1.05);
       pointer-events: none;
-      z-index: 1;
+      z-index: 1; /* ドットレイヤー(z-index: 0)の上 */
       animation: fallStraightToDepth 32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-
-      /* ★ 画像自体を中央 oval 状にくり抜くマスク処理を追加 */
-      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 80%);
-      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 80%);
     }
 
     .bg-falling-card img {
