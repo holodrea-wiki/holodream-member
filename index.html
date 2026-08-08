@@ -46,7 +46,7 @@
       filter: brightness(0.45) contrast(1.05);
       pointer-events: none;
       /* ★ 移動スピードを遅く変更（8s -> 16s） */
-      animation: fallStraightToDepth 16s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: fallStraightToDepth 32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     .bg-falling-card img {
@@ -825,7 +825,7 @@
         // ★ 16秒（全体の移動時間）完了後に要素を削除
         setTimeout(() => {
           card.remove();
-        }, 16000);
+        }, 32000);
       };
 
       // 初期カード生成
