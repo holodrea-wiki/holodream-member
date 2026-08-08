@@ -29,7 +29,10 @@
       height: 100vh;
       z-index: -1;
       overflow: hidden;
-      background: radial-gradient(circle at center, #1e293b 0%, #0b0f19 100%);
+      background-color: #0b0f19;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       perspective: 1000px;
     }
 
@@ -794,7 +797,6 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 手前から奥へまっすぐ乱雑に落ちていく3D背景生成処理 */
     /* ★ 手前から奥へまっすぐ落ちていく3D背景生成処理（軽量化版） */
     function initFallingBackground(imagesList) {
       const container = document.getElementById('bgFallingContainer');
@@ -803,18 +805,14 @@
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      // ----------------------------------------------------
-      // ★ 1. ページ読み込み時に数枚（例: 5枚）だけ選出・固定する
-      // ----------------------------------------------------
-      const SELECT_COUNT = 5; // 抽選する枚数
+      const SELECT_COUNT = 5;
       const shuffled = [...imageUrls].sort(() => 0.5 - Math.random());
       const selectedImages = shuffled.slice(0, Math.min(SELECT_COUNT, shuffled.length));
 
-      // 位置を分散させるグリッド制御
       let areaSector = 0;
       const getNextPosition = () => {
-        const col = areaSector % 3; // 0, 1, 2
-        const row = Math.floor(areaSector / 3); // 0, 1
+        const col = areaSector % 3;
+        const row = Math.floor(areaSector / 3);
         areaSector = (areaSector + 1) % 6;
 
         const startX = (col * 30 - 10 + Math.random() * 25) + 'vw';
@@ -831,7 +829,6 @@
         card.className = 'bg-falling-card';
 
         const img = document.createElement('img');
-        // 選出された画像のみを順番にループ使用
         img.src = selectedImages[imgIndex % selectedImages.length];
         imgIndex++;
 
@@ -845,18 +842,15 @@
 
         container.appendChild(card);
 
-        // アニメーション終了後にDOM要素を削除
         setTimeout(() => {
           card.remove();
         }, 32000);
       };
 
-      // ★ 初期出現数（2枚）
       for (let i = 0; i < 2; i++) {
         setTimeout(createFallingCard, i * 2000);
       }
 
-      // ★ 生成インターバル（4秒毎に1枚生成に低減してさらに動作を軽量化）
       setInterval(createFallingCard, 4000);
     }
 
@@ -869,6 +863,15 @@
         }
         return '';
       };
+
+      // ★ bannerシートで banner カラムが「背景」になっている行のURLを背景にセット
+      const bgUrl = getUrl(['背景', 'background', 'bg_banner', 'bg']);
+      if (bgUrl) {
+        const bgContainer = document.getElementById('bgFallingContainer');
+        if (bgContainer) {
+          bgContainer.style.backgroundImage = `url('${bgUrl}')`;
+        }
+      }
 
       const topMainUrl = getUrl(['TOP', 'top', 'メイン', 'メインバナー', 'top_banner']);
       if (topMainUrl) {
