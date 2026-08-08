@@ -45,8 +45,8 @@
       will-change: transform, opacity;
       filter: brightness(0.45) contrast(1.05);
       pointer-events: none;
-      /* ★ アニメーション速度を 8s -> 4s に変更してフェードアウトを早める */
-      animation: fallStraightToDepth 4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      /* ★ 移動スピードを前の 8s に保持 */
+      animation: fallStraightToDepth 8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     .bg-falling-card img {
@@ -58,17 +58,17 @@
       user-select: none;
     }
 
-    /* ★ 早期フェードアウト用キーフレーム */
+    /* ★ 移動速度はそのまま、早い段階で消えるキーフレーム */
     @keyframes fallStraightToDepth {
       0% {
         opacity: 0;
         transform: translate3d(var(--start-x), var(--start-y), 250px) scale(1.1);
       }
-      10% {
-        opacity: 0.75;
+      15% {
+        opacity: 0.8;
       }
-      40% {
-        opacity: 0.3;
+      45% {
+        opacity: 0; /* 移動途中の早い段階で完全透過 */
       }
       100% {
         opacity: 0;
@@ -791,7 +791,7 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 手前から奥へまっすぐ乱雑に落ちていく3D背景生成処理（生成数増加・生成位置下降） */
+    /* ★ 手前から奥へまっすぐ乱雑に落ちていく3D背景生成処理 */
     function initFallingBackground(imagesList) {
       const container = document.getElementById('bgFallingContainer');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
@@ -811,9 +811,9 @@
 
         // ★ 位置調整：画面中央〜下寄りにカードが発生して落ちていくよう Y座標範囲を設定
         const startX = (Math.random() * 85 - 10) + 'vw';
-        const startY = (Math.random() * 55 + 10) + 'vh'; // 10vh ~ 65vh (画面中央寄り)
+        const startY = (Math.random() * 55 + 10) + 'vh';
         const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
-        const endY = (parseFloat(startY) + (Math.random() * 25 + 15)) + 'vh'; // 中央～下側へ落ちる
+        const endY = (parseFloat(startY) + (Math.random() * 25 + 15)) + 'vh';
 
         card.style.setProperty('--start-x', startX);
         card.style.setProperty('--start-y', startY);
@@ -822,18 +822,18 @@
 
         container.appendChild(card);
 
-        // 5秒（アニメーション時間）完了後に要素を削除
+        // ★ 8秒（全体の移動時間）完了後に要素を削除
         setTimeout(() => {
           card.remove();
-        }, 5000);
+        }, 8000);
       };
 
-      // ★ 初期カード生成数を 12枚 に増やして密度アップ
+      // 初期カード生成
       for (let i = 0; i < 12; i++) {
         setTimeout(createFallingCard, i * 250);
       }
 
-      // ★ 生成インターバルを 500ms（0.5秒間隔）に短縮してカード表示量を増加
+      // 生成インターバル
       setInterval(createFallingCard, 500);
     }
 
