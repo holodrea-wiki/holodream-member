@@ -39,9 +39,10 @@
       height: 438px;
       border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      background: #1e293b;
+      /* ★ 枠線と影を削除 */
+      box-shadow: none;
+      border: none;
+      background: transparent;
       will-change: transform, opacity;
       filter: brightness(0.45) contrast(1.05);
       pointer-events: none;
@@ -56,6 +57,8 @@
       display: block;
       -webkit-user-drag: none;
       user-select: none;
+      /* ★ 画像サイズを110%（1.1倍）に拡大して枠が見えないように設定 */
+      transform: scale(1.1);
     }
 
     /* ★ 移動速度はそのまま、早い段階で消えるキーフレーム */
