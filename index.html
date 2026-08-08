@@ -821,7 +821,7 @@
       const getNextPosition = () => {
         // 画面を3x2（合計6エリア）に分割
         const col = areaSector % 3; // 0, 1, 2 (左, 中央, 右)
-        const row = Math.floor(areaSector / 3); // 0, 1 (上寄り, 下寄り)
+        const row = Math.floor(areaSector / 3); // 0, 1 (上寄リ, 下寄リ)
         areaSector = (areaSector + 1) % 6;
 
         // 各エリア内でさらにランダムにばらけさせる
@@ -859,13 +859,13 @@
         }, 32000);
       };
 
-      // ★ 初期カード生成数（さらに半分の 3個 に減少し密度を減らす）
-      for (let i = 0; i < 3; i++) {
-        setTimeout(createFallingCard, i * 1200);
+      // ★ 初期カード生成数（枚数を半分の6個に減少）
+      for (let i = 0; i < 6; i++) {
+        setTimeout(createFallingCard, i * 600);
       }
 
-      // ★ 生成インターバル（2秒間に1個生成へ変更し、画面内カード数を前回の半分に調整）
-      setInterval(createFallingCard, 2000);
+      // ★ 生成インターバル（1秒間に1個生成）
+      setInterval(createFallingCard, 1000);
     }
 
     function setBanners(bannerMap) {
