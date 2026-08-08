@@ -39,14 +39,15 @@
       height: 438px;
       border-radius: 20px;
       overflow: hidden;
+      /* ★ 枠線と影を削除 */
       box-shadow: none;
       border: none;
       background: transparent;
+      will-change: transform, opacity;
       filter: brightness(0.45) contrast(1.05);
       pointer-events: none;
-      opacity: 0;
-      /* アニメーションを完全ループ */
-      animation: fallStraightToDepth 32s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+      /* ★ 移動スピードを32秒に変更 */
+      animation: fallStraightToDepth 32s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     .bg-falling-card img {
@@ -56,9 +57,11 @@
       display: block;
       -webkit-user-drag: none;
       user-select: none;
+      /* ★ 画像サイズを110%（1.1倍）に拡大して枠が見えないように設定 */
       transform: scale(1.1);
     }
 
+    /* ★ 移動速度はそのまま、早い段階で消えるキーフレーム */
     @keyframes fallStraightToDepth {
       0% {
         opacity: 0;
@@ -68,7 +71,7 @@
         opacity: 0.8;
       }
       45% {
-        opacity: 0;
+        opacity: 0; /* 移動途中の早い段階で完全透過 */
       }
       100% {
         opacity: 0;
@@ -374,6 +377,7 @@
       letter-spacing: 0.01em;
     }
 
+    /* モーダル＆ゲームカード共通スタイル */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 16px; }
     .modal-content { background: #111827; color: #ffffff; border-radius: 16px; width: 100%; max-width: 940px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); overflow: hidden; position: relative; border: 1px solid #374151; }
     .modal-header { padding: 12px 20px; background: #1f2937; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #374151; }
@@ -790,7 +794,7 @@
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
 
-    /* ★ 極限軽量化：初回読み込み時に画像を完全抽選・固定してCSSループのみ動作させる処理 */
+    /* ★ 手前から奥へまっすぐ乱雑に落ちていく3D背景生成処理 */
     function initFallingBackground(imagesList) {
       const container = document.getElementById('bgFallingContainer');
       if (!imagesList || !Array.isArray(imagesList) || imagesList.length === 0) return;
@@ -798,45 +802,73 @@
       let imageUrls = imagesList.filter(url => typeof url === 'string' && url.startsWith('http'));
       if (imageUrls.length === 0) return;
 
-      const POOL_SIZE = 2; // 常駐するカードを2枚に厳選（超軽量）
-      const DURATION = 32;  // アニメーション周期（32秒）
+      // 重複を防ぎ画像を散らすための履歴リスト
+      let recentIndices = [];
+      const getRandomImg = () => {
+        if (imageUrls.length <= 1) return imageUrls[0];
+        let idx;
+        const maxHistory = Math.min(Math.floor(imageUrls.length * 0.6), 15);
+        do {
+          idx = Math.floor(Math.random() * imageUrls.length);
+        } while (recentIndices.includes(idx));
 
-      // 最初に取り置く画像URLのインデックスをダブらないように抽選
-      let availableIndices = Array.from({ length: imageUrls.length }, (_, i) => i);
-      // シャッフル
-      for (let i = availableIndices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [availableIndices[i], availableIndices[j]] = [availableIndices[j], availableIndices[i]];
-      }
+        recentIndices.push(idx);
+        if (recentIndices.length > maxHistory) {
+          recentIndices.shift();
+        }
+        return imageUrls[idx];
+      };
 
-      for (let i = 0; i < POOL_SIZE; i++) {
+      // ★ 出現位置を画面全域にバランスよく分散させるためのグリッド制御
+      let areaSector = 0;
+      const getNextPosition = () => {
+        // 画面を3x2（合計6エリア）に分割
+        const col = areaSector % 3; // 0, 1, 2 (左, 中央, 右)
+        const row = Math.floor(areaSector / 3); // 0, 1 (上寄り, 下寄り)
+        areaSector = (areaSector + 1) % 6;
+
+        // 各エリア内でさらにランダムにばらけさせる
+        const startX = (col * 30 - 10 + Math.random() * 25) + 'vw';
+        const startY = (row * 35 + 5 + Math.random() * 25) + 'vh';
+        
+        // 移動先もほんのり拡散
+        const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
+        const endY = (parseFloat(startY) + (Math.random() * 20 + 10)) + 'vh';
+
+        return { startX, startY, endX, endY };
+      };
+
+      const createFallingCard = () => {
         const card = document.createElement('div');
         card.className = 'bg-falling-card';
 
         const img = document.createElement('img');
-        // リロードするまで変わらない抽選画像を取り付け
-        const chosenIndex = availableIndices[i % availableIndices.length];
-        img.src = imageUrls[chosenIndex];
+        img.src = getRandomImg();
         card.appendChild(img);
 
-        // 左右・高さをばらけさせる位置指定
-        const col = i % 2; // 左右に分割
-        const startX = (col * 45 - 5 + Math.random() * 20) + 'vw';
-        const startY = (Math.random() * 40 + 10) + 'vh';
-        const endX = (parseFloat(startX) + (Math.random() * 20 - 10)) + 'vw';
-        const endY = (parseFloat(startY) + (Math.random() * 20 + 10)) + 'vh';
+        // 位置取得（ばらつき向上）
+        const pos = getNextPosition();
 
-        card.style.setProperty('--start-x', startX);
-        card.style.setProperty('--start-y', startY);
-        card.style.setProperty('--end-x', endX);
-        card.style.setProperty('--end-y', endY);
-
-        // 16秒差（全体の半分）で交互に流れるようタイミングをずらす
-        const delay = -(DURATION / POOL_SIZE) * i;
-        card.style.animationDelay = `${delay}s`;
+        card.style.setProperty('--start-x', pos.startX);
+        card.style.setProperty('--start-y', pos.startY);
+        card.style.setProperty('--end-x', pos.endX);
+        card.style.setProperty('--end-y', pos.endY);
 
         container.appendChild(card);
+
+        // ★ 32秒（全体の移動時間）完了後に要素を削除
+        setTimeout(() => {
+          card.remove();
+        }, 32000);
+      };
+
+      // ★ 初期カード生成数（さらに半分の 3個 に減少し密度を減らす）
+      for (let i = 0; i < 3; i++) {
+        setTimeout(createFallingCard, i * 1200);
       }
+
+      // ★ 生成インターバル（2秒間に1個生成へ変更し、画面内カード数を前回の半分に調整）
+      setInterval(createFallingCard, 2000);
     }
 
     function setBanners(bannerMap) {
