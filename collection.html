@@ -81,14 +81,16 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      /* ★ 背景色を透明に変更し、不要な黒背景・ボックス影を削除 */
-      background-color: transparent;
-      padding-top: 4px;
-      padding-bottom: 8px;
+      /* ★ 背景を明るい半透明ホワイトに戻す */
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
 
     .top-nav {
