@@ -881,7 +881,19 @@
       };
 
       // ★ bannerシートで banner カラムが「背景」になっている行のURLを背景にセット
-      const bgUrl = getUrl(['背景', 'background', 'bg_banner', 'bg']);
+      // ★ スマホ画面判定（幅650px以下）の処理を追加
+      const isMobile = window.innerWidth <= 650;
+      let bgUrl = '';
+
+      if (isMobile) {
+        bgUrl = getUrl(['背景（モバイル）', '背景(モバイル)', '背景モバイル', 'bg_mobile', 'mobile_bg']);
+      }
+
+      // スマホ用画像が取得できない場合、またはPC画面の場合は「背景」をセット
+      if (!bgUrl) {
+        bgUrl = getUrl(['背景', 'background', 'bg_banner', 'bg']);
+      }
+
       if (bgUrl) {
         const bgContainer = document.getElementById('bgFallingContainer');
         if (bgContainer) {
