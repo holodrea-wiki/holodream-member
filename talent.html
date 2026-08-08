@@ -12,11 +12,41 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #eef2f7;
+      background-color: #0f172a;
       color: #1f2937;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+    }
+
+    /* ★ 共通背景コンテナ & ドットオーバーレイ */
+    .bg-falling-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      background-color: #0b0f19;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .bg-falling-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(rgba(15, 23, 42, 0.65) 1px, transparent 1px);
+      background-size: 4.5px 4.5px;
+      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.85) 80%);
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 15%, rgba(0,0,0,0.85) 80%);
     }
 
     /* 上部ナビヘッダー */
@@ -47,7 +77,8 @@
     .controls {
       position: sticky;
       top: 0;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
       padding: 12px 16px;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -109,12 +140,13 @@
       text-align: center;
       padding: 50px;
       font-weight: bold;
-      color: #6b7280;
+      color: #f8fafc;
     }
 
     .unit-section {
       margin-bottom: 20px;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -580,6 +612,9 @@
 </head>
 <body>
 
+  <!-- 共通背景コンテナ -->
+  <div class="bg-falling-container" id="bgFallingContainer"></div>
+
   <!-- 上部共通ヘッダー -->
   <div class="header">
     <h1>ホロドリ メンバー情報</h1>
@@ -651,6 +686,13 @@
     let globalTagUrlMap = {};
 
     window.onload = function() {
+      // 背景バナー取得
+      const BANNER_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getTopBannerMap';
+      fetch(BANNER_URL, { method: 'GET', redirect: 'follow' })
+        .then(res => res.json())
+        .then(data => setBackgroundBanner(data))
+        .catch(err => console.error('バナー通信エラー:', err));
+
       const GAS_ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbxequWJqOweGHAQZYx6lDqEU5gZXFlAyPi0f5zlPQFYPn_xJRL1ROyxsqUvBjJcV50w/exec?action=getCharacterDataGroupedByUnit';
 
       fetch(GAS_ENDPOINT_URL, { method: 'GET', redirect: 'follow' })
@@ -668,6 +710,24 @@
         .then(data => renderExternalLinks(data))
         .catch(err => console.error('外部リンク通信エラー:', err));
     };
+
+    function setBackgroundBanner(bannerMap) {
+      if (!bannerMap) return;
+      const getUrl = (keys) => {
+        for (let k of keys) {
+          if (bannerMap[k]) return bannerMap[k];
+        }
+        return '';
+      };
+      const isMobile = window.innerWidth <= 650;
+      let bgUrl = isMobile ? getUrl(['背景（モバイル）', '背景(モバイル)', '背景モバイル', 'bg_mobile', 'mobile_bg']) : '';
+      if (!bgUrl) bgUrl = getUrl(['背景', 'background', 'bg_banner', 'bg']);
+      
+      if (bgUrl) {
+        const bgContainer = document.getElementById('bgFallingContainer');
+        if (bgContainer) bgContainer.style.backgroundImage = `url('${bgUrl}')`;
+      }
+    }
 
     function handleSearchInput() {
       const input = document.getElementById('searchInput');
@@ -856,7 +916,7 @@
       });
 
       if (container.children.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:30px; color:#9ca3af;">該当するキャラクターが見つかりませんでした。</div>';
+        container.innerHTML = '<div style="text-align:center; padding:30px; color:#f8fafc;">該当するキャラクターが見つかりませんでした。</div>';
       }
     }
 
